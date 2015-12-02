@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CheckBox;
 
 public class SettingsScreenActivity extends AppCompatActivity {
 
@@ -24,6 +25,31 @@ public class SettingsScreenActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    public void onCheckboxClicked(View view) {
+        // Is the view now checked?
+        boolean checked = ((CheckBox) view).isChecked();
+
+        // Check which checkbox was checked
+        switch(view.getId()) {
+            case R.id.checkbox_1:
+                if (checked) {
+
+                }
+                else {
+
+                }
+                break;
+            case R.id.checkbox_2:
+                if (checked) {
+
+                }
+                else {
+
+                }
+                break;
+        }
     }
 
 }

@@ -10,4 +10,17 @@
     tools:showIn="@layout/activity_settings_screen"
     tools:context="d0020e.basac.SettingsScreenActivity">
 
+    <CheckBox android:id="@+id/checkbox_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send all data"
+        android:onClick="onCheckboxClicked"/>
+
+    <CheckBox android:id="@+id/checkbox_2"
+        android:layout_below="@+id/checkbox_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send no data"
+        android:onClick="onCheckboxClicked" />
+
 </RelativeLayout>

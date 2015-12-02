@@ -9,4 +9,22 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_data_screen" tools:context="d0020e.basac.DataScreenActivity">
 
+    <ProgressBar
+        android:id="@+id/oxygen_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_marginRight="5dp"
+        android:text="test"
+        />
+
+    <Button
+        android:id="@+id/action_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/oxygen_bar"
+        android:text="Update"
+        android:onClick="updateProgressbar"/>
+
+
 </RelativeLayout>
