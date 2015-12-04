@@ -1,10 +1,9 @@
 package d0020e.basac;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -19,16 +18,6 @@ public class SettingsScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
     }
 
     public void onCheckboxClicked(View view) {
@@ -62,11 +51,22 @@ public class SettingsScreenActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Bluetooth not available", Toast.LENGTH_SHORT).show();
         } else {
             if (!mBlueToothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, HomeScreenActivity.BLUETOOTH_REQUEST_CODE);
+                mBlueToothAdapter.enable();
             } else {
                 mBlueToothAdapter.disable();
             }
+        }
+    }
+
+    public void bluetooth_connect(View view) {
+        BluetoothAdapter mBlueToothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBlueToothAdapter == null) {
+            Toast.makeText(getApplicationContext(), "Bluetooth not available", Toast.LENGTH_SHORT).show();
+        } else if (mBlueToothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
+            Toast.makeText(getApplicationContext(), "Turn on bluetooth", Toast.LENGTH_SHORT).show();
+        } else if (mBlueToothAdapter.getState() == BluetoothAdapter.STATE_ON) {
+            Intent intent = new Intent(this, BluetoothScreenActivity.class);
+            startActivity(intent);
         }
     }
 

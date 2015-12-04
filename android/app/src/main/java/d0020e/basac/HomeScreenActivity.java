@@ -14,14 +14,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class HomeScreenActivity extends AppCompatActivity {
     public static int BLUETOOTH_REQUEST_CODE = 1;
     private BroadcastReceiver mBluetoothReceiver;
+    private boolean mBluetoothReceiverRegistered;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,32 +37,54 @@ public class HomeScreenActivity extends AppCompatActivity {
         });
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        mBluetoothReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
-                    final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
-                    updateBluetoothStatus(state);
+        if (mBluetoothAdapter == null) {
+            mBluetoothReceiverRegistered = false;
+        } else {
+            mBluetoothReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String action = intent.getAction();
+                    if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
+                        final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
+                        updateBluetoothStatus(state);
+                    }
                 }
-            }
-        };
-        this.registerReceiver(mBluetoothReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
-        updateBluetoothStatus(mBluetoothAdapter.getState());
+            };
+            this.registerReceiver(mBluetoothReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+            mBluetoothReceiverRegistered = true;
+            updateBluetoothStatus(mBluetoothAdapter.getState());
+        }
     }
 
     protected void onDestroy() {
         super.onDestroy();
-        this.unregisterReceiver(mBluetoothReceiver);
+        if (mBluetoothReceiverRegistered) {
+            this.unregisterReceiver(mBluetoothReceiver);
+        }
     }
 
     private void updateBluetoothStatus(int state) {
         switch (state) {
+            case BluetoothAdapter.STATE_TURNING_OFF:
+                //Toast.makeText(getApplicationContext(), "Bluetooth turning off", Toast.LENGTH_SHORT).show();
+                break;
             case BluetoothAdapter.STATE_OFF:
                 Toast.makeText(getApplicationContext(), "Bluetooth off", Toast.LENGTH_SHORT).show();
                 break;
+            case BluetoothAdapter.STATE_TURNING_ON:
+                //Toast.makeText(getApplicationContext(), "Bluetooth turning on", Toast.LENGTH_SHORT).show();
+                break;
             case BluetoothAdapter.STATE_ON:
                 Toast.makeText(getApplicationContext(), "Bluetooth on", Toast.LENGTH_SHORT).show();
+                break;
+            case BluetoothAdapter.STATE_CONNECTED:
+
+                break;
+            case BluetoothAdapter.STATE_CONNECTING:
+
+                break;
+            case BluetoothAdapter.STATE_DISCONNECTED:
+
                 break;
         }
     }
