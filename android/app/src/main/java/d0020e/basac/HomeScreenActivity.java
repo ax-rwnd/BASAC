@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,22 +19,27 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 public class HomeScreenActivity extends AppCompatActivity {
     public static int BLUETOOTH_REQUEST_CODE = 1;
     private BroadcastReceiver mBluetoothReceiver;
     private boolean mBluetoothReceiverRegistered;
-    
-    private Button dataButton
 
     private DataModel dataModel;
     private StateController stateController;
     private Button dataButton;
 
+    private BluetoothService mBluetoothService;
+
+    private Handler mHandler = new Handler() {
+
+    };
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home_screen);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         Log.e("HomeScreen", "Datamodel Created");
         /* Starts the StateController as a seperate thread*/
@@ -46,18 +52,8 @@ public class HomeScreenActivity extends AppCompatActivity {
         }).start();
 
         setContentView(R.layout.activity_home_screen);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        /* Creates the actionbutton for checking/connecting through bluetooth. */
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Bluetooth goes here.", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
 
         dataButton = (Button) findViewById(R.id.action_data);
         dataButton.setText("DATA");
@@ -80,6 +76,17 @@ public class HomeScreenActivity extends AppCompatActivity {
             mBluetoothReceiverRegistered = true;
             updateBluetoothStatus(mBluetoothAdapter.getState());
         }
+    }
+
+    protected void onStart() {
+        super.onStart();
+        if (mBluetoothService == null) {
+
+        }
+    }
+
+    private void setupService() {
+        mBluetoothService = new BluetoothService(this,mHandler);
     }
 
     protected void onDestroy() {
@@ -146,9 +153,9 @@ public class HomeScreenActivity extends AppCompatActivity {
     }
 
     public void startDataScreen(View view) {
-            Intent intent = new Intent(this, DataScreenActivity.class);
-            intent.putExtra("dataModel", dataModel);
-            startActivity(intent);
+        Intent intent = new Intent(this, DataScreenActivity.class);
+        intent.putExtra("dataModel", dataModel);
+        startActivity(intent);
     }
 
     public void startSettingsScreen(View view) {

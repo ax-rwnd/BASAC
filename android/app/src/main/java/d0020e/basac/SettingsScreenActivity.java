@@ -27,11 +27,6 @@ public class SettingsScreenActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void bluetooth_service(View view) {
-        Intent intent = new Intent(this, BluetoothServiceScreenActivity.class);
-        startActivity(intent);
-    }
-
     public void onCheckboxClicked(View view) {
         // Is the view now checked?
         boolean checked = ((CheckBox) view).isChecked();
@@ -55,6 +50,16 @@ public class SettingsScreenActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    public void bluetooth_service(View view) {
+        Intent intent = new Intent(this, BluetoothServiceScreenActivity.class);
+        startActivity(intent);
+    }
+
+    public void bluetooth_client(View view) {
+        Intent intent = new Intent(this, BluetoothClientScreenActivity.class);
+        startActivity(intent);
     }
 
     public void toggle_bluetooth(View view) {

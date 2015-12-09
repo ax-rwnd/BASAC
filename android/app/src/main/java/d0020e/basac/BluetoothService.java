@@ -2,7 +2,6 @@ package d0020e.basac;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -17,7 +16,7 @@ public class BluetoothService {
     private static final String TAG = "BluetoothService";
 
     private static final String NAME = "BASAC";
-    private static final UUID MY_UUID = UUID.randomUUID();
+    private static final UUID MY_UUID = UUID.fromString("b5cb9ed6-176c-45ae-b129-38ae7665e485");
 
 
     private BluetoothAdapter mAdapter;
@@ -30,10 +29,19 @@ public class BluetoothService {
     private int mState;
     private static final int STATE_NONE = 0;
 
+    private int[] data;
+
     public BluetoothService(Context context, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mHandler = handler;
         mState = STATE_NONE;
+
+        data = new int[5];
+        data[0] = 1;
+        data[1] = 2;
+        data[2] = 3;
+        data[3] = 4;
+        data[4] = 5;
     }
 
     private class AcceptThread extends Thread {

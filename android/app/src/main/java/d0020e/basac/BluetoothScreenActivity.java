@@ -16,6 +16,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+import java.util.Set;
+
 public class BluetoothScreenActivity extends AppCompatActivity {
 
     private final BroadcastReceiver mBluetoothDiscoveryReceiver = new BroadcastReceiver() {
@@ -37,6 +40,7 @@ public class BluetoothScreenActivity extends AppCompatActivity {
 
     private BluetoothAdapter mBluetoothAdapter;
     private ArrayAdapter<String> mDeviceArray;
+    private ArrayAdapter<String> mPairedDeviceArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,7 @@ public class BluetoothScreenActivity extends AppCompatActivity {
         mDeviceArray = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1);
         ListView mDeviceList = (ListView) findViewById(R.id.bt_devices);
         mDeviceList.setAdapter(mDeviceArray);
+        mPairedDeviceArray = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1);
 
         Toast.makeText(getApplicationContext(), "Started device discovery", Toast.LENGTH_SHORT).show();
 
@@ -64,6 +69,14 @@ public class BluetoothScreenActivity extends AppCompatActivity {
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(mBluetoothDiscoveryReceiver, filter);
 
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            ListView mPairedDeviceList = (ListView) findViewById(R.id.bt_paired_devices);
+            mPairedDeviceList.setAdapter(mPairedDeviceArray);
+            for (BluetoothDevice device : pairedDevices) {
+                mPairedDeviceArray.add(device.getName() + "\n" + device.getAddress());
+            }
+        }
 
         if (mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.cancelDiscovery();
