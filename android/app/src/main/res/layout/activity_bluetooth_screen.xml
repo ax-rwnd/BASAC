@@ -15,5 +15,24 @@
         android:id="@+id/bt_devices"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:choiceMode="singleChoice" />
+        android:choiceMode="singleChoice"
+        android:layout_above="@+id/bt_device" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BT STATUS"
+        android:id="@+id/bt_device"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="48dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rescan"
+        android:id="@+id/bt_rescan"
+        android:onClick="bt_rescan"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

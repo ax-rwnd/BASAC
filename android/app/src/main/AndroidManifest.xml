@@ -3,7 +3,7 @@
     package="d0020e.basac">
 
     <uses-sdk
-        android:minSdkVersion="15"
+        android:minSdkVersion="18"
         android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -31,12 +33,13 @@
         <activity
             android:name=".DataScreenActivity"
             android:label="@string/title_activity_data_screen"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SettingsScreenActivity"
             android:label="@string/title_activity_settings_screen"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".BluetoothScreenActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".BluetoothScreenActivity" />
+        <activity android:name=".BluetoothServiceScreenActivity"></activity>
     </application>
 
 </manifest>

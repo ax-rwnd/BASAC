@@ -1,7 +1,6 @@
 package d0020e.basac;
 
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,12 +11,25 @@ import android.widget.Toast;
 
 public class SettingsScreenActivity extends AppCompatActivity {
 
+    private BluetoothAdapter mBluetoothAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    public void bluetooth_service(View view) {
+        Intent intent = new Intent(this, BluetoothServiceScreenActivity.class);
+        startActivity(intent);
     }
 
     public void onCheckboxClicked(View view) {
@@ -46,27 +58,34 @@ public class SettingsScreenActivity extends AppCompatActivity {
     }
 
     public void toggle_bluetooth(View view) {
-        BluetoothAdapter mBlueToothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBlueToothAdapter == null) {
+        if (mBluetoothAdapter == null) {
             Toast.makeText(getApplicationContext(), "Bluetooth not available", Toast.LENGTH_SHORT).show();
         } else {
-            if (!mBlueToothAdapter.isEnabled()) {
-                mBlueToothAdapter.enable();
+            if (!mBluetoothAdapter.isEnabled()) {
+                Toast.makeText(getApplicationContext(), "Turning on bluetooth", Toast.LENGTH_SHORT).show();
+                mBluetoothAdapter.enable();
             } else {
-                mBlueToothAdapter.disable();
+                mBluetoothAdapter.disable();
             }
         }
     }
 
     public void bluetooth_connect(View view) {
-        BluetoothAdapter mBlueToothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBlueToothAdapter == null) {
+        if (mBluetoothAdapter == null) {
             Toast.makeText(getApplicationContext(), "Bluetooth not available", Toast.LENGTH_SHORT).show();
-        } else if (mBlueToothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
+        } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
             Toast.makeText(getApplicationContext(), "Turn on bluetooth", Toast.LENGTH_SHORT).show();
-        } else if (mBlueToothAdapter.getState() == BluetoothAdapter.STATE_ON) {
+        } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
             Intent intent = new Intent(this, BluetoothScreenActivity.class);
             startActivity(intent);
+        }
+    }
+
+    public void bt_discoverable(View view) {
+        if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,300);
+            startActivity(discoverableIntent);
         }
     }
 

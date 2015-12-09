@@ -43,4 +43,24 @@
         android:layout_toEndOf="@+id/toggle_bluetooth"
         android:onClick="bluetooth_connect"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bluetooth service"
+        android:id="@+id/bluetooth_service"
+        android:onClick="bluetooth_service"
+        android:layout_below="@+id/toggle_bluetooth"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Make discoverable"
+        android:id="@+id/bt_discoverable"
+        android:onClick="bt_discoverable"
+        android:layout_below="@+id/bluetooth_service"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 </RelativeLayout>
