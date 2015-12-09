@@ -14,27 +14,53 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 public class HomeScreenActivity extends AppCompatActivity {
     public static int BLUETOOTH_REQUEST_CODE = 1;
     private BroadcastReceiver mBluetoothReceiver;
     private boolean mBluetoothReceiverRegistered;
+    
+    private Button dataButton
+
+    private DataModel dataModel;
+    private StateController stateController;
+    private Button dataButton;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.e("HomeScreen", "Datamodel Created");
+        /* Starts the StateController as a seperate thread*/
+        new Thread(new Runnable() {
+            public void run() {
+                dataModel = new DataModel();
+                stateController = new StateController(dataModel);
+                // TODO: implement observer-observable pattern between stateController & Bluetooth manager.
+            }
+        }).start();
+
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        /* Creates the actionbutton for checking/connecting through bluetooth. */
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Bluetooth goes here.", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
+
+        dataButton = (Button) findViewById(R.id.action_data);
+        dataButton.setText("DATA");
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
@@ -111,6 +137,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         }
         if (id == R.id.action_data) {
             Intent intent = new Intent(this, DataScreenActivity.class);
+            intent.putExtra("dataModel", dataModel);
             startActivity(intent);
             return true;
         }
@@ -119,12 +146,14 @@ public class HomeScreenActivity extends AppCompatActivity {
     }
 
     public void startDataScreen(View view) {
-        Intent intent = new Intent(this, DataScreenActivity.class);
-        startActivity(intent);
+            Intent intent = new Intent(this, DataScreenActivity.class);
+            intent.putExtra("dataModel", dataModel);
+            startActivity(intent);
     }
 
     public void startSettingsScreen(View view) {
         Intent intent = new Intent(this, SettingsScreenActivity.class);
         startActivity(intent);
     }
+
 }
