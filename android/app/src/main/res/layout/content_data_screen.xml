@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_marginRight="5dp"
-        android:text="test"
         />
 
     <Button
@@ -23,8 +22,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/oxygen_bar"
-        android:text="Update"
-        android:onClick="updateProgressbar"/>
+        android:text="Increment"
+        android:onClick="incrementProgressbar"/>
+
+    <ProgressBar
+        android:id="@+id/heartrate_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/action_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_marginRight="5dp"
+        />
+    <ProgressBar
+        android:id="@+id/humidity_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/heartrate_bar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_marginRight="5dp"
+        />
+
+
 
 
 </RelativeLayout>
