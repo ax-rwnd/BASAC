@@ -39,7 +39,7 @@
             android:label="@string/title_activity_settings_screen"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".BluetoothScreenActivity" />
-        <activity android:name=".BluetoothServiceScreenActivity" />
+        <activity android:name=".BluetoothServerScreenActivity" />
         <activity android:name=".BluetoothClientScreenActivity"></activity>
     </application>
 

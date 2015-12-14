@@ -7,13 +7,23 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".BluetoothServerScreenActivity">
+    tools:context="d0020e.basac.BluetoothClientScreenActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SERVICE STATUS"
-        android:id="@+id/bt_service_status"
-        android:layout_alignParentTop="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="STATUS"
+        android:id="@+id/bt_status_client"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bt_client_log"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/bt_status_client"
+        android:choiceMode="none" />
 </RelativeLayout>

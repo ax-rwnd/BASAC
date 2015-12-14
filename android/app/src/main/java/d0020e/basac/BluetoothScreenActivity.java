@@ -1,5 +1,6 @@
 package d0020e.basac;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -10,7 +11,10 @@ import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView.OnItemClickListener;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -61,8 +65,6 @@ public class BluetoothScreenActivity extends AppCompatActivity {
 
         Toast.makeText(getApplicationContext(), "Started device discovery", Toast.LENGTH_SHORT).show();
 
-
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
@@ -70,19 +72,40 @@ public class BluetoothScreenActivity extends AppCompatActivity {
         registerReceiver(mBluetoothDiscoveryReceiver, filter);
 
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        ListView mPairedDeviceList = (ListView) findViewById(R.id.bt_paired_devices);
         if (pairedDevices.size() > 0) {
-            ListView mPairedDeviceList = (ListView) findViewById(R.id.bt_paired_devices);
             mPairedDeviceList.setAdapter(mPairedDeviceArray);
             for (BluetoothDevice device : pairedDevices) {
                 mPairedDeviceArray.add(device.getName() + "\n" + device.getAddress());
             }
         }
 
+        mDeviceList.setOnItemClickListener(mDeviceOnClickListener);
+        mPairedDeviceList.setOnItemClickListener(mDeviceOnClickListener);
+
         if (mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.cancelDiscovery();
         }
         mBluetoothAdapter.startDiscovery();
     }
+
+    private OnItemClickListener mDeviceOnClickListener = new OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+            // Cancel discovery because it's costly and we're about to connect
+            mBluetoothAdapter.cancelDiscovery();
+            // Get the device MAC address, which is the last 17 chars in the View
+            String info = ((TextView) v).getText().toString();
+            String address = info.substring(info.length() - 17);
+            // Create the result Intent and include the MAC address
+            Intent intent = new Intent();
+            intent.putExtra("device_address", address);
+            Toast.makeText(getApplicationContext(),address.toString(),Toast.LENGTH_SHORT);
+            // Set result and finish this Activity
+            setResult(Activity.RESULT_OK, intent);
+            finish();
+        }
+    };
 
     public void bt_rescan(View view) {
         mDeviceArray.clear();

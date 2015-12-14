@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:text="Bluetooth service"
         android:id="@+id/bluetooth_service"
-        android:onClick="bluetooth_service"
+        android:onClick="bluetooth_server"
         android:layout_below="@+id/toggle_bluetooth"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

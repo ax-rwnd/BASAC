@@ -34,8 +34,15 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         oxygenProgress.setProgress(dataModel.getTestValue());
 
         dataButton = (Button) findViewById(R.id.action_progress);
+        dataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                incrementProgressbar();
+            }
+        });
 
         this.isRunning = 1;
+
     }
 
 
@@ -43,13 +50,13 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         oxygenProgress.setProgress(dataModel.getTestValue());
     }
 
-    public void incrementProgressbar(View view) {
+    public void incrementProgressbar() {
         dataModel.incrementTestValue();
     }
 
     public void update(Observable observable, Object data) {
-            this.updateProgressbar();
-            Log.e("update", "fubar");
+        Log.d("DataScreen", "update()");
+        updateProgressbar();
     }
     public void onStop() {
         super.onStop();

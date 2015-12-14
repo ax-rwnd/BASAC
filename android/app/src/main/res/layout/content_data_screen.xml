@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/oxygen_bar"
         android:text="Increment"
-        android:onClick="incrementProgressbar"/>
+        />
 
     <ProgressBar
         android:id="@+id/heartrate_bar"

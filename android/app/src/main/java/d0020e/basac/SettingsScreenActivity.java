@@ -3,15 +3,31 @@ package d0020e.basac;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
+
+import java.util.Observable;
+import java.util.Observer;
 
 public class SettingsScreenActivity extends AppCompatActivity {
 
+    private static final String TAG = "SettingsScreen";
+
+    private BluetoothClient mBluetoothClient;
+
     private BluetoothAdapter mBluetoothAdapter;
+    private String mDeviceAddress;
+    private DataModel mDataModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,11 +37,33 @@ public class SettingsScreenActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        Bundle data = getIntent().getExtras();
+        mDataModel = (DataModel) data.getSerializable("dataModel");
+        //mDataModel.addObserver(this);
+
+        Button mBTClient = (Button) findViewById(R.id.bluetooth_client);
+        mBTClient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDeviceAddress != null) {
+                    mBluetoothClient = new BluetoothClient(mDeviceAddress, mDataModel);
+                }
+            }
+        });
     }
 
-    protected void onDestroy() {
-        super.onDestroy();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mBluetoothAdapter != null) {
+            TextView mPairedDevice = (TextView) findViewById(R.id.bt_paired_device);
+        }
     }
+
+    /*public void update(Observable o, Object data) {
+        Log.d(TAG, "update()");
+    }*/
 
     public void onCheckboxClicked(View view) {
         // Is the view now checked?
@@ -52,14 +90,22 @@ public class SettingsScreenActivity extends AppCompatActivity {
         }
     }
 
-    public void bluetooth_service(View view) {
-        Intent intent = new Intent(this, BluetoothServiceScreenActivity.class);
+    public void bluetooth_server(View view) {
+        Intent intent = new Intent(this, BluetoothServerScreenActivity.class);
+        intent.putExtra("dataModel", mDataModel);
         startActivity(intent);
     }
 
     public void bluetooth_client(View view) {
-        Intent intent = new Intent(this, BluetoothClientScreenActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(this, BluetoothClientScreenActivity.class);
+        //intent.putExtra("device_address",mDeviceAddress);
+        //intent.putExtra("dataModel", mDataModel);
+        //startActivity(intent);
+        if (mDeviceAddress != null) {
+            mBluetoothClient = new BluetoothClient(mDeviceAddress, mDataModel);
+        } else {
+            Toast.makeText(getApplicationContext(),"Connect to a device",Toast.LENGTH_SHORT);
+        }
     }
 
     public void toggle_bluetooth(View view) {
@@ -82,7 +128,7 @@ public class SettingsScreenActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Turn on bluetooth", Toast.LENGTH_SHORT).show();
         } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
             Intent intent = new Intent(this, BluetoothScreenActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, HomeScreenActivity.BLUETOOTH_RESULT_DEVICE);
         }
     }
 
@@ -96,10 +142,17 @@ public class SettingsScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == HomeScreenActivity.BLUETOOTH_REQUEST_CODE) {
-            if (resultCode != RESULT_OK) {
-                Toast.makeText(getApplicationContext(), "Bluetooth not enabled", Toast.LENGTH_SHORT).show();
-            }
+        switch (requestCode) {
+            case HomeScreenActivity.BLUETOOTH_REQUEST_CODE:
+                if (resultCode != RESULT_OK) {
+                    Toast.makeText(getApplicationContext(), "Bluetooth not enabled", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case HomeScreenActivity.BLUETOOTH_RESULT_DEVICE:
+                mDeviceAddress = data.getStringExtra("device_address");
+                TextView pairedDevice = (TextView) findViewById(R.id.bt_paired_device);
+                pairedDevice.setText(mDeviceAddress);
+                break;
         }
     }
 

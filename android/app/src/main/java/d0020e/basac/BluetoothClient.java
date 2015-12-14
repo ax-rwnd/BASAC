@@ -1,13 +1,11 @@
 package d0020e.basac;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -17,10 +15,14 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.UUID;
 
-public class BluetoothClientScreenActivity extends AppCompatActivity {
-
+/**
+ * Created by weedz on 2015-12-14.
+ */
+public class BluetoothClient {
     private static final String NAME = "BASAC";
     private static final UUID MY_UUID = UUID.fromString("67f071e1-dbbc-47e6-903e-769a5e262ad2");
     private static final String TAG = "BTClient";
@@ -79,7 +81,6 @@ public class BluetoothClientScreenActivity extends AppCompatActivity {
                         // construct a string from the valid bytes in the buffer
                         String readMessage = new String(readBuf, 0, msg.arg1);
                         Log.d(TAG, "Handler() msgRead: " + readMessage);
-                        mClientArrayAdapter.add(readMessage);
                         mDataModel.setTestValue(Integer.parseInt(readMessage));
                     }
                     break;
@@ -91,37 +92,14 @@ public class BluetoothClientScreenActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bluetooth_client_screen2);
-
-        //mStatus = (TextView) findViewById(R.id.bt_status_client);
-
+    public BluetoothClient(String deviceAddress, DataModel dm) {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        Bundle data = getIntent().getExtras();
-        mDataModel = (DataModel) data.getSerializable("dataModel");
-        mDeviceAddress = data.getString("device_address");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mState == STATE_NONE) {
-            if (mDeviceAddress == null) {
-                // finish activity..
-                Toast.makeText(getApplicationContext(), "Connect to a device", Toast.LENGTH_SHORT);
-                finish();
-                return;
-            }
-            mClientLog = (ListView) findViewById(R.id.bt_client_log);
-            mClientArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1);
-            mClientLog.setAdapter(mClientArrayAdapter);
-            // Get the BLuetoothDevice object
-            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mDeviceAddress);
-            // Attempt to connect to the device
-            connect(device);
-        }
+        mDeviceAddress = deviceAddress;
+        mDataModel = dm;
+        // Get the BLuetoothDevice object
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mDeviceAddress);
+        // Attempt to connect to the device
+        connect(device);
     }
 
     /**
@@ -258,4 +236,5 @@ public class BluetoothClientScreenActivity extends AppCompatActivity {
             } catch (IOException e) { }
         }
     }
+
 }

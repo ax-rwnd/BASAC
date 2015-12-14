@@ -7,41 +7,22 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="d0020e.basac.BluetoothClientScreenActivity">
+    tools:context=".BluetoothClientScreenActivity">
 
-    <EditText
+    <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/data_01"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:id="@+id/message"
+        android:layout_centerHorizontal="true"
+        android:choiceMode="none"
+        android:layout_above="@+id/bt_client_status" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/data_02"
-        android:layout_below="@+id/data_01"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/data_03"
-        android:layout_below="@+id/data_02"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send test data"
-        android:id="@+id/send_data"
-        android:layout_below="@+id/data_03"
-        android:layout_alignParentStart="true" />
+        android:text="STATUS"
+        android:id="@+id/bt_client_status"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,19 +22,16 @@ import android.widget.Toast;
 
 
 public class HomeScreenActivity extends AppCompatActivity {
-    public static int BLUETOOTH_REQUEST_CODE = 1;
+    private static final String TAG = "HomeScreen";
+
+    public static final int BLUETOOTH_REQUEST_CODE = 1;
+    public static final int BLUETOOTH_RESULT_DEVICE = 2;
     private BroadcastReceiver mBluetoothReceiver;
     private boolean mBluetoothReceiverRegistered;
 
     private DataModel dataModel;
     private StateController stateController;
     private Button dataButton;
-
-    private BluetoothService mBluetoothService;
-
-    private Handler mHandler = new Handler() {
-
-    };
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,13 +78,6 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
-        if (mBluetoothService == null) {
-
-        }
-    }
-
-    private void setupService() {
-        mBluetoothService = new BluetoothService(this,mHandler);
     }
 
     protected void onDestroy() {
@@ -160,6 +151,7 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     public void startSettingsScreen(View view) {
         Intent intent = new Intent(this, SettingsScreenActivity.class);
+        intent.putExtra("dataModel", dataModel);
         startActivity(intent);
     }
 
