@@ -13,14 +13,14 @@
     <CheckBox android:id="@+id/checkbox_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send all data"
+        android:text="It's raining outside"
         android:onClick="onCheckboxClicked"/>
 
     <CheckBox android:id="@+id/checkbox_2"
         android:layout_below="@+id/checkbox_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send no data"
+        android:text="It's not raining outside"
         android:onClick="onCheckboxClicked" />
 
 </RelativeLayout>

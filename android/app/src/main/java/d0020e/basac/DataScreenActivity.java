@@ -1,6 +1,7 @@
 package d0020e.basac;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -49,7 +50,10 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
 
     public void update(Observable observable, Object data) {
             this.updateProgressbar();
-            Log.e("update", "fubar");
+            if(dataModel.getWarningState()) {
+                dataButton.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
+            }
+            Log.e("DataScreen", "Update");
     }
     public void onStop() {
         super.onStop();

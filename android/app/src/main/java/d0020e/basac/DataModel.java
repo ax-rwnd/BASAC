@@ -12,9 +12,11 @@ import java.util.Observable;
  */
 public class DataModel extends Observable implements Serializable {
     private static int testValue;
+    private static boolean warning;
 
     public DataModel() {
-        this.testValue = 0;
+        testValue = 0;
+        warning = false;
         Log.e("DataModel", "Datamodel constructor");
     }
 
@@ -23,12 +25,22 @@ public class DataModel extends Observable implements Serializable {
     }
     /* Sets value to the actual value, invoked by StateController */
     public void setTestValue(int newValue) {
-        this.testValue = newValue;
+        testValue = newValue;
         notifyObservers();
+    }
+
+    public void toggleWarning() {
+        warning = !warning;
+    }
+
+    public boolean getWarningState() {
+        return warning;
     }
     /* Temporary function for testing through the GUI */
     public void incrementTestValue() {
-        this.testValue++;
+        testValue++;
+        Log.e("incrementButton: ", Integer.toString(this.countObservers()));
+        this.countObservers();
         setChanged();
         notifyObservers();
     }

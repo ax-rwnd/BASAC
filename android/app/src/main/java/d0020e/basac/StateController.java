@@ -1,5 +1,7 @@
 package d0020e.basac;
 
+import android.util.Log;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -18,5 +20,9 @@ public class StateController implements Observer {
     /* Is called when Datamodel is updated. checks if any thresholds are exceeded and subsequently
     * sets warning status/flags to their proper alert level */
     public void update(Observable observable, Object data) {
+        Log.e("StateController", "data updated");
+        if((dataModel.getTestValue() > 30) && (dataModel.getWarningState()==false)) {
+            dataModel.toggleWarning();
+        }
     }
 }
