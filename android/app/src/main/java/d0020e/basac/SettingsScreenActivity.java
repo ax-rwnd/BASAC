@@ -140,6 +140,12 @@ public class SettingsScreenActivity extends AppCompatActivity {
         }
     }
 
+    public void startService(View view) {
+        TempService tmp = new TempService(mDataModel);
+        tmp.start();
+        Toast.makeText(getApplicationContext(), "Service started", Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {

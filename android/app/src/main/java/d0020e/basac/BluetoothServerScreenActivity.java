@@ -54,12 +54,12 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
                 case MESSAGE_STATE_CHANGE:
                     Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
-                        case BluetoothClientScreenActivity.STATE_CONNECTED:
+                        case BluetoothClient.STATE_CONNECTED:
                             break;
-                        case BluetoothClientScreenActivity.STATE_CONNECTING:
+                        case BluetoothClient.STATE_CONNECTING:
                             break;
-                        case BluetoothClientScreenActivity.STATE_LISTEN:
-                        case BluetoothClientScreenActivity.STATE_NONE:
+                        case BluetoothClient.STATE_LISTEN:
+                        case BluetoothClient.STATE_NONE:
                             break;
                     }
                     break;
@@ -85,7 +85,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         }
     };
 
-    private int mState = BluetoothClientScreenActivity.STATE_NONE;
+    private int mState = BluetoothClient.STATE_NONE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +102,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (mState == BluetoothClientScreenActivity.STATE_NONE) {
+        if (mState == BluetoothClient.STATE_NONE) {
             // Initialize the send button with a listener that for click events
             mSendButton = (Button) findViewById(R.id.bt_server_send);
             mSendButton.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +136,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
             mAcceptThread = new AcceptThread();
             mAcceptThread.start();
         }
-        setState(BluetoothClientScreenActivity.STATE_LISTEN);
+        setState(BluetoothClient.STATE_LISTEN);
     }
 
     /**
@@ -151,7 +151,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
 
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
-        if (mState != BluetoothClientScreenActivity.STATE_CONNECTED) {
+        if (mState != BluetoothClient.STATE_CONNECTED) {
             Toast.makeText(this, "Not connected", Toast.LENGTH_SHORT).show();
             return;
         }

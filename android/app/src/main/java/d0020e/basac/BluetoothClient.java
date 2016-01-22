@@ -60,12 +60,12 @@ public class BluetoothClient {
                 case MESSAGE_STATE_CHANGE:
                     Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
-                        case BluetoothClientScreenActivity.STATE_CONNECTED:
+                        case BluetoothClient.STATE_CONNECTED:
                             break;
-                        case BluetoothClientScreenActivity.STATE_CONNECTING:
+                        case BluetoothClient.STATE_CONNECTING:
                             break;
-                        case BluetoothClientScreenActivity.STATE_LISTEN:
-                        case BluetoothClientScreenActivity.STATE_NONE:
+                        case BluetoothClient.STATE_LISTEN:
+                        case BluetoothClient.STATE_NONE:
                             break;
                     }
                     break;

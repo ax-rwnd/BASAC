@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.io.Serializable;
 import java.util.Observable;
+import java.util.Observer;
 
 /**
  * The Datamodel, holds the data recieved from the "Väst"
@@ -20,6 +21,7 @@ public class DataModel extends Observable implements Serializable {
     public DataModel() {
         this.testValue = 0;
         Log.d(TAG, "constructor");
+        System.out.println("Datamodel: " + this.toString());
     }
 
     public int getTestValue() {
@@ -36,6 +38,14 @@ public class DataModel extends Observable implements Serializable {
     /* Temporary function for testing through the GUI */
     public void incrementTestValue() {
         this.testValue++;
+        System.out.println("Datamodel: " + this.toString());
+        System.out.println(countObservers());
+        setChanged();
+        notifyObservers();
+    }
+
+    public void incrementTestValue(int value) {
+        this.testValue += value;
         setChanged();
         notifyObservers();
     }
