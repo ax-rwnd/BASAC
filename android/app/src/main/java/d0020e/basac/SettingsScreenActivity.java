@@ -51,6 +51,10 @@ public class SettingsScreenActivity extends AppCompatActivity {
                 }
             }
         });
+        final CheckBox checkBox = (CheckBox) findViewById(R.id.checkbox_1);
+        if (!checkBox.isChecked()) {
+            checkBox.setChecked(true);
+        }
     }
 
     @Override
@@ -73,18 +77,18 @@ public class SettingsScreenActivity extends AppCompatActivity {
         switch(view.getId()) {
             case R.id.checkbox_1:
                 if (checked) {
-
+                    Log.i("box 1 :", "checked");
                 }
                 else {
-
+                    Log.i("box 1 :", "NOT checked");
                 }
                 break;
             case R.id.checkbox_2:
                 if (checked) {
-
+                    Log.i("box 2 :", "checked");
                 }
                 else {
-
+                    Log.i("box 2 :", "NOT .checked");
                 }
                 break;
         }

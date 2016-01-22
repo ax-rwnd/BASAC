@@ -17,35 +17,35 @@ public class DataModel extends Observable implements Serializable {
     private static final String TAG = "DataModel";
 
     private static int testValue;
+    private static boolean warning;
 
     public DataModel() {
-        this.testValue = 0;
-        Log.d(TAG, "constructor");
-        System.out.println("Datamodel: " + this.toString());
+        testValue = 0;
+        warning = false;
+        Log.e(TAG, "Datamodel constructor");
     }
 
     public int getTestValue() {
         return testValue;
     }
     /* Sets value to the actual value, invoked by StateController */
-
     public void setTestValue(int newValue) {
         Log.d(TAG,"setTestValue("+String.valueOf(newValue)+")");
         this.testValue = newValue;
         setChanged();
         notifyObservers();
     }
+
+    public void toggleWarning() {
+        warning = !warning;
+    }
+
+    public boolean getWarningState() {
+        return warning;
+    }
     /* Temporary function for testing through the GUI */
     public void incrementTestValue() {
         this.testValue++;
-        System.out.println("Datamodel: " + this.toString());
-        System.out.println(countObservers());
-        setChanged();
-        notifyObservers();
-    }
-
-    public void incrementTestValue(int value) {
-        this.testValue += value;
         setChanged();
         notifyObservers();
     }
