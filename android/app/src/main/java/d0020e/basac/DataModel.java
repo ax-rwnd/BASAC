@@ -10,7 +10,8 @@ import java.util.Observable;
 public class DataModel extends Observable implements Serializable {
     private static final String TAG = "DataModel";
 
-    private int testValue;
+    //variables saved on the static object to bypass the throwing away of essential data on pause of activity?
+    private static int testValue;
     private static boolean warning;
 
 
@@ -52,6 +53,7 @@ public class DataModel extends Observable implements Serializable {
     }
 
     public void notifyView() {
+        Log.d(TAG, Integer.toString(this.testValue));
         setChanged();
         notifyObservers();
     }

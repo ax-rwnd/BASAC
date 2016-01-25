@@ -34,8 +34,9 @@ public class TempService extends Thread {
                 break;
             }
         }
-
     }
+
+
 
     public void cancel() {
 

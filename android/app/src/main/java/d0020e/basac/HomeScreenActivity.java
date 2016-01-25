@@ -34,17 +34,15 @@ public class HomeScreenActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Log.d(TAG, "Datamodel Created");
+        dataModel = new DataModel();
+
         /* Starts the StateController as a seperate thread*/
-        /*new Thread(new Runnable() {
+        new Thread(new Runnable() {
             public void run() {
-                dataModel = new DataModel();
                 stateController = new StateController(dataModel);
                 // TODO: implement observer-observable pattern between stateController & Bluetooth manager.
             }
-        }).start();*/
-
-        dataModel = new DataModel();
-        stateController = new StateController(dataModel);
+        }).start();
 
         setContentView(R.layout.activity_home_screen);
 

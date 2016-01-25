@@ -13,15 +13,28 @@ public class StateController implements Observer {
     public StateController(DataModel dataModel) {
         this.dataModel = dataModel;
         this.dataModel.addObserver(this);
+        this.run();
+    }
+
+    private void run() {
+        while(true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Log.d("StateController", "is running");
+        }
     }
 
     @Override
     /* Is called when Datamodel is updated. checks if any thresholds are exceeded and subsequently
     * sets warning status/flags to their proper alert level */
     public void update(Observable observable, Object data) {
-        Log.e("StateController", "data updated");
+        Log.d("StateController", "data updated");
         if((dataModel.getTestValue() > 30) && (dataModel.getWarningState()==false)) {
             dataModel.toggleWarning();
+
         }
     }
 }
