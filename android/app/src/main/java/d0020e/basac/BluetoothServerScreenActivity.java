@@ -1,6 +1,5 @@
 package d0020e.basac;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -14,10 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 public class BluetoothServerScreenActivity extends AppCompatActivity {
@@ -46,7 +45,13 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
 
     private DataModel mDataModel;
 
-    private Handler mHandler = new Handler() {
+    private BluetoothHandler mHandler = new BluetoothHandler(this);
+
+    private static class BluetoothHandler extends Handler {
+        private final WeakReference<BluetoothServerScreenActivity> mReference;
+        private BluetoothHandler(BluetoothServerScreenActivity bc) {
+            mReference = new WeakReference<>(bc);
+        }
         @Override
         public void handleMessage(Message msg) {
             Log.d(TAG, "handleMessage(): " + msg.what);
@@ -67,35 +72,38 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    Log.d(TAG,"Handler() msgWrite: " + writeMessage);
+                    Log.d(TAG, "Handler() msgWrite: " + writeMessage);
                     break;
                 case MESSAGE_READ:
                     if (msg.obj != null) {
                         byte[] readBuf = (byte[]) msg.obj;
                         // construct a string from the valid bytes in the buffer
                         String readMessage = new String(readBuf, 0, msg.arg1);
-                        Log.d(TAG,"Handler() msgRead: " + readMessage);
+                        Log.d(TAG, "Handler() msgRead: " + readMessage);
+                        //mReference.get().mDataModel.setTestValue(Integer.parseInt(readMessage));
                     }
                     break;
                 case MESSAGE_DEVICE_NAME:
                     // save the connected device's name
-                    Log.d(TAG,"Handler() msgDeviceName: ");
+                    Log.d(TAG, "Handler() msgDeviceName: ");
                     break;
             }
         }
-    };
+    }
 
     private int mState = BluetoothClient.STATE_NONE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            return;
+        }
         setContentView(R.layout.activity_bluetooth_server_screen);
 
         Bundle data = getIntent().getExtras();
         mDataModel = (DataModel) data.getSerializable("dataModel");
-
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     }
 
@@ -226,7 +234,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         }
 
         public void run() {
-            BluetoothSocket socket = null;
+            BluetoothSocket socket;
             // Keep listening until exception occurs or a socket is returned
             while (true) {
                 try {

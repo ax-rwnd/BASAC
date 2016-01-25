@@ -6,18 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 
@@ -31,7 +25,7 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     private DataModel dataModel;
     private StateController stateController;
-    private Button dataButton;
+    //private Button dataButton;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +33,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Log.e("HomeScreen", "Datamodel Created");
+        Log.d(TAG, "Datamodel Created");
         /* Starts the StateController as a seperate thread*/
         /*new Thread(new Runnable() {
             public void run() {
@@ -53,11 +47,6 @@ public class HomeScreenActivity extends AppCompatActivity {
         stateController = new StateController(dataModel);
 
         setContentView(R.layout.activity_home_screen);
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
-
-        dataButton = (Button) findViewById(R.id.action_data);
-        dataButton.setText("DATA");
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {

@@ -3,8 +3,6 @@ package d0020e.basac;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,11 +11,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
-import java.util.Observable;
-import java.util.Observer;
 
 public class SettingsScreenActivity extends AppCompatActivity {
 
@@ -40,7 +33,6 @@ public class SettingsScreenActivity extends AppCompatActivity {
 
         Bundle data = getIntent().getExtras();
         mDataModel = (DataModel) data.getSerializable("dataModel");
-        //mDataModel.addObserver(this);
 
         Button mBTClient = (Button) findViewById(R.id.bluetooth_client);
         mBTClient.setOnClickListener(new View.OnClickListener() {
@@ -64,10 +56,6 @@ public class SettingsScreenActivity extends AppCompatActivity {
             TextView mPairedDevice = (TextView) findViewById(R.id.bt_paired_device);
         }
     }
-
-    /*public void update(Observable o, Object data) {
-        Log.d(TAG, "update()");
-    }*/
 
     public void onCheckboxClicked(View view) {
         // Is the view now checked?
@@ -95,20 +83,22 @@ public class SettingsScreenActivity extends AppCompatActivity {
     }
 
     public void bluetooth_server(View view) {
-        Intent intent = new Intent(this, BluetoothServerScreenActivity.class);
-        intent.putExtra("dataModel", mDataModel);
-        startActivity(intent);
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(getApplicationContext(), "Bluetooth not available", Toast.LENGTH_SHORT).show();
+        } else if (!mBluetoothAdapter.isEnabled()) {
+            Toast.makeText(getApplicationContext(), "Make sure bluetooth is turned on before starting server", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(this, BluetoothServerScreenActivity.class);
+            intent.putExtra("dataModel", mDataModel);
+            startActivity(intent);
+        }
     }
 
     public void bluetooth_client(View view) {
-        //Intent intent = new Intent(this, BluetoothClientScreenActivity.class);
-        //intent.putExtra("device_address",mDeviceAddress);
-        //intent.putExtra("dataModel", mDataModel);
-        //startActivity(intent);
         if (mDeviceAddress != null) {
             mBluetoothClient = new BluetoothClient(mDeviceAddress, mDataModel);
         } else {
-            Toast.makeText(getApplicationContext(),"Connect to a device",Toast.LENGTH_SHORT);
+            Toast.makeText(getApplicationContext(),"Connect to a device",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -142,12 +132,6 @@ public class SettingsScreenActivity extends AppCompatActivity {
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,300);
             startActivity(discoverableIntent);
         }
-    }
-
-    public void startService(View view) {
-        TempService tmp = new TempService(mDataModel);
-        tmp.start();
-        Toast.makeText(getApplicationContext(), "Service started", Toast.LENGTH_SHORT).show();
     }
 
     @Override

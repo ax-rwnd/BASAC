@@ -10,13 +10,10 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Observable;
-import java.util.Observer;
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 /**
@@ -52,7 +49,13 @@ public class BluetoothClient {
 
     private DataModel mDataModel;
 
-    private Handler mHandler = new Handler() {
+    private BluetoothHandler mHandler = new BluetoothHandler(this);
+
+    private static class BluetoothHandler extends Handler {
+        private final WeakReference<BluetoothClient> mReference;
+        private BluetoothHandler(BluetoothClient bc) {
+            mReference = new WeakReference<>(bc);
+        }
         @Override
         public void handleMessage(Message msg) {
             Log.d(TAG, "handleMessage(): " + msg.what);
@@ -73,7 +76,7 @@ public class BluetoothClient {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    Log.d(TAG,"Handler() msgWrite: " + writeMessage);
+                    Log.d(TAG, "Handler() msgWrite: " + writeMessage);
                     break;
                 case MESSAGE_READ:
                     if (msg.obj != null) {
@@ -81,16 +84,16 @@ public class BluetoothClient {
                         // construct a string from the valid bytes in the buffer
                         String readMessage = new String(readBuf, 0, msg.arg1);
                         Log.d(TAG, "Handler() msgRead: " + readMessage);
-                        mDataModel.setTestValue(Integer.parseInt(readMessage));
+                        mReference.get().mDataModel.setTestValue(Integer.parseInt(readMessage));
                     }
                     break;
                 case MESSAGE_DEVICE_NAME:
                     // save the connected device's name
-                    Log.d(TAG,"Handler() msgDeviceName: ");
+                    Log.d(TAG, "Handler() msgDeviceName: ");
                     break;
             }
         }
-    };
+    }
 
     public BluetoothClient(String deviceAddress, DataModel dm) {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

@@ -1,7 +1,6 @@
 package d0020e.basac;
 
 import android.util.Log;
-
 import java.util.Observable;
 import java.util.Observer;
 

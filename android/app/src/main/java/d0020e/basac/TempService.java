@@ -13,27 +13,25 @@ public class TempService extends Thread {
     private DataModel mData;
 
     public TempService(StateController sc) {
-
         Log.d(TAG, "initialize");
         mState = sc;
-
     }
 
     public TempService(DataModel dm) {
-        Log.d(TAG, "Started");
+        Log.d(TAG, "initialize");
         mData = dm;
     }
 
     public void run() {
 
         while (true) {
-            Log.d(TAG, "run()");
-            mData.incrementTestValue();
+            mData.notifyView();
             //mState.incrementValue(5);
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
-                Log.e(TAG, "run() failed", e);
+                Log.e(TAG, "run() interupted", e);
+                break;
             }
         }
 

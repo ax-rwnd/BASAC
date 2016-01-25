@@ -80,13 +80,4 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="61dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start service"
-        android:id="@+id/start_service"
-        android:onClick="startService"
-        android:layout_below="@+id/bluetooth_client"
-        android:layout_alignStart="@+id/bluetooth_client" />
-
 </RelativeLayout>
