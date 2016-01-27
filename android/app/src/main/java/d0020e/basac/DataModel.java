@@ -1,6 +1,13 @@
 package d0020e.basac;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.View;
+
 import java.io.Serializable;
 import java.util.Observable;
 
@@ -14,11 +21,16 @@ public class DataModel extends Observable implements Serializable {
     private static int testValue;
     private static boolean warning;
 
+    private static Context mContext;
 
     public DataModel() {
         testValue = 0;
         warning = false;
         Log.d(TAG, "DataModel constructor");
+    }
+
+    public static void setContext(Context c) {
+        mContext = c;
     }
 
     public int getTestValue() {
@@ -28,7 +40,7 @@ public class DataModel extends Observable implements Serializable {
     /* Sets value to the actual value, invoked by StateController */
     public void setTestValue(int newValue) {
         Log.d(TAG,"setTestValue("+String.valueOf(newValue)+")");
-        this.testValue = newValue;
+        testValue = newValue;
         setChanged();
         notifyObservers();
     }
@@ -41,19 +53,7 @@ public class DataModel extends Observable implements Serializable {
         return warning;
     }
 
-    /* Temporary function for testing through the GUI */
-    public void incrementTestValue() {
-        this.testValue++;
-        if (this.testValue > 100) {
-            testValue = 0;
-        }
-        Log.d(TAG, "incrementTestValue()");
-        setChanged();
-        notifyObservers();
-    }
-
     public void notifyView() {
-        Log.d(TAG, Integer.toString(this.testValue));
         setChanged();
         notifyObservers();
     }

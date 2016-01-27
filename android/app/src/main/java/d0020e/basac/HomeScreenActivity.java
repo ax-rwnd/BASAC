@@ -35,11 +35,21 @@ public class HomeScreenActivity extends AppCompatActivity {
 
         Log.d(TAG, "Datamodel Created");
         dataModel = new DataModel();
+        //dataModel.setContext(this);
 
+        stateController = new StateController(dataModel);
+        stateController.setContext(this);
         /* Starts the StateController as a seperate thread*/
         new Thread(new Runnable() {
             public void run() {
-                stateController = new StateController(dataModel);
+                while(true) {
+                    stateController.run();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 // TODO: implement observer-observable pattern between stateController & Bluetooth manager.
             }
         }).start();

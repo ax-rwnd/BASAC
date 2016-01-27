@@ -5,28 +5,27 @@ import android.util.Log;
 /**
  * Created by weedz on 2016-01-18.
  */
-public class TempService extends Thread {
+public class UpdateDataGUIService extends Thread {
 
-    private static String TAG = "TempService";
+    private static String TAG = "UpdateDataGUIService";
 
     private StateController mState;
     private DataModel mData;
 
-    public TempService(StateController sc) {
+    public UpdateDataGUIService(StateController sc) {
         Log.d(TAG, "initialize");
         mState = sc;
     }
 
-    public TempService(DataModel dm) {
+    public UpdateDataGUIService(DataModel dm) {
         Log.d(TAG, "initialize");
         mData = dm;
     }
 
     public void run() {
-
+        Log.d(TAG, "run()");
         while (true) {
             mData.notifyView();
-            //mState.incrementValue(5);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

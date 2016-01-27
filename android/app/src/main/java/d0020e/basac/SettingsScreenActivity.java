@@ -134,6 +134,12 @@ public class SettingsScreenActivity extends AppCompatActivity {
         }
     }
 
+    public void temp_func(View view) {
+        Log.d(TAG,"Set test value = 100");
+        Toast.makeText(getApplicationContext(),"Set test value = 100", Toast.LENGTH_SHORT).show();
+        mDataModel.setTestValue(100);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {

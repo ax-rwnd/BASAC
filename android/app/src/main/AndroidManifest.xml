@@ -40,7 +40,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".BluetoothScreenActivity" />
         <activity android:name=".BluetoothServerScreenActivity" />
-        <activity android:name=".BluetoothClientScreenActivity"></activity>
+        <activity
+            android:name=".WarningActivity"
+            android:label="@string/title_activity_warning"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
