@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,8 +16,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 
-public class HomeScreenActivity extends AppCompatActivity {
+
+public class HomeScreenActivity extends AppCompatActivity implements SensorEventListener {
     private static final String TAG = "HomeScreen";
 
     public static final int BLUETOOTH_REQUEST_CODE = 1;
@@ -35,6 +40,13 @@ public class HomeScreenActivity extends AppCompatActivity {
 
         Log.d(TAG, "Datamodel Created");
         dataModel = new DataModel();
+
+        /*Initialize accelerometer
+         */
+        SensorManager sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor smAccel = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sm.registerListener(this, smAccel, SensorManager.SENSOR_DELAY_NORMAL);
+
 
         /* Starts the StateController as a seperate thread*/
         new Thread(new Runnable() {
@@ -149,5 +161,36 @@ public class HomeScreenActivity extends AppCompatActivity {
         super.onResume();
 
     }
+    private long lastEvent;
+    private float prevX,prevY,prevZ;
+    private static final int threshold = 1000;
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        Sensor sensor = event.sensor;
 
+        if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float posX = event.values[0];
+            float posY = event.values[1];
+            float posZ = event.values[2];
+
+            String position = "x: " + Float.toString(posX) + " y: " + Float.toString(posY) + " y: " + Float.toString(posZ);
+            long currentTime = System.currentTimeMillis();
+
+            if ((currentTime-lastEvent) > 100 ) {
+                long deltaTime = (currentTime - lastEvent);
+                lastEvent = currentTime;
+                float speed = Math.abs(posX + posY + posZ - prevX - prevY - prevZ)/ deltaTime * 10000;
+                if (speed > threshold){
+                    Log.d("Motion Sensor", Float.toString(speed));
+                }
+
+            }
+
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 }
