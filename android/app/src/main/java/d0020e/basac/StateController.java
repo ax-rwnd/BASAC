@@ -1,7 +1,5 @@
 package d0020e.basac;
 
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -16,35 +14,24 @@ import java.util.Observer;
  */
 public class StateController implements Observer {
     private static String TAG = "StateController";
-    private DataModel dataModel;
-    private Context mContext;
+    private HomeScreenActivity mContext;
 
-    private Boolean warningDisplay = false;
+    private Boolean warningDialog = false;
+    private Boolean warningState = false;
 
-    public StateController(DataModel dataModel) {
-        this.dataModel = dataModel;
-        this.dataModel.addObserver(this);
+    public StateController() {
+        DataModel.getInstance().addObserver(this);
     }
 
     public void setContext(Context c) {
-        this.mContext = c;
-    }
-
-    public void run() {
-        if((dataModel.getTestValue() > 30) && !dataModel.getWarningState()) {
-            dataModel.toggleWarning();
-        }
-        if (dataModel.getWarningState()) {
-            // Display a warning
-            showWarning();
-        }
-        Log.d("StateController", "is running");
+        this.mContext = (HomeScreenActivity)c;
     }
 
     private void showWarning() {
         Log.d(TAG, "Warning");
 
         int notificationId = 1;
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle("Warning")
@@ -64,21 +51,20 @@ public class StateController implements Observer {
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.notify(notificationId, mBuilder.build());
 
-        if (!warningDisplay) {
-            this.warningDisplay = true;
-            //DialogFragment warningDialog = new WarningDialog();
-            //warningDialog.show(mContext.getSupportFragmentManager(), "warning");
+        if (!this.warningDialog) {
+            Log.d(TAG, "Showing warning dialog");
+            this.warningDialog = true;
         }
-
+        this.warningState = false;
     }
 
     @Override
     /* Is called when Datamodel is updated. checks if any thresholds are exceeded and subsequently
     * sets warning status/flags to their proper alert level */
     public void update(Observable observable, Object data) {
-        Log.d("StateController", "data updated");
-        if((dataModel.getTestValue() > 30) && !dataModel.getWarningState()) {
-            dataModel.toggleWarning();
+        Log.d("StateController", "Data updated");
+        if((DataModel.getInstance().getValue(0) > 30)) {
+            this.warningState = true;
             showWarning();
         }
     }

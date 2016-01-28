@@ -13,7 +13,6 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 /**
@@ -47,14 +46,12 @@ public class BluetoothClient {
     private String mDeviceAddress;
     private TextView mStatus;
 
-    private DataModel mDataModel;
 
     private BluetoothHandler mHandler = new BluetoothHandler(this);
 
     private static class BluetoothHandler extends Handler {
-        private final WeakReference<BluetoothClient> mReference;
         private BluetoothHandler(BluetoothClient bc) {
-            mReference = new WeakReference<>(bc);
+
         }
         @Override
         public void handleMessage(Message msg) {
@@ -84,7 +81,7 @@ public class BluetoothClient {
                         // construct a string from the valid bytes in the buffer
                         String readMessage = new String(readBuf, 0, msg.arg1);
                         Log.d(TAG, "Handler() msgRead: " + readMessage);
-                        mReference.get().mDataModel.setTestValue(Integer.parseInt(readMessage));
+                        DataModel.getInstance().setValue(0, Integer.parseInt(readMessage));
                     }
                     break;
                 case MESSAGE_DEVICE_NAME:
@@ -95,10 +92,9 @@ public class BluetoothClient {
         }
     }
 
-    public BluetoothClient(String deviceAddress, DataModel dm) {
+    public BluetoothClient(String deviceAddress) {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mDeviceAddress = deviceAddress;
-        mDataModel = dm;
         // Get the BLuetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mDeviceAddress);
         // Attempt to connect to the device

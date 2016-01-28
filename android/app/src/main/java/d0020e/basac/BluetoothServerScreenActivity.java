@@ -43,8 +43,6 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
     private StringBuffer mOutStringBuffer = null;
     private Button mSendButton;
 
-    private DataModel mDataModel;
-
     private BluetoothHandler mHandler = new BluetoothHandler(this);
 
     private static class BluetoothHandler extends Handler {
@@ -103,7 +101,6 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bluetooth_server_screen);
 
         Bundle data = getIntent().getExtras();
-        mDataModel = (DataModel) data.getSerializable("dataModel");
 
     }
 

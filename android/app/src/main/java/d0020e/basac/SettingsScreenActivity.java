@@ -20,7 +20,6 @@ public class SettingsScreenActivity extends AppCompatActivity {
 
     private BluetoothAdapter mBluetoothAdapter;
     private String mDeviceAddress;
-    private DataModel mDataModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,14 +31,13 @@ public class SettingsScreenActivity extends AppCompatActivity {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         Bundle data = getIntent().getExtras();
-        mDataModel = (DataModel) data.getSerializable("dataModel");
 
         Button mBTClient = (Button) findViewById(R.id.bluetooth_client);
         mBTClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mDeviceAddress != null) {
-                    mBluetoothClient = new BluetoothClient(mDeviceAddress, mDataModel);
+                    mBluetoothClient = new BluetoothClient(mDeviceAddress);
                 }
             }
         });
@@ -89,14 +87,13 @@ public class SettingsScreenActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Make sure bluetooth is turned on before starting server", Toast.LENGTH_SHORT).show();
         } else {
             Intent intent = new Intent(this, BluetoothServerScreenActivity.class);
-            intent.putExtra("dataModel", mDataModel);
             startActivity(intent);
         }
     }
 
     public void bluetooth_client(View view) {
         if (mDeviceAddress != null) {
-            mBluetoothClient = new BluetoothClient(mDeviceAddress, mDataModel);
+            mBluetoothClient = new BluetoothClient(mDeviceAddress);
         } else {
             Toast.makeText(getApplicationContext(),"Connect to a device",Toast.LENGTH_SHORT).show();
         }
@@ -137,7 +134,7 @@ public class SettingsScreenActivity extends AppCompatActivity {
     public void temp_func(View view) {
         Log.d(TAG,"Set test value = 100");
         Toast.makeText(getApplicationContext(),"Set test value = 100", Toast.LENGTH_SHORT).show();
-        mDataModel.setTestValue(100);
+        DataModel.getInstance().setValue(0,100);
     }
 
     @Override

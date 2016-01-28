@@ -2,18 +2,18 @@ package d0020e.basac;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
-
 
 public class HomeScreenActivity extends AppCompatActivity {
     private static final String TAG = "HomeScreen";
@@ -23,38 +23,18 @@ public class HomeScreenActivity extends AppCompatActivity {
     private BroadcastReceiver mBluetoothReceiver;
     private boolean mBluetoothReceiverRegistered;
 
-    private DataModel dataModel;
-    private StateController stateController;
-    //private Button dataButton;
+    private Boolean mBound = false;
+    private DataMonitor mService;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        Log.d(TAG, "Datamodel Created");
-        dataModel = new DataModel();
-        //dataModel.setContext(this);
-
-        stateController = new StateController(dataModel);
-        stateController.setContext(this);
-        /* Starts the StateController as a seperate thread*/
-        new Thread(new Runnable() {
-            public void run() {
-                while(true) {
-                    stateController.run();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                // TODO: implement observer-observable pattern between stateController & Bluetooth manager.
-            }
-        }).start();
-
         setContentView(R.layout.activity_home_screen);
+
+        DataStore ds = (DataStore)getApplicationContext();
+        ds.getState().setContext(this);
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
@@ -74,10 +54,35 @@ public class HomeScreenActivity extends AppCompatActivity {
             mBluetoothReceiverRegistered = true;
             updateBluetoothStatus(mBluetoothAdapter.getState());
         }
+
     }
 
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            DataMonitor.LocalBinder binder = (DataMonitor.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+        }
+    };
+
+    @Override
     protected void onStart() {
         super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 
     protected void onDestroy() {
@@ -93,13 +98,13 @@ public class HomeScreenActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "Bluetooth turning off", Toast.LENGTH_SHORT).show();
                 break;
             case BluetoothAdapter.STATE_OFF:
-                Toast.makeText(getApplicationContext(), "Bluetooth off", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Bluetooth off", Toast.LENGTH_SHORT).show();
                 break;
             case BluetoothAdapter.STATE_TURNING_ON:
                 //Toast.makeText(getApplicationContext(), "Bluetooth turning on", Toast.LENGTH_SHORT).show();
                 break;
             case BluetoothAdapter.STATE_ON:
-                Toast.makeText(getApplicationContext(), "Bluetooth on", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Bluetooth on", Toast.LENGTH_SHORT).show();
                 break;
             case BluetoothAdapter.STATE_CONNECTED:
 
@@ -135,7 +140,6 @@ public class HomeScreenActivity extends AppCompatActivity {
         }
         if (id == R.id.action_data) {
             Intent intent = new Intent(this, DataScreenActivity.class);
-            intent.putExtra("dataModel", dataModel);
             startActivity(intent);
             return true;
         }
@@ -145,13 +149,11 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     public void startDataScreen(View view) {
         Intent intent = new Intent(this, DataScreenActivity.class);
-        intent.putExtra("dataModel", dataModel);
         startActivity(intent);
     }
 
     public void startSettingsScreen(View view) {
         Intent intent = new Intent(this, SettingsScreenActivity.class);
-        intent.putExtra("dataModel", dataModel);
         startActivity(intent);
     }
 
