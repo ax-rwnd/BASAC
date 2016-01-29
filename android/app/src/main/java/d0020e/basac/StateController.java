@@ -59,12 +59,16 @@ public class StateController implements Observer {
     }
 
     @Override
-    /* Is called when Datamodel is updated. checks if any thresholds are exceeded and subsequently
-    * sets warning status/flags to their proper alert level */
+    /**
+     * Is called when Datamodel is updated. checks if any thresholds are exceeded and subsequently
+     * sets warning status/flags to their proper alert level
+     */
     public void update(Observable observable, Object data) {
         Log.d("StateController", "Data updated");
         if((DataModel.getInstance().getValue(0) > 30)) {
             this.warningState = true;
+        }
+        if (this.warningState) {
             showWarning();
         }
     }
