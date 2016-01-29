@@ -28,11 +28,6 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
     private ConnectedThread mConnectedThread;
     private AcceptThread mAcceptThread;
 
-    public static final int STATE_NONE = 0;
-    public static final int STATE_LISTEN = 1;
-    public static final int STATE_CONNECTING = 2;
-    public static final int STATE_CONNECTED = 3;
-
     public static final int MESSAGE_STATE_CHANGE = 1;
     public static final int MESSAGE_READ = 2;
     public static final int MESSAGE_WRITE = 3;
@@ -41,7 +36,6 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
 
     private StringBuffer mOutStringBuffer = null;
-    private Button mSendButton;
 
     private BluetoothHandler mHandler = new BluetoothHandler(this);
 
@@ -58,8 +52,10 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
                     Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
                         case BluetoothClient.STATE_CONNECTED:
+                            Toast.makeText(mReference.get(), "State CONNECTED", Toast.LENGTH_SHORT).show();
                             break;
                         case BluetoothClient.STATE_CONNECTING:
+                            Toast.makeText(mReference.get(), "State CONNECTING", Toast.LENGTH_SHORT).show();
                             break;
                         case BluetoothClient.STATE_LISTEN:
                         case BluetoothClient.STATE_NONE:
@@ -67,10 +63,12 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
                     }
                     break;
                 case MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    Log.d(TAG, "Handler() msgWrite: " + writeMessage);
+                    if (msg.obj != null) {
+                        byte[] writeBuf = (byte[]) msg.obj;
+                        // construct a string from the buffer
+                        String writeMessage = new String(writeBuf);
+                        Log.d(TAG, "Handler() msgWrite: " + writeMessage);
+                    }
                     break;
                 case MESSAGE_READ:
                     if (msg.obj != null) {
@@ -100,7 +98,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_bluetooth_server_screen);
 
-        Bundle data = getIntent().getExtras();
+        //Bundle data = getIntent().getExtras();
 
     }
 
@@ -109,7 +107,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         super.onStart();
         if (mState == BluetoothClient.STATE_NONE) {
             // Initialize the send button with a listener that for click events
-            mSendButton = (Button) findViewById(R.id.bt_server_send);
+            Button mSendButton = (Button) findViewById(R.id.bt_server_send);
             mSendButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     // Send a message using content of the edit text widget
@@ -151,7 +149,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         Log.d(TAG, "stop");
         if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
         if (mAcceptThread != null) {mAcceptThread.cancel(); mAcceptThread = null;}
-        setState(STATE_NONE);
+        setState(BluetoothClient.STATE_NONE);
     }
 
     private void sendMessage(String message) {
@@ -190,7 +188,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         bundle.putString(NAME, device.getName());
         msg.setData(bundle);
         mHandler.sendMessage(msg);
-        setState(STATE_CONNECTED);
+        setState(BluetoothClient.STATE_CONNECTED);
     }
 
     /**
@@ -203,7 +201,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
         synchronized (this) {
-            if (mState != STATE_CONNECTED) return;
+            if (mState != BluetoothClient.STATE_CONNECTED) return;
             r = mConnectedThread;
         }
         // Perform the write unsynchronized
@@ -321,7 +319,9 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                Log.d(TAG, "ConnectThread cancel()");
+            }
         }
     }
 

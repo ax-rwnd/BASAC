@@ -7,24 +7,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-/**
- * Created by weedz on 2015-12-14.
- */
+
 public class BluetoothClient {
     private static final String NAME = "BASAC";
     private static final UUID MY_UUID = UUID.fromString("67f071e1-dbbc-47e6-903e-769a5e262ad2");
     private static final String TAG = "BTClient";
 
     private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothDevice mDevice;
 
     private ConnectedThread mConnectedThread;
     private ConnectThread mConnectThread;
@@ -41,16 +35,11 @@ public class BluetoothClient {
 
     private int mState = STATE_NONE;
 
-    private ListView mClientLog;
-    private ArrayAdapter<String> mClientArrayAdapter;
-    private String mDeviceAddress;
-    private TextView mStatus;
 
-
-    private BluetoothHandler mHandler = new BluetoothHandler(this);
+    private BluetoothHandler mHandler = new BluetoothHandler();
 
     private static class BluetoothHandler extends Handler {
-        private BluetoothHandler(BluetoothClient bc) {
+        private BluetoothHandler() {
 
         }
         @Override
@@ -81,7 +70,11 @@ public class BluetoothClient {
                         // construct a string from the valid bytes in the buffer
                         String readMessage = new String(readBuf, 0, msg.arg1);
                         Log.d(TAG, "Handler() msgRead: " + readMessage);
-                        DataModel.getInstance().setValue(0, Integer.parseInt(readMessage));
+                        try {
+                            DataModel.getInstance().setValue(0, Integer.parseInt(readMessage));
+                        } catch (NumberFormatException e) {
+                            Log.e(TAG, "NumberFormatException: " + readMessage);
+                        }
                     }
                     break;
                 case MESSAGE_DEVICE_NAME:
@@ -94,11 +87,10 @@ public class BluetoothClient {
 
     public BluetoothClient(String deviceAddress) {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        mDeviceAddress = deviceAddress;
-        // Get the BLuetoothDevice object
-        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mDeviceAddress);
+        // Get the BluetoothDevice object
+        BluetoothDevice mDevice = mBluetoothAdapter.getRemoteDevice(deviceAddress);
         // Attempt to connect to the device
-        connect(device);
+        connect(mDevice);
     }
 
     /**
@@ -172,6 +164,7 @@ public class BluetoothClient {
                 try {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
+                    Log.d(TAG, "OutStream, " + mmOutStream);
                     // Send the obtained bytes to the UI activity
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
@@ -185,7 +178,9 @@ public class BluetoothClient {
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                Log.d(TAG, "ConnectedThread cancel()");
+            }
         }
     }
 
@@ -203,7 +198,9 @@ public class BluetoothClient {
             try {
                 // MY_UUID is the app's UUID string, also used by the server code
                 tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                Log.e(TAG, "Error in ConnectThread.run() RfcommSocket");
+            }
             mmSocket = tmp;
         }
 
@@ -220,7 +217,9 @@ public class BluetoothClient {
                 // Unable to connect; close the socket and get out
                 try {
                     mmSocket.close();
-                } catch (IOException closeException) { }
+                } catch (IOException closeException) {
+                    Log.d(TAG, "ConnectThread run() mmSocket.close()");
+                }
                 return;
             }
 
@@ -232,7 +231,9 @@ public class BluetoothClient {
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                Log.d(TAG, "ConnectThread cancel() mmSocket.close()");
+            }
         }
     }
 

@@ -11,16 +11,6 @@
     <!-- Strings related to Settings -->
     <string name="preference_data_key">DataKey</string>
 
-    <!-- Example General settings -->
-
-    <!-- Example settings for Data & Sync -->
-
-    <!-- Example settings for Notifications -->
-
     <string name="title_activity_warning">WarningActivity</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-
-    <!-- TODO: remove this placeholder text -->
 
 </resources>
