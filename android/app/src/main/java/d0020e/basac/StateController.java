@@ -1,5 +1,6 @@
 package d0020e.basac;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -30,7 +31,10 @@ public class StateController implements Observer {
     private void showWarning() {
         Log.d(TAG, "Warning");
 
+        // TODO: Show different messages for different values/warnings
+        // TODO: Send data back to arduino?
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
+                .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle("Warning")
                 .setContentText("Test value is too high!")
@@ -58,6 +62,7 @@ public class StateController implements Observer {
     /**
      * Is called when Datamodel is updated. checks if any thresholds are exceeded and subsequently
      * sets warning status/flags to their proper alert level
+     * TODO: Log values
      */
     public void update(Observable observable, Object data) {
         Log.d(TAG, "Data updated");

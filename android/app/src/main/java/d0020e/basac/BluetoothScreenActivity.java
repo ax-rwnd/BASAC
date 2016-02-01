@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.AdapterView.OnItemClickListener;
 import android.view.View;
 import android.widget.AdapterView;
@@ -102,7 +101,6 @@ public class BluetoothScreenActivity extends AppCompatActivity {
             editor.putString("device_address", address);
             editor.apply();
 
-            Toast.makeText(getApplicationContext(),address,Toast.LENGTH_SHORT).show();
             // Set result and finish this Activity
             setResult(Activity.RESULT_OK, intent);
             finish();

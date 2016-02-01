@@ -122,8 +122,13 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        super.onStop();
         stop();
+        super.onStop();
+    }
+    @Override
+    protected void onDestroy() {
+        stop();
+        super.onDestroy();
     }
 
     /**
@@ -146,8 +151,14 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
      */
     public synchronized void stop() {
         Log.d(TAG, "stop");
-        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
-        if (mAcceptThread != null) {mAcceptThread.cancel(); mAcceptThread = null;}
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
+        if (mAcceptThread != null) {
+            mAcceptThread.cancel();
+            mAcceptThread = null;
+        }
         setState(BluetoothClient.STATE_NONE);
     }
 

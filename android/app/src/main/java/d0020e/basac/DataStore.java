@@ -17,6 +17,7 @@ public class DataStore extends Application {
     // Notification
     public static final int NOTIFICATION_WARNING = 1;
     public static final int NOTIFICATION_BLUETOOTHCLIENT = 2;
+    public static final int NOTIFICATION_BLUETOOTH_LIST = 3;
     // Bluetooth
     public static final int BLUETOOTH_REQUEST_CODE = 1;
     public static final int BLUETOOTH_RESULT_DEVICE = 2;

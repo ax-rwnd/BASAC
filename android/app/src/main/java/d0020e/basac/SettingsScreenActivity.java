@@ -2,15 +2,11 @@ package d0020e.basac;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,18 +78,6 @@ public class SettingsScreenActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
-    /*public void bluetooth_client(View view) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String address = sharedPref.getString("device_address", null);
-        if (address != null) {
-            Intent intent = new Intent(this, BluetoothClient.class);
-            startService(intent);
-            //new BluetoothClient(mDeviceAddress);
-        } else {
-            Toast.makeText(this, "Connect to a device",Toast.LENGTH_SHORT).show();
-        }
-    }*/
 
     public void toggle_bluetooth(View view) {
         if (mBluetoothAdapter == null) {
