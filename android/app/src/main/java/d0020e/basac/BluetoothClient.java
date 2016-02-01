@@ -1,27 +1,39 @@
 package d0020e.basac;
 
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
 
-public class BluetoothClient {
+public class BluetoothClient extends Service {
     private static final String NAME = "BASAC";
     private static final UUID MY_UUID = UUID.fromString("67f071e1-dbbc-47e6-903e-769a5e262ad2");
     private static final String TAG = "BTClient";
 
     private BluetoothAdapter mBluetoothAdapter;
 
-    private ConnectedThread mConnectedThread;
+    private static ConnectedThread mConnectedThread;
     private ConnectThread mConnectThread;
+
+    public static BluetoothDevice mDevice = null;
 
     public static final int STATE_NONE = 0;
     public static final int STATE_LISTEN = 1;
@@ -33,64 +45,125 @@ public class BluetoothClient {
     public static final int MESSAGE_WRITE = 3;
     public static final int MESSAGE_DEVICE_NAME = 4;
 
-    private int mState = STATE_NONE;
+    public static int mState = STATE_NONE;
+
+    //public Vector<Byte> packData = new Vector<>(2048);
+
+    private final IBinder mBinder = new LocalBinder();
+    private static Handler mHandler = null;
+
+    private static StateController mStateController = null;
 
 
-    private BluetoothHandler mHandler = new BluetoothHandler();
-
-    private static class BluetoothHandler extends Handler {
-        private BluetoothHandler() {
-
-        }
-        @Override
-        public void handleMessage(Message msg) {
-            Log.d(TAG, "handleMessage(): " + msg.what);
-            switch (msg.what) {
-                case MESSAGE_STATE_CHANGE:
-                    Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
-                    switch (msg.arg1) {
-                        case BluetoothClient.STATE_CONNECTED:
-                            break;
-                        case BluetoothClient.STATE_CONNECTING:
-                            break;
-                        case BluetoothClient.STATE_LISTEN:
-                        case BluetoothClient.STATE_NONE:
-                            break;
-                    }
-                    break;
-                case MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    Log.d(TAG, "Handler() msgWrite: " + writeMessage);
-                    break;
-                case MESSAGE_READ:
-                    if (msg.obj != null) {
-                        byte[] readBuf = (byte[]) msg.obj;
-                        // construct a string from the valid bytes in the buffer
-                        String readMessage = new String(readBuf, 0, msg.arg1);
-                        Log.d(TAG, "Handler() msgRead: " + readMessage);
-                        try {
-                            DataModel.getInstance().setValue(0, Integer.parseInt(readMessage));
-                        } catch (NumberFormatException e) {
-                            Log.e(TAG, "NumberFormatException: " + readMessage);
-                        }
-                    }
-                    break;
-                case MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    Log.d(TAG, "Handler() msgDeviceName: ");
-                    break;
-            }
+    public class LocalBinder extends Binder {
+        BluetoothClient getService() {
+            return BluetoothClient.this;
         }
     }
 
-    public BluetoothClient(String deviceAddress) {
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Log.d(TAG, "handleMessage(): " + msg.what);
+            if (!Thread.currentThread().isInterrupted()) {
+                switch (msg.what) {
+                    case MESSAGE_STATE_CHANGE:
+                        Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
+                        switch (msg.arg1) {
+                            case BluetoothClient.STATE_CONNECTED:
+                                break;
+                            case BluetoothClient.STATE_CONNECTING:
+                                break;
+                            case BluetoothClient.STATE_LISTEN:
+                            case BluetoothClient.STATE_NONE:
+                                break;
+                        }
+                        break;
+                    case MESSAGE_READ:
+                        if (msg.obj != null) {
+                            byte[] readBuf = (byte[]) msg.obj;
+                            // construct a string from the valid bytes in the buffer
+                            String readMessage = new String(readBuf, 0, msg.arg1);
+                            Log.d(TAG, "Handler() msgRead: " + readMessage);
+                            try {
+                                DataModel.getInstance().setValue(0, Integer.parseInt(readMessage));
+                                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                SharedPreferences.Editor editor = sharedPref.edit();
+                                editor.putInt("data_01", Integer.parseInt(readMessage));
+                                editor.apply();
+                            } catch (NumberFormatException e) {
+                                Log.e(TAG, "NumberFormatException: " + readMessage);
+                            }
+                        }
+                        break;
+                    case MESSAGE_WRITE:
+                        byte[] writeBuf = (byte[]) msg.obj;
+                        // construct a string from the buffer
+                        String writeMessage = new String(writeBuf);
+                        Log.d(TAG, "Handler() msgWrite: " + writeMessage);
+                        break;
+                    case MESSAGE_DEVICE_NAME:
+                        // save the connected device's name
+                        Log.d(TAG, "Handler() msgDeviceName: ");
+                        break;
+                }
+            }
+            super.handleMessage(msg);
+        }
+    };
+
+    /*public BluetoothClient(String deviceAddress) {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         // Get the BluetoothDevice object
         BluetoothDevice mDevice = mBluetoothAdapter.getRemoteDevice(deviceAddress);
         // Attempt to connect to the device
         connect(mDevice);
+    }*/
+
+    @Override
+    public void onCreate() {
+        Log.d(TAG, "Service started");
+        super.onCreate();
+    }
+    @Override
+    public void onDestroy() {
+        stop();
+        Log.d(TAG, "Service destroyed");
+        super.onDestroy();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "Service starting");
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            String address = sharedPref.getString("device_address", null);
+            Log.d(TAG, "Bluetooth device: " + address);
+            if (address != null) {
+                BluetoothClient.mDevice = mBluetoothAdapter.getRemoteDevice(address);
+                DataStore ds = (DataStore)getApplicationContext();
+                mStateController = ds.getState();
+                mStateController.setContext(this);
+                connect(BluetoothClient.mDevice);
+            } else {
+                Log.d(TAG, "Address = null, terminating");
+                stop();
+            }
+        } else {
+            Toast.makeText(this, "Enable bluetooth", Toast.LENGTH_SHORT).show();
+            stop();
+            return 0;
+        }
+
+        return START_STICKY;
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        mHandler = ((DataStore) getApplication()).getHandler();
+        return mBinder;
     }
 
     /**
@@ -101,14 +174,19 @@ public class BluetoothClient {
         Log.d(TAG, "connect to: " + device);
         // Cancel any thread attempting to make a connection
         if (mState == STATE_CONNECTING) {
-            if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
+            if (mConnectThread != null) {
+                mConnectThread.cancel();
+                mConnectThread = null;
+            }
         }
         // Cancel any thread currently running a connection
-        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device);
         mConnectThread.start();
-        //mStatus.setText("Connecting");
         setState(STATE_CONNECTING);
     }
 
@@ -116,20 +194,68 @@ public class BluetoothClient {
         mState = state;
     }
 
+    public synchronized void stop() {
+        setState(STATE_NONE);
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
+        if (mBluetoothAdapter != null) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+        stopSelf();
+    }
+
+    @Override
+    public boolean stopService(Intent name) {
+        setState(STATE_NONE);
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
+        if (mBluetoothAdapter != null) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+        return super.stopService(name);
+    }
+
+    private void connectionLost() {
+        BluetoothClient.this.stop();
+
+    }
+    private void connectionFailed() {
+        BluetoothClient.this.stop();
+    }
+
     public synchronized void manageConnectedSocket(BluetoothSocket socket, BluetoothDevice device) {
         Log.d(TAG, "connected");
         // Cancel the thread that completed the connection
+       /* if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }*/
         // Cancel any thread currently running a connection
-        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
         // Start the thread to manage the connection and perform transmissions
         mConnectedThread = new ConnectedThread(socket);
         mConnectedThread.start();
         // Send the name of the connected device back to the UI Activity
-        Message msg = mHandler.obtainMessage(2);
+        Message msg = handler.obtainMessage(2);
         Bundle bundle = new Bundle();
         bundle.putString(NAME, device.getName());
         msg.setData(bundle);
-        mHandler.sendMessage(msg);
+        handler.sendMessage(msg);
     }
 
     private class ConnectedThread extends Thread {
@@ -150,12 +276,12 @@ public class BluetoothClient {
             } catch (IOException e) {
                 Log.e(TAG,"ConnectedThread() failed",e);
             }
-
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
         }
 
         public void run() {
+            Looper.prepare();
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes; // bytes returned from read()
 
@@ -163,14 +289,26 @@ public class BluetoothClient {
             while (true) {
                 try {
                     // Read from the InputStream
+                    Log.d(TAG, "mmInStream, " + mmInStream);
                     bytes = mmInStream.read(buffer);
-                    Log.d(TAG, "OutStream, " + mmOutStream);
                     // Send the obtained bytes to the UI activity
-                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
+                    handler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                    connectionLost();
                     break;
                 }
+            }
+        }
+
+        public void write(byte[] buffer) {
+            try {
+                mmOutStream.write(buffer);
+                handler.obtainMessage(MESSAGE_WRITE, buffer.length, -1, buffer).sendToTarget();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d(TAG, "Exception during write");
             }
         }
 
@@ -206,6 +344,7 @@ public class BluetoothClient {
 
         public void run() {
             // Cancel discovery because it will slow down the connection
+            setName("ConnectThread");
             mBluetoothAdapter.cancelDiscovery();
 
             try {
@@ -224,7 +363,7 @@ public class BluetoothClient {
             }
 
             // Do work to manage the connection (in a separate thread)
-            manageConnectedSocket(mmSocket,mmDevice);
+            manageConnectedSocket(mmSocket, mmDevice);
         }
 
         /** Will cancel an in-progress connection, and close the socket */

@@ -9,10 +9,10 @@ import java.util.Observable;
  * Created by WeeDzCokie on 2016-01-28.
  */
 public class DataModel extends Observable {
-    private static final String TAG = "DataModelS";
+    private static final String TAG = "DataModel";
 
     private static DataModel ourInstance = new DataModel();
-    private ArrayList<Integer> dataValues;
+    private ArrayList<Integer> dataValues = new ArrayList<>();
 
     public static DataModel getInstance() {
         return ourInstance;
@@ -34,9 +34,9 @@ public class DataModel extends Observable {
         try {
             dataValues.set(index, value);
         } catch (IndexOutOfBoundsException e) {
+            Log.e(TAG, "Index " + index + " is not set in DataModel");
             e.printStackTrace();
         }
-        Log.d(TAG, "Observers: " + countObservers());
         setChanged();
         notifyObservers();
     }

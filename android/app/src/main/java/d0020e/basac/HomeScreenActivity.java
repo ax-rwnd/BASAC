@@ -23,9 +23,6 @@ public class HomeScreenActivity extends AppCompatActivity {
     private BroadcastReceiver mBluetoothReceiver;
     private boolean mBluetoothReceiverRegistered;
 
-    private Boolean mBound = false;
-    private DataMonitor mService;
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
@@ -34,7 +31,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home_screen);
 
         DataStore ds = (DataStore)getApplicationContext();
-        ds.getState().setContext(this);
+        ds.mState.setContext(this);
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
@@ -57,20 +54,6 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     }
 
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            DataMonitor.LocalBinder binder = (DataMonitor.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBound = false;
-        }
-    };
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -79,10 +62,6 @@ public class HomeScreenActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (mBound) {
-            unbindService(mConnection);
-            mBound = false;
-        }
     }
 
     protected void onDestroy() {

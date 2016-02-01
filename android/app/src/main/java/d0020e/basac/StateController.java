@@ -14,7 +14,7 @@ import java.util.Observer;
  */
 public class StateController implements Observer {
     private static String TAG = "StateController";
-    private HomeScreenActivity mContext;
+    private Context mContext;
 
     private Boolean warningDialog = false;
     private Boolean warningState = false;
@@ -24,7 +24,7 @@ public class StateController implements Observer {
     }
 
     public void setContext(Context c) {
-        this.mContext = (HomeScreenActivity)c;
+        this.mContext = c;
     }
 
     private void showWarning() {
@@ -64,7 +64,7 @@ public class StateController implements Observer {
      * sets warning status/flags to their proper alert level
      */
     public void update(Observable observable, Object data) {
-        Log.d("StateController", "Data updated");
+        Log.d(TAG, "Data updated");
         if((DataModel.getInstance().getValue(0) > 30)) {
             this.warningState = true;
         }

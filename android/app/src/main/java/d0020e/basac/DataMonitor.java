@@ -1,5 +1,6 @@
 package d0020e.basac;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -9,13 +10,27 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import android.os.SystemClock;
+import android.util.Log;
 import android.widget.Toast;
 
-public class DataMonitor extends Service {
+public class DataMonitor extends IntentService {
+    private static final String TAG = "DataMonitor";
+
+
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
     private IBinder mBinder = new LocalBinder();
+
+    private BluetoothClient mBluetoothClient;
+
+    /**
+     * Creates an IntentService.  Invoked by your subclass's constructor.
+     *
+     * @param name Used to name the worker thread, important only for debugging.
+     */
+    public DataMonitor(String name) {
+        super(name);
+    }
 
     private final class ServiceHandler extends Handler {
 
@@ -66,6 +81,17 @@ public class DataMonitor extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        String dataString = intent.getDataString();
+        try {
+            //mBluetoothClient = new BluetoothClient();
+        } catch (Exception e) {
+            Log.e(TAG, "BluetoothClient() failed to start");
+            e.printStackTrace();
+        }
     }
 
     @Override

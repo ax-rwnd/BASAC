@@ -8,8 +8,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.AdapterView.OnItemClickListener;
 import android.view.View;
 import android.widget.AdapterView;
@@ -96,7 +99,12 @@ public class BluetoothScreenActivity extends AppCompatActivity {
             // Create the result Intent and include the MAC address
             Intent intent = new Intent();
             intent.putExtra("device_address", address);
-            Toast.makeText(getApplicationContext(),address.toString(),Toast.LENGTH_SHORT);
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("device_address", address);
+            editor.apply();
+
+            Toast.makeText(getApplicationContext(),address,Toast.LENGTH_SHORT).show();
             // Set result and finish this Activity
             setResult(Activity.RESULT_OK, intent);
             finish();

@@ -2,7 +2,10 @@ package d0020e.basac;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -30,17 +33,6 @@ public class SettingsScreenActivity extends AppCompatActivity {
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        Bundle data = getIntent().getExtras();
-
-        Button mBTClient = (Button) findViewById(R.id.bluetooth_client);
-        mBTClient.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mDeviceAddress != null) {
-                    mBluetoothClient = new BluetoothClient(mDeviceAddress);
-                }
-            }
-        });
         final CheckBox checkBox = (CheckBox) findViewById(R.id.checkbox_1);
         if (!checkBox.isChecked()) {
             checkBox.setChecked(true);
@@ -92,21 +84,26 @@ public class SettingsScreenActivity extends AppCompatActivity {
     }
 
     public void bluetooth_client(View view) {
-        if (mDeviceAddress != null) {
-            mBluetoothClient = new BluetoothClient(mDeviceAddress);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String address = sharedPref.getString("device_address", null);
+        if (address != null) {
+            Intent intent = new Intent(this, BluetoothClient.class);
+            startService(intent);
+            //new BluetoothClient(mDeviceAddress);
         } else {
-            Toast.makeText(getApplicationContext(),"Connect to a device",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Connect to a device",Toast.LENGTH_SHORT).show();
         }
     }
 
     public void toggle_bluetooth(View view) {
         if (mBluetoothAdapter == null) {
-            Toast.makeText(getApplicationContext(), "Bluetooth not available", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Bluetooth not available", Toast.LENGTH_SHORT).show();
         } else {
             if (!mBluetoothAdapter.isEnabled()) {
-                Toast.makeText(getApplicationContext(), "Turning on bluetooth", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Turning on bluetooth", Toast.LENGTH_SHORT).show();
                 mBluetoothAdapter.enable();
             } else {
+                Toast.makeText(this, "Turning off bluetooth", Toast.LENGTH_SHORT).show();
                 mBluetoothAdapter.disable();
             }
         }

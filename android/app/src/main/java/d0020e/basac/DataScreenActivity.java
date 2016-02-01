@@ -47,7 +47,6 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     }
 
     public void update() {
-        Log.d("DataScreen", "Update");
         this.updateProgressbar();
         /*if(mService.mModel.getWarningState()) {
             dataButton.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);

@@ -61,6 +61,14 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
                         case BluetoothClient.STATE_NONE:
                             break;
                     }
+                    break;case MESSAGE_READ:
+                    if (msg.obj != null) {
+                        byte[] readBuf = (byte[]) msg.obj;
+                        // construct a string from the valid bytes in the buffer
+                        String readMessage = new String(readBuf, 0, msg.arg1);
+                        Log.d(TAG, "Handler() msgRead: " + readMessage);
+                        //mReference.get().mDataModel.setTestValue(Integer.parseInt(readMessage));
+                    }
                     break;
                 case MESSAGE_WRITE:
                     if (msg.obj != null) {
@@ -68,15 +76,6 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
                         // construct a string from the buffer
                         String writeMessage = new String(writeBuf);
                         Log.d(TAG, "Handler() msgWrite: " + writeMessage);
-                    }
-                    break;
-                case MESSAGE_READ:
-                    if (msg.obj != null) {
-                        byte[] readBuf = (byte[]) msg.obj;
-                        // construct a string from the valid bytes in the buffer
-                        String readMessage = new String(readBuf, 0, msg.arg1);
-                        Log.d(TAG, "Handler() msgRead: " + readMessage);
-                        //mReference.get().mDataModel.setTestValue(Integer.parseInt(readMessage));
                     }
                     break;
                 case MESSAGE_DEVICE_NAME:
@@ -295,6 +294,10 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
                     mHandler.obtainMessage(1, bytes, -1, buffer)
                             .sendToTarget();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "connection closed, starting AcceptThread()");
+                    mAcceptThread = new AcceptThread();
+                    mAcceptThread.start();
                     break;
                 }
             }
