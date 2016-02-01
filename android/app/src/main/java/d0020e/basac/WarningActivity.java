@@ -31,18 +31,16 @@ public class WarningActivity extends AppCompatActivity {
         Bundle data = getIntent().getExtras();
         TextView mWarningText = (TextView) findViewById(R.id.warning);
         int warningId = data.getInt("warning");
-        int notificationId = data.getInt("notificationId");
 
-        if (notificationId != 0) {
-            NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotifyMgr.cancel(notificationId);
-        }
+        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING);
+
         switch (warningId) {
             case 1:
-                mWarningText.setText("Test warning");
+                mWarningText.setText("Test value is too high!");
                 break;
             default:
-                mWarningText.setText("Unknown warning id " + warningId);
+                mWarningText.setText("Unknown warning id: " + warningId);
         }
     }
 

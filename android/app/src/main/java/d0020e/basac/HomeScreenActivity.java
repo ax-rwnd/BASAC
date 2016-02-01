@@ -18,8 +18,6 @@ import android.view.MenuItem;
 public class HomeScreenActivity extends AppCompatActivity {
     private static final String TAG = "HomeScreen";
 
-    public static final int BLUETOOTH_REQUEST_CODE = 1;
-    public static final int BLUETOOTH_RESULT_DEVICE = 2;
     private BroadcastReceiver mBluetoothReceiver;
     private boolean mBluetoothReceiverRegistered;
 

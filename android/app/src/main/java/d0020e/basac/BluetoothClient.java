@@ -1,9 +1,13 @@
 package d0020e.basac;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
@@ -14,6 +18,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -112,14 +117,6 @@ public class BluetoothClient extends Service {
         }
     };
 
-    /*public BluetoothClient(String deviceAddress) {
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        // Get the BluetoothDevice object
-        BluetoothDevice mDevice = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-        // Attempt to connect to the device
-        connect(mDevice);
-    }*/
-
     @Override
     public void onCreate() {
         Log.d(TAG, "Service started");
@@ -135,6 +132,19 @@ public class BluetoothClient extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Service starting");
+        if (intent != null) {
+            String stopService = intent.getStringExtra("STOP");
+            Log.d(TAG, "Stop service? " + stopService);
+            if (stopService != null && stopService.length() > 0) {
+                stop();
+                return 0;
+            }
+        }
+        if (BluetoothClient.mConnectedThread != null) {
+            Log.d(TAG, "Service already started");
+            return 0;
+        }
+
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -145,6 +155,37 @@ public class BluetoothClient extends Service {
                 DataStore ds = (DataStore)getApplicationContext();
                 mStateController = ds.getState();
                 mStateController.setContext(this);
+
+                // Show notification when bluetooth is connected
+                int notificationId = DataStore.NOTIFICATION_BLUETOOTHCLIENT;
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                        .setDefaults(Notification.DEFAULT_ALL)
+                        .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                        .setContentTitle("Bluetooth")
+                        .setContentText("Bluetooth is connected")
+                        .setOngoing(true)
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .setContentIntent(
+                                PendingIntent.getActivity(
+                                        this,
+                                        0,
+                                        new Intent(this, HomeScreenActivity.class),
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                )
+                        )
+                        .addAction(
+                                R.drawable.ic_notifications_black_24dp,
+                                "Disconnect",
+                                PendingIntent.getService(
+                                        this,
+                                        0,
+                                        new Intent(this, BluetoothClient.class)
+                                                .putExtra("STOP", "STOP"),
+                                        PendingIntent.FLAG_UPDATE_CURRENT));
+
+                NotificationManager mNotifyMgr = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotifyMgr.notify(notificationId, mBuilder.build());
+
                 connect(BluetoothClient.mDevice);
             } else {
                 Log.d(TAG, "Address = null, terminating");
@@ -171,7 +212,7 @@ public class BluetoothClient extends Service {
      * @param device  The BluetoothDevice to connect
      */
     public synchronized void connect(BluetoothDevice device) {
-        Log.d(TAG, "connect to: " + device);
+        //Log.d(TAG, "connect to: " + device);
         // Cancel any thread attempting to make a connection
         if (mState == STATE_CONNECTING) {
             if (mConnectThread != null) {
@@ -207,6 +248,9 @@ public class BluetoothClient extends Service {
         if (mBluetoothAdapter != null) {
             mBluetoothAdapter.cancelDiscovery();
         }
+        Toast.makeText(this,"Bluetooth disconnected", Toast.LENGTH_SHORT).show();
+        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotifyMgr.cancel(DataStore.NOTIFICATION_BLUETOOTHCLIENT);
         stopSelf();
     }
 
@@ -289,7 +333,6 @@ public class BluetoothClient extends Service {
             while (true) {
                 try {
                     // Read from the InputStream
-                    Log.d(TAG, "mmInStream, " + mmInStream);
                     bytes = mmInStream.read(buffer);
                     // Send the obtained bytes to the UI activity
                     handler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)

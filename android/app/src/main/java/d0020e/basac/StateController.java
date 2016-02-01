@@ -30,26 +30,22 @@ public class StateController implements Observer {
     private void showWarning() {
         Log.d(TAG, "Warning");
 
-        int notificationId = 1;
-
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle("Warning")
-                .setContentText("Test value is too high!");
+                .setContentText("Test value is too high!")
+                .setOngoing(true)
+                .setContentIntent(PendingIntent.getActivity(
+                        mContext,
+                        0,
+                        new Intent(mContext, WarningActivity.class)
+                                .putExtra("warning", 1),
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                ));
         mBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
 
-        Intent resultIntent = new Intent(mContext, WarningActivity.class);
-        resultIntent.putExtra("warning", 1);
-        resultIntent.putExtra("notificationId", notificationId);
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(
-                mContext,
-                0,
-                resultIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-        );
-        mBuilder.setContentIntent(resultPendingIntent);
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(notificationId, mBuilder.build());
+        mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING, mBuilder.build());
 
         if (!this.warningDialog) {
             Log.d(TAG, "Showing warning dialog");

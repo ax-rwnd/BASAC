@@ -14,6 +14,13 @@ import android.util.Log;
  * Created by WeeDzCokie on 2016-01-28.
  */
 public class DataStore extends Application {
+    // Notification
+    public static final int NOTIFICATION_WARNING = 1;
+    public static final int NOTIFICATION_BLUETOOTHCLIENT = 2;
+    // Bluetooth
+    public static final int BLUETOOTH_REQUEST_CODE = 1;
+    public static final int BLUETOOTH_RESULT_DEVICE = 2;
+
     public StateController mState;
 
     Handler.Callback realCallback = null;

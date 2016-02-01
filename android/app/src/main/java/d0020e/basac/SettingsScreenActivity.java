@@ -83,7 +83,7 @@ public class SettingsScreenActivity extends AppCompatActivity {
         }
     }
 
-    public void bluetooth_client(View view) {
+    /*public void bluetooth_client(View view) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String address = sharedPref.getString("device_address", null);
         if (address != null) {
@@ -93,7 +93,7 @@ public class SettingsScreenActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Connect to a device",Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 
     public void toggle_bluetooth(View view) {
         if (mBluetoothAdapter == null) {
@@ -116,8 +116,14 @@ public class SettingsScreenActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Turn on bluetooth", Toast.LENGTH_SHORT).show();
         } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
             Intent intent = new Intent(this, BluetoothScreenActivity.class);
-            startActivityForResult(intent, HomeScreenActivity.BLUETOOTH_RESULT_DEVICE);
+            startActivityForResult(intent, DataStore.BLUETOOTH_RESULT_DEVICE);
         }
+    }
+
+    public void bluetooth_disconnect(View view) {
+        Intent intent = new Intent(this, BluetoothClient.class)
+                .putExtra("STOP", "stop");
+        startService(intent);
     }
 
     public void bt_discoverable(View view) {
@@ -137,15 +143,20 @@ public class SettingsScreenActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case HomeScreenActivity.BLUETOOTH_REQUEST_CODE:
+            case DataStore.BLUETOOTH_REQUEST_CODE:
                 if (resultCode != RESULT_OK) {
                     Toast.makeText(getApplicationContext(), "Bluetooth not enabled", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case HomeScreenActivity.BLUETOOTH_RESULT_DEVICE:
-                mDeviceAddress = data.getStringExtra("device_address");
-                TextView pairedDevice = (TextView) findViewById(R.id.bt_paired_device);
-                pairedDevice.setText(mDeviceAddress);
+            case DataStore.BLUETOOTH_RESULT_DEVICE:
+                if (data != null) {
+                    mDeviceAddress = data.getStringExtra("device_address");
+                    TextView pairedDevice = (TextView) findViewById(R.id.bt_paired_device);
+                    pairedDevice.setText(mDeviceAddress);
+
+                    Intent intent = new Intent(this, BluetoothClient.class);
+                    startService(intent);
+                }
                 break;
         }
     }

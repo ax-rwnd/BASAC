@@ -62,8 +62,6 @@ public class BluetoothScreenActivity extends AppCompatActivity {
         mDeviceList.setAdapter(mDeviceArray);
         mPairedDeviceArray = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1);
 
-        Toast.makeText(getApplicationContext(), "Started device discovery", Toast.LENGTH_SHORT).show();
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);

@@ -65,9 +65,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bluetooth client"
+        android:text="Disconnect"
         android:id="@+id/bluetooth_client"
-        android:onClick="bluetooth_client"
+        android:onClick="bluetooth_disconnect"
         android:layout_alignTop="@+id/bluetooth_service"
         android:layout_toEndOf="@+id/bt_discoverable" />
 

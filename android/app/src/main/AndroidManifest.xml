@@ -32,6 +32,7 @@
         <activity
             android:name=".DataScreenActivity"
             android:label="@string/title_activity_data_screen"
+            android:parentActivityName=".HomeScreenActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SettingsScreenActivity"

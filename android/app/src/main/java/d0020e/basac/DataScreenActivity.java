@@ -39,7 +39,7 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     }
 
     public void incrementProgressbar() {
-        DataModel.getInstance().setValue(0, DataModel.getInstance().getValue(0)+5);
+        DataModel.getInstance().setValue(0, DataModel.getInstance().getValue(0) + 5);
     }
 
     public void update(Observable observable, Object data) {

@@ -16,7 +16,7 @@
     <ListView android:id="@+id/bt_paired_devices"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:stackFromBottom="true"
+        android:stackFromBottom="false"
         android:layout_weight="2"
         />
     <TextView android:id="@+id/title_new_devices"
@@ -29,7 +29,7 @@
     <ListView android:id="@+id/bt_devices"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:stackFromBottom="true"
+        android:stackFromBottom="false"
         android:layout_weight="1"
         />
     <TextView android:id="@+id/bt_device"

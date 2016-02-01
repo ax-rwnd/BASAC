@@ -8,10 +8,6 @@
     <string name="title_activity_data_screen">DataScreenActivity</string>
     <string name="title_activity_settings_screen">SettingsScreenActivity</string>
 
-    <!-- Strings related to Settings -->
-
     <string name="title_activity_warning">WarningActivity</string>
-
-    <!-- TODO: remove this placeholder text -->
 
 </resources>
