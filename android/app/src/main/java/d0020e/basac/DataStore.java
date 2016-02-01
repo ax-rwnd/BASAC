@@ -1,14 +1,10 @@
 package d0020e.basac;
 
 import android.app.Application;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 /**
  * Created by WeeDzCokie on 2016-01-28.
@@ -17,10 +13,15 @@ public class DataStore extends Application {
     // Notification
     public static final int NOTIFICATION_WARNING = 1;
     public static final int NOTIFICATION_BLUETOOTHCLIENT = 2;
-    public static final int NOTIFICATION_BLUETOOTH_LIST = 3;
+    public static final int NOTIFICATION_BLUETOOTH_LOST = 3;
     // Bluetooth
     public static final int BLUETOOTH_REQUEST_CODE = 1;
     public static final int BLUETOOTH_RESULT_DEVICE = 2;
+
+
+    public static final String TOAST = "TOAST";
+    // Messages
+    public static final int MESSAGE_TOAST = 1;
 
     public StateController mState;
 
@@ -45,7 +46,6 @@ public class DataStore extends Application {
 
     @Override
     public void onCreate() {
-        // TODO: Set values in DataModel from file
         // TODO: Add values to match arduino data
         super.onCreate();
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);

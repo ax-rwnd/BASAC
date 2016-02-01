@@ -21,12 +21,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+/**
+ * TODO: Display connection status to the user, notify if connection failed
+ */
 
 public class BluetoothClient extends Service {
     private static final String NAME = "BASAC";
@@ -53,8 +55,6 @@ public class BluetoothClient extends Service {
     private static boolean intendedStop = false;
 
     public static int mState = STATE_NONE;
-
-    //public Vector<Byte> packData = new Vector<>(2048);
 
     private final IBinder mBinder = new LocalBinder();
     private static Handler mHandler = null;
@@ -121,7 +121,6 @@ public class BluetoothClient extends Service {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "Service started");
         super.onCreate();
     }
     @Override
@@ -133,10 +132,8 @@ public class BluetoothClient extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "Service starting");
         if (intent != null) {
             String stopService = intent.getStringExtra("STOP");
-            Log.d(TAG, "Stop service? " + stopService);
             if (stopService != null && stopService.length() > 0) {
                 BluetoothClient.intendedStop = true;
                 stop();
@@ -148,6 +145,7 @@ public class BluetoothClient extends Service {
             return 0;
         }
 
+        Log.d(TAG, "Service starting");
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -158,11 +156,11 @@ public class BluetoothClient extends Service {
                 DataStore ds = (DataStore)getApplicationContext();
                 mStateController = ds.getState();
                 mStateController.setContext(this);
-                Toast.makeText(this, "Connecting..", Toast.LENGTH_SHORT).show();
                 connect(BluetoothClient.mDevice);
             } else {
                 Log.d(TAG, "Address = null, terminating");
                 stop();
+                return 0;
             }
         } else {
             Toast.makeText(this, "Enable bluetooth", Toast.LENGTH_SHORT).show();
@@ -221,12 +219,12 @@ public class BluetoothClient extends Service {
         if (mBluetoothAdapter != null) {
             mBluetoothAdapter.cancelDiscovery();
         }
+
         Toast.makeText(this, "Bluetooth disconnected", Toast.LENGTH_SHORT).show();
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.cancel(DataStore.NOTIFICATION_BLUETOOTHCLIENT);
 
         if (!BluetoothClient.intendedStop) {
-            Toast.makeText(this, "Bluetooth connection lost", Toast.LENGTH_SHORT).show();
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setSmallIcon(R.drawable.ic_notifications_black_24dp)
@@ -242,7 +240,7 @@ public class BluetoothClient extends Service {
                             )
                     )
                     .setAutoCancel(true);
-            mNotifyMgr.notify(DataStore.NOTIFICATION_BLUETOOTH_LIST, mBuilder.build());
+            mNotifyMgr.notify(DataStore.NOTIFICATION_BLUETOOTH_LOST, mBuilder.build());
         }
 
         stopSelf();
@@ -266,9 +264,14 @@ public class BluetoothClient extends Service {
     }
 
     private void connectionLost() {
+        Log.d(TAG, "Connection lost");
+        //Toast.makeText(this, "Bluetooth connection lost", Toast.LENGTH_SHORT).show();
         BluetoothClient.this.stop();
     }
     private void connectionFailed() {
+        Log.d(TAG, "Could failed");
+        //Toast.makeText(this, "Bluetooth connection failed", Toast.LENGTH_SHORT).show();
+        BluetoothClient.intendedStop = true;
         BluetoothClient.this.stop();
     }
 
@@ -304,10 +307,10 @@ public class BluetoothClient extends Service {
         mNotifyMgr.notify(DataStore.NOTIFICATION_BLUETOOTHCLIENT, mBuilder.build());
 
         // Cancel the thread that completed the connection
-       /* if (mConnectThread != null) {
+       if (mConnectThread != null) {
             mConnectThread.cancel();
             mConnectThread = null;
-        }*/
+        }
         // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
             mConnectedThread.cancel();
@@ -322,6 +325,8 @@ public class BluetoothClient extends Service {
         bundle.putString(NAME, device.getName());
         msg.setData(bundle);
         handler.sendMessage(msg);
+
+        setState(BluetoothClient.STATE_CONNECTED);
     }
 
     private class ConnectedThread extends Thread {
@@ -380,10 +385,10 @@ public class BluetoothClient extends Service {
         /* Call this from the main activity to shutdown the connection */
         public void cancel() {
             try {
+                Log.d(TAG, "ConnectedThread cancel()");
                 mmSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.d(TAG, "ConnectedThread cancel()");
             }
         }
     }
@@ -425,7 +430,12 @@ public class BluetoothClient extends Service {
                 } catch (IOException closeException) {
                     Log.d(TAG, "ConnectThread run() mmSocket.close()");
                 }
+                connectionFailed();
                 return;
+            }
+
+            synchronized (BluetoothClient.this) {
+                mConnectThread = null;
             }
 
             // Do work to manage the connection (in a separate thread)
@@ -435,6 +445,7 @@ public class BluetoothClient extends Service {
         /** Will cancel an in-progress connection, and close the socket */
         public void cancel() {
             try {
+                Log.d(TAG, "ConnectThread cancel()");
                 mmSocket.close();
             } catch (IOException e) {
                 Log.d(TAG, "ConnectThread cancel() mmSocket.close()");
