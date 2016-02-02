@@ -169,22 +169,22 @@ public class HomeScreenActivity extends AppCompatActivity implements SensorEvent
         Sensor sensor = event.sensor;
 
         if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            float posX = event.values[0];
-            float posY = event.values[1];
-            float posZ = event.values[2];
+            double posX = event.values[0];
+            double posY = event.values[1];
+            double posZ = event.values[2];
 
-            String position = "x: " + Float.toString(posX) + " y: " + Float.toString(posY) + " y: " + Float.toString(posZ);
+           // String position = "x: " + Double.toString(posX) + " y: " + Float.toString(posY) + " y: " + Float.toString(posZ);
             long currentTime = System.currentTimeMillis();
 
-            if ((currentTime-lastEvent) > 100 ) {
+            //if ((currentTime-lastEvent) > 100 ) {
                 long deltaTime = (currentTime - lastEvent);
                 lastEvent = currentTime;
-                float speed = Math.abs(posX + posY + posZ - prevX - prevY - prevZ)/ deltaTime * 10000;
-                if (speed > threshold){
-                    Log.d("Motion Sensor", Float.toString(speed));
-                }
+                double speed = Math.sqrt(posX*posX+posY*posY+posZ*posZ);
+                //if (speed > threshold){
+                    Log.d("Motion Sensor", Double.toString(speed));
+                //}
 
-            }
+            //}
 
         }
     }
