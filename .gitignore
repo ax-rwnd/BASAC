@@ -11,3 +11,8 @@
 *.swo
 android/local.properties
 android/local.properties
+android/build/intermediates/dex-cache/cache.xml
+android/app/app.iml
+android/android.iml
+android/app/app.iml
+android/android.iml
