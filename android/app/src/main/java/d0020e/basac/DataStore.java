@@ -17,10 +17,9 @@ public class DataStore extends Application {
     // Bluetooth
     public static final int BLUETOOTH_REQUEST_CODE = 1;
     public static final int BLUETOOTH_RESULT_DEVICE = 2;
-    // Warning IDs
-    public static final int WARNING_TESTVALUE = 0;
-    public static final int WARNING_ACCELEROMETER = 1;
-
+    // Value IDs
+    public static final int VALUE_TESTVALUE = 0;
+    public static final int VALUE_ACCELEROMETER = 1;
 
     public static final String TOAST = "TOAST";
     // Messages
@@ -52,9 +51,9 @@ public class DataStore extends Application {
         // TODO: Add values to match arduino data
         super.onCreate();
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        int value_01 = sharedPref.getInt("data_01", 0);
+        int value_testValue = sharedPref.getInt("data_"+DataStore.VALUE_TESTVALUE, DataStore.VALUE_TESTVALUE);
 
-        DataModel.getInstance().addValue(value_01);
+        DataModel.getInstance().addValue(value_testValue);
         DataModel.getInstance().addValue(10);
 
         mState = new StateController();

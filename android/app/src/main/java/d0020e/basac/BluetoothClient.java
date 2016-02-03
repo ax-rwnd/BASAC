@@ -93,10 +93,10 @@ public class BluetoothClient extends Service {
                             String readMessage = new String(readBuf, 0, msg.arg1);
                             Log.d(TAG, "Handler() msgRead: " + readMessage);
                             try {
-                                DataModel.getInstance().setValue(0, Integer.parseInt(readMessage));
+                                DataModel.getInstance().setValue(DataStore.VALUE_TESTVALUE, Integer.parseInt(readMessage));
                                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                                 SharedPreferences.Editor editor = sharedPref.edit();
-                                editor.putInt("data_01", Integer.parseInt(readMessage));
+                                editor.putInt("data_"+DataStore.VALUE_TESTVALUE, Integer.parseInt(readMessage));
                                 editor.apply();
                             } catch (NumberFormatException e) {
                                 Log.e(TAG, "NumberFormatException: " + readMessage);

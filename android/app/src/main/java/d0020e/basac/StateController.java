@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,7 +22,10 @@ public class StateController implements Observer {
     //private boolean warningState = false;
     private boolean[] warningState;
 
+    private JSONData json;
+
     public StateController() {
+        json = new JSONData();
         warningState = new boolean[5];
         warningState[1] = false; //sets fallaccident to false startup.
         DataModel.getInstance().addObserver(this);
@@ -34,7 +38,6 @@ public class StateController implements Observer {
     private void showWarning(int warningId) {
         Log.d(TAG, "Warning");
 
-        // TODO: Show different messages for different values/warnings
         // TODO: Send data back to arduino?
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                 .setDefaults(Notification.DEFAULT_ALL)
@@ -50,7 +53,7 @@ public class StateController implements Observer {
                 .setPriority(NotificationCompat.PRIORITY_MAX);
 
         switch (warningId) {
-            case DataStore.WARNING_TESTVALUE:
+            case DataStore.VALUE_TESTVALUE:
                 mBuilder.setContentTitle("Warning, Test value")
                         .setContentText("Test value too high!");
                 break;
@@ -78,9 +81,9 @@ public class StateController implements Observer {
     public void update(Observable observable, Object data) {
         int warningId = -1;
         Log.d(TAG, "Data updated");
-        if((DataModel.getInstance().getValue(0) > 30)) {
-            this.warningState[DataStore.WARNING_TESTVALUE] = true;
-            warningId = DataStore.WARNING_TESTVALUE;
+        if((DataModel.getInstance().getValue(DataStore.VALUE_TESTVALUE) > 30)) {
+            this.warningState[DataStore.VALUE_TESTVALUE] = true;
+            warningId = DataStore.VALUE_TESTVALUE;
         }
         if((DataModel.getInstance().getValue(1) < 2) && (this.warningState[1]!=true)) {
             this.warningState[DataStore.WARNING_ACCELEROMETER] = true;
@@ -90,5 +93,8 @@ public class StateController implements Observer {
         if (warningId != -1) {
             showWarning(warningId);
         }
+        // update JSON data
+        json.put("test value", DataModel.getInstance().getValue(DataStore.VALUE_TESTVALUE));
+        json.logJSON();
     }
 }
