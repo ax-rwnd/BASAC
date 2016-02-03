@@ -34,6 +34,7 @@ public class HomeScreenActivity extends AppCompatActivity implements SensorEvent
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_home_screen);
 
         DataStore ds = (DataStore)getApplicationContext();
         ds.mState.setContext(this);
@@ -43,19 +44,6 @@ public class HomeScreenActivity extends AppCompatActivity implements SensorEvent
         SensorManager sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Sensor smAccel = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sm.registerListener(this, smAccel, SensorManager.SENSOR_DELAY_NORMAL);
-
-
-        /* Starts the StateController as a seperate thread*/
-        new Thread(new Runnable() {
-            public void run() {
-                stateController = new StateController(dataModel);
-                // TODO: implement observer-observable pattern between stateController & Bluetooth manager.
-            }
-        }).start();
-
-        setContentView(R.layout.activity_home_screen);
-
-
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
