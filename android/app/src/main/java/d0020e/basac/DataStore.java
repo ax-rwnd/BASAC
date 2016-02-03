@@ -17,6 +17,9 @@ public class DataStore extends Application {
     // Bluetooth
     public static final int BLUETOOTH_REQUEST_CODE = 1;
     public static final int BLUETOOTH_RESULT_DEVICE = 2;
+    // Warning IDs
+    public static final int WARNING_TESTVALUE = 0;
+    public static final int WARNING_ACCELEROMETER = 1;
 
 
     public static final String TOAST = "TOAST";

@@ -36,7 +36,7 @@ public class WarningActivity extends AppCompatActivity {
         mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING);
 
         switch (warningId) {
-            case 1:
+            case DataStore.WARNING_TESTVALUE:
                 mWarningText.setText("Test value is too high!");
                 break;
             default:

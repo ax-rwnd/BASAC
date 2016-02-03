@@ -17,10 +17,12 @@ public class StateController implements Observer {
     private static String TAG = "StateController";
     private Context mContext;
 
-    private Boolean warningDialog = false;
-    private Boolean warningState = false;
+    private boolean warningDialog = false;
+    //private boolean warningState = false;
+    private boolean[] warningState;
 
     public StateController() {
+        warningState = new boolean[5];
         DataModel.getInstance().addObserver(this);
     }
 
@@ -28,7 +30,7 @@ public class StateController implements Observer {
         this.mContext = c;
     }
 
-    private void showWarning() {
+    private void showWarning(int warningId) {
         Log.d(TAG, "Warning");
 
         // TODO: Show different messages for different values/warnings
@@ -36,17 +38,25 @@ public class StateController implements Observer {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                .setContentTitle("Warning")
-                .setContentText("Test value is too high!")
                 .setOngoing(true)
                 .setContentIntent(PendingIntent.getActivity(
                         mContext,
                         0,
                         new Intent(mContext, WarningActivity.class)
-                                .putExtra("warning", 1),
+                                .putExtra("warning", warningId),
                         PendingIntent.FLAG_UPDATE_CURRENT
-                ));
-        mBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
+                ))
+                .setPriority(NotificationCompat.PRIORITY_MAX);
+
+        switch (warningId) {
+            case DataStore.WARNING_TESTVALUE:
+                mBuilder.setContentTitle("Warning, Test value")
+                        .setContentText("Test value too high!");
+                break;
+            default:
+                mBuilder.setContentTitle("Warning!")
+                        .setContentText("Unspecified warning!");
+        }
 
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING, mBuilder.build());
@@ -55,7 +65,7 @@ public class StateController implements Observer {
             Log.d(TAG, "Showing warning dialog");
             this.warningDialog = true;
         }
-        this.warningState = false;
+        this.warningState[warningId] = false;
     }
 
     @Override
@@ -65,12 +75,14 @@ public class StateController implements Observer {
      * TODO: Log values
      */
     public void update(Observable observable, Object data) {
+        int warningId = -1;
         Log.d(TAG, "Data updated");
         if((DataModel.getInstance().getValue(0) > 30)) {
-            this.warningState = true;
+            this.warningState[DataStore.WARNING_TESTVALUE] = true;
+            warningId = DataStore.WARNING_TESTVALUE;
         }
-        if (this.warningState) {
-            showWarning();
+        if (warningId != -1) {
+            showWarning(warningId);
         }
     }
 }
