@@ -10,19 +10,6 @@
     tools:showIn="@layout/activity_settings_screen"
     tools:context="d0020e.basac.SettingsScreenActivity">
 
-    <CheckBox android:id="@+id/checkbox_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="It's raining outside"
-        android:onClick="onCheckboxClicked"/>
-
-    <CheckBox android:id="@+id/checkbox_2"
-        android:layout_below="@+id/checkbox_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="It's not raining outside"
-        android:onClick="onCheckboxClicked" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

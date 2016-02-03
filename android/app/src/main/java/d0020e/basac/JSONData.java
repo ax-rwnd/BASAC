@@ -36,7 +36,7 @@ public class JSONData {
         }
         finalJSON = new JSONObject();
         try {
-            finalJSON.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
+            //finalJSON.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
             finalJSON.put("timestamp", new Date().getTime());
             finalJSON.put("values" , new JSONObject());
         } catch (JSONException e) {
@@ -51,6 +51,24 @@ public class JSONData {
             e.printStackTrace();
             Log.d(TAG, "put() failed to put " + name + ": " + value.toString());
         }
+    }
+
+    public Object getDataValues(String name) {
+        try {
+            return finalJSON.getJSONObject("values").get(name);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Object get(String name) {
+        try {
+            return finalJSON.get(name);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void logJSON() {

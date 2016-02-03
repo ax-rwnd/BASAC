@@ -269,7 +269,7 @@ public class BluetoothClient extends Service {
         BluetoothClient.this.stop();
     }
     private void connectionFailed() {
-        Log.d(TAG, "Could failed");
+        Log.d(TAG, "Connection failed");
         //Toast.makeText(this, "Bluetooth connection failed", Toast.LENGTH_SHORT).show();
         BluetoothClient.intendedStop = true;
         BluetoothClient.this.stop();

@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,10 +14,7 @@ public class SettingsScreenActivity extends AppCompatActivity {
 
     private static final String TAG = "SettingsScreen";
 
-    private BluetoothClient mBluetoothClient;
-
     private BluetoothAdapter mBluetoothAdapter;
-    private String mDeviceAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,44 +24,6 @@ public class SettingsScreenActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        final CheckBox checkBox = (CheckBox) findViewById(R.id.checkbox_1);
-        if (!checkBox.isChecked()) {
-            checkBox.setChecked(true);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mBluetoothAdapter != null) {
-            TextView mPairedDevice = (TextView) findViewById(R.id.bt_paired_device);
-        }
-    }
-
-    public void onCheckboxClicked(View view) {
-        // Is the view now checked?
-        boolean checked = ((CheckBox) view).isChecked();
-
-        // Check which checkbox was checked
-        switch(view.getId()) {
-            case R.id.checkbox_1:
-                if (checked) {
-                    Log.i("box 1 :", "checked");
-                }
-                else {
-                    Log.i("box 1 :", "NOT checked");
-                }
-                break;
-            case R.id.checkbox_2:
-                if (checked) {
-                    Log.i("box 2 :", "checked");
-                }
-                else {
-                    Log.i("box 2 :", "NOT .checked");
-                }
-                break;
-        }
     }
 
     public void bluetooth_server(View view) {
@@ -134,7 +92,7 @@ public class SettingsScreenActivity extends AppCompatActivity {
                 break;
             case DataStore.BLUETOOTH_RESULT_DEVICE:
                 if (data != null) {
-                    mDeviceAddress = data.getStringExtra("device_address");
+                    String mDeviceAddress = data.getStringExtra("device_address");
                     TextView pairedDevice = (TextView) findViewById(R.id.bt_paired_device);
                     pairedDevice.setText(mDeviceAddress);
 

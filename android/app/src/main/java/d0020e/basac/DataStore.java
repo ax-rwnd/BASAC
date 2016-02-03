@@ -21,10 +21,6 @@ public class DataStore extends Application {
     public static final int VALUE_TESTVALUE = 0;
     public static final int VALUE_ACCELEROMETER = 1;
 
-    public static final String TOAST = "TOAST";
-    // Messages
-    public static final int MESSAGE_TOAST = 1;
-
     public StateController mState;
 
     Handler.Callback realCallback = null;
@@ -51,6 +47,9 @@ public class DataStore extends Application {
         // TODO: Add values to match arduino data
         super.onCreate();
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        // Set default values for settings
+        PreferenceManager.setDefaultValues(this, R.xml.preference_main, false);
+
         int value_testValue = sharedPref.getInt("data_"+DataStore.VALUE_TESTVALUE, DataStore.VALUE_TESTVALUE);
 
         DataModel.getInstance().addValue(value_testValue);

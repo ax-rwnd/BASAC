@@ -49,6 +49,8 @@
             android:name=".BluetoothClient"
             android:enabled="true"
             android:exported="false" />
+
+        <activity android:name=".SettingsActivity" />
     </application>
 
 </manifest>
