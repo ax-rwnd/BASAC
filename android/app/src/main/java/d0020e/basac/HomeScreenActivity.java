@@ -8,9 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -34,7 +32,6 @@ public class HomeScreenActivity extends AppCompatActivity implements SensorEvent
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setContentView(R.layout.activity_home_screen);
 
         DataStore ds = (DataStore)getApplicationContext();
         ds.mState.setContext(this);
