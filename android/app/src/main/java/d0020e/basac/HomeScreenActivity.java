@@ -170,6 +170,7 @@ public class HomeScreenActivity extends AppCompatActivity implements SensorEvent
                 double speed = Math.sqrt(posX*posX+posY*posY+posZ*posZ);
                 //if (speed > threshold){
                     Log.d("Motion Sensor", Double.toString(speed));
+                    DataModel.getInstance().setValue(1, speed);
                 //}
 
             //}

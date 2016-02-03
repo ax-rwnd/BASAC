@@ -55,6 +55,7 @@ public class DataStore extends Application {
         int value_01 = sharedPref.getInt("data_01", 0);
 
         DataModel.getInstance().addValue(value_01);
+        DataModel.getInstance().addValue(10);
 
         mState = new StateController();
     }

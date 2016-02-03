@@ -23,6 +23,7 @@ public class StateController implements Observer {
 
     public StateController() {
         warningState = new boolean[5];
+        warningState[1] = false; //sets fallaccident to false startup.
         DataModel.getInstance().addObserver(this);
     }
 
@@ -80,6 +81,11 @@ public class StateController implements Observer {
         if((DataModel.getInstance().getValue(0) > 30)) {
             this.warningState[DataStore.WARNING_TESTVALUE] = true;
             warningId = DataStore.WARNING_TESTVALUE;
+        }
+        if((DataModel.getInstance().getValue(1) < 2) && (this.warningState[1]!=true)) {
+            this.warningState[DataStore.WARNING_ACCELEROMETER] = true;
+            warningId = DataStore.WARNING_ACCELEROMETER;
+            Log.d("Accelerometer", "YOU'RE FALLIN!");
         }
         if (warningId != -1) {
             showWarning(warningId);

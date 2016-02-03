@@ -12,7 +12,7 @@ public class DataModel extends Observable {
     private static final String TAG = "DataModel";
 
     private static DataModel ourInstance = new DataModel();
-    private ArrayList<Integer> dataValues = new ArrayList<>();
+    private ArrayList<Double> dataValues = new ArrayList<>();
 
     public static DataModel getInstance() {
         return ourInstance;
@@ -22,15 +22,15 @@ public class DataModel extends Observable {
         dataValues = new ArrayList<>();
     }
 
-    public int getValue(int index) {
+    public double getValue(int index) {
         return dataValues.get(index);
     }
 
-    public void addValue(int value) {
+    public void addValue(double value) {
         dataValues.add(value);
     }
 
-    public void setValue(int index, int value) {
+    public void setValue(int index, double value) {
         try {
             dataValues.set(index, value);
         } catch (IndexOutOfBoundsException e) {

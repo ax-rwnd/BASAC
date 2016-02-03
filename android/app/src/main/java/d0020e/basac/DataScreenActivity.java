@@ -21,7 +21,7 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         setContentView(R.layout.activity_data_screen);
 
         oxygenProgress = (ProgressBar) findViewById(R.id.oxygen_bar);
-        oxygenProgress.setProgress(DataModel.getInstance().getValue(0));
+        oxygenProgress.setProgress((int)Math.round(DataModel.getInstance().getValue(0)));
 
         Button dataButton = (Button) findViewById(R.id.action_progress);
         dataButton.setOnClickListener(new View.OnClickListener() {
@@ -35,7 +35,7 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     }
 
     public void updateProgressbar() {
-        oxygenProgress.setProgress(DataModel.getInstance().getValue(0));
+        oxygenProgress.setProgress((int)Math.round(DataModel.getInstance().getValue(0)));
     }
 
     public void incrementProgressbar() {
