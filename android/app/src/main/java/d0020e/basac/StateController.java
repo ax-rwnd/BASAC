@@ -86,8 +86,8 @@ public class StateController implements Observer {
             warningId = DataStore.VALUE_TESTVALUE;
         }
         if((DataModel.getInstance().getValue(1) < 2) && (this.warningState[1]!=true)) {
-            this.warningState[DataStore.WARNING_ACCELEROMETER] = true;
-            warningId = DataStore.WARNING_ACCELEROMETER;
+            this.warningState[DataStore.VALUE_ACCELEROMETER] = true;
+            warningId = DataStore.VALUE_ACCELEROMETER;
             Log.d("Accelerometer", "YOU'RE FALLIN!");
         }
         if (warningId != -1) {
