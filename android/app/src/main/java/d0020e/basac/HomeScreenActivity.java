@@ -169,7 +169,7 @@ public class HomeScreenActivity extends AppCompatActivity implements SensorEvent
                 lastEvent = currentTime;
                 double speed = Math.sqrt(posX*posX+posY*posY+posZ*posZ);
                 //if (speed > threshold){
-                    Log.d("Motion Sensor", Double.toString(speed));
+                    //Log.d("Motion Sensor", Double.toString(speed));
                 //}
 
             //}
