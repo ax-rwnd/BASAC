@@ -36,12 +36,13 @@ public class StateController implements Observer {
     public StateController() {
         json = new JSONData();
         warningState = new boolean[5];
-        warningState[1] = false; //sets fallaccident to false startup.
+        //warningState[1] = false; //sets fallaccident to false startup.
         DataModel.getInstance().addObserver(this);
     }
 
     public void setContext(Context c) {
         this.mContext = c;
+        new MotionSensor(mContext);
     }
 
     public long getLastUpdate() {
@@ -70,13 +71,17 @@ public class StateController implements Observer {
                 mBuilder.setContentTitle("Warning, Test value")
                         .setContentText("Test value too high!");
                 break;
+            case DataStore.VALUE_ACCELEROMETER:
+                mBuilder.setContentTitle("Accelerometer")
+                        .setContentText("Accelerometer triggered warning");
+                break;
             default:
                 mBuilder.setContentTitle("Warning!")
                         .setContentText("Unspecified warning!");
         }
 
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING, mBuilder.build());
+        mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING+warningId, mBuilder.build());
 
         if (!this.warningDialog) {
             Log.d(TAG, "Showing warning dialog");
@@ -88,7 +93,7 @@ public class StateController implements Observer {
     /**
      * Is called when Datamodel is updated. checks if any thresholds are exceeded and subsequently
      * sets warning status/flags to their proper alert level
-     * TODO: Log values
+     * TODO: save json data to cache file for ccn-lite
      */
     public void update(Observable observable, Object data) {
         int warningId = -1;
@@ -96,19 +101,19 @@ public class StateController implements Observer {
         last_update = new Date().getTime();
         if((DataModel.getInstance().getValue(DataStore.VALUE_TESTVALUE) > 30) && !this.warningState[DataStore.VALUE_TESTVALUE]) {
             this.warningState[DataStore.VALUE_TESTVALUE] = true;
-            warningId = DataStore.VALUE_TESTVALUE;
+            showWarning(DataStore.VALUE_TESTVALUE);
         }
-        if((DataModel.getInstance().getValue(1) < 2) && !this.warningState[DataStore.VALUE_ACCELEROMETER]) {
+        if((DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) < MotionSensor.threshold) && !this.warningState[DataStore.VALUE_ACCELEROMETER]) {
             this.warningState[DataStore.VALUE_ACCELEROMETER] = true;
-            warningId = DataStore.VALUE_ACCELEROMETER;
-            Log.d("Accelerometer", "YOU'RE FALLIN!");
+            json.put("accelerometer", DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER));
+            showWarning(DataStore.VALUE_ACCELEROMETER);
         }
         if (warningId != -1) {
             showWarning(warningId);
         }
         // update JSON data
         json.put("test_value", DataModel.getInstance().getValue(DataStore.VALUE_TESTVALUE));
-        //json.logJSON();
+        json.logJSON();
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
         if (pref.getBoolean("pref_key_settings_datalog", false)) {
@@ -118,7 +123,7 @@ public class StateController implements Observer {
                 String line;
                 outputStream = mContext.openFileOutput("data.log", Context.MODE_APPEND);
 
-                line = json.getJSON().toString() + "\n";
+                line = json.toString() + "\n";
 
                 Log.d(TAG, line);
 
@@ -142,5 +147,7 @@ public class StateController implements Observer {
                 e.printStackTrace();
             }
         }
+        // Cleanup json data
+        json.remove("accelerometer");
     }
 }

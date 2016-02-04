@@ -39,6 +39,9 @@ public class WarningActivity extends AppCompatActivity {
             case DataStore.VALUE_TESTVALUE:
                 mWarningText.setText("Test value is too high!");
                 break;
+            case DataStore.VALUE_ACCELEROMETER:
+                mWarningText.setText("Accelerometer, you are falling..");
+                break;
             default:
                 mWarningText.setText("Unknown warning id: " + warningId);
         }
