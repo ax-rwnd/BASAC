@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Settings"
+        android:key="pref_key_settings">
+        <CheckBoxPreference
+            android:key="pref_key_settings_datalog"
+            android:summary="Enable data log"
+            android:title="Log"
+            android:defaultValue="false" />
+
+        <d0020e.basac.ResetLogFileDialogPreference
+            android:key="pref_key_settings_delete_log_file"
+            android:title="Delete log file"
+            android:positiveButtonText="Yes"
+            android:negativeButtonText="No" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

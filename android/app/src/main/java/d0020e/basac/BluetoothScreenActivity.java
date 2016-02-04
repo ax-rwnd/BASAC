@@ -8,6 +8,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.AdapterView.OnItemClickListener;
@@ -59,8 +61,6 @@ public class BluetoothScreenActivity extends AppCompatActivity {
         mDeviceList.setAdapter(mDeviceArray);
         mPairedDeviceArray = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1);
 
-        Toast.makeText(getApplicationContext(), "Started device discovery", Toast.LENGTH_SHORT).show();
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
@@ -96,7 +96,11 @@ public class BluetoothScreenActivity extends AppCompatActivity {
             // Create the result Intent and include the MAC address
             Intent intent = new Intent();
             intent.putExtra("device_address", address);
-            Toast.makeText(getApplicationContext(),address.toString(),Toast.LENGTH_SHORT);
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("device_address", address);
+            editor.apply();
+
             // Set result and finish this Activity
             setResult(Activity.RESULT_OK, intent);
             finish();

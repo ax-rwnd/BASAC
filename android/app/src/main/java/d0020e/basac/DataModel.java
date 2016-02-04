@@ -1,61 +1,43 @@
 package d0020e.basac;
 
 import android.util.Log;
-import java.io.Serializable;
+
+import java.util.ArrayList;
 import java.util.Observable;
 
 /**
- * The Datamodel, holds the data recieved from the "Väst"
+ * Created by WeeDzCokie on 2016-01-28.
  */
-public class DataModel extends Observable implements Serializable {
+public class DataModel extends Observable {
     private static final String TAG = "DataModel";
 
-    //variables saved on the static object to bypass the throwing away of essential data on pause of activity?
-    private static int testValue;
-    private static boolean warning;
+    private static DataModel ourInstance = new DataModel();
+    private ArrayList<Double> dataValues = new ArrayList<>();
 
-
-    public DataModel() {
-        testValue = 0;
-        warning = false;
-        Log.d(TAG, "DataModel constructor");
+    public static DataModel getInstance() {
+        return ourInstance;
     }
 
-    public int getTestValue() {
-        return testValue;
+    private DataModel() {
+        dataValues = new ArrayList<>();
     }
 
-    /* Sets value to the actual value, invoked by StateController */
-    public void setTestValue(int newValue) {
-        Log.d(TAG,"setTestValue("+String.valueOf(newValue)+")");
-        this.testValue = newValue;
-        setChanged();
-        notifyObservers();
+    public double getValue(int index) {
+        return dataValues.get(index);
     }
 
-    public void toggleWarning() {
-        warning = !warning;
+    public void addValue(double value) {
+        dataValues.add(value);
     }
 
-    public boolean getWarningState() {
-        return warning;
-    }
-
-    /* Temporary function for testing through the GUI */
-    public void incrementTestValue() {
-        this.testValue++;
-        if (this.testValue > 100) {
-            testValue = 0;
+    public void setValue(int index, double value) {
+        try {
+            dataValues.set(index, value);
+        } catch (IndexOutOfBoundsException e) {
+            Log.e(TAG, "Index " + index + " is not set in DataModel");
+            e.printStackTrace();
         }
-        Log.d(TAG, "incrementTestValue()");
         setChanged();
         notifyObservers();
     }
-
-    public void notifyView() {
-        Log.d(TAG, Integer.toString(this.testValue));
-        setChanged();
-        notifyObservers();
-    }
-
 }
