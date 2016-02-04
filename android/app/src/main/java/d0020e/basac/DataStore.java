@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * Created by WeeDzCokie on 2016-01-28.
@@ -13,7 +14,8 @@ public class DataStore extends Application {
     // Notification
     public static final int NOTIFICATION_BLUETOOTHCLIENT = 1;
     public static final int NOTIFICATION_BLUETOOTH_LOST = 2;
-    public static final int NOTIFICATION_WARNING = 3;   // 3-8
+    public static final int NOTIFICATION_SERVICE_RUNNING = 3;
+    public static final int NOTIFICATION_WARNING = 4;   // +xx
     // Bluetooth
     public static final int BLUETOOTH_REQUEST_CODE = 1;
     public static final int BLUETOOTH_RESULT_DEVICE = 2;
@@ -35,15 +37,14 @@ public class DataStore extends Application {
     public Handler getHandler() {
         return handler;
     }
-    public StateController getState() {
-        return mState;
-    }
+
     public void setCallback(Handler.Callback callback) {
         this.realCallback = callback;
     }
 
     @Override
     public void onCreate() {
+        Log.d("DataStore", "onCreate()");
         // TODO: Add values to match arduino data
         super.onCreate();
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -55,8 +56,11 @@ public class DataStore extends Application {
         DataModel.getInstance().addValue(value_testValue);
         DataModel.getInstance().addValue(10);
 
-        mState = new StateController();
-        mState.setContext(this);
+        // Move statecontroller init to a button on homescreen ("Start Monitoring")
+        // temp StateController
+        //mState = new StateController(this);
+        //DataModel.getInstance().addObserver(mState);
+
     }
 
 }
