@@ -31,12 +31,11 @@ public class StateController implements Observer {
 
     private JSONData json;
 
-    private long last_update = new Date().getTime();
+    private long last_update = 0;
 
     public StateController() {
         json = new JSONData();
         warningState = new boolean[5];
-        //warningState[1] = false; //sets fallaccident to false startup.
         DataModel.getInstance().addObserver(this);
     }
 
@@ -47,6 +46,10 @@ public class StateController implements Observer {
 
     public long getLastUpdate() {
         return last_update;
+    }
+
+    public void setWarningState(int warningId, boolean state) {
+        warningState[warningId] = state;
     }
 
     private void showWarning(int warningId) {
@@ -98,7 +101,12 @@ public class StateController implements Observer {
     public void update(Observable observable, Object data) {
         int warningId = -1;
         Log.d(TAG, "Data updated");
-        last_update = new Date().getTime();
+        last_update = System.currentTimeMillis();
+
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+        editor.putLong("last_update", last_update);
+        editor.apply();
+
         if((DataModel.getInstance().getValue(DataStore.VALUE_TESTVALUE) > 30) && !this.warningState[DataStore.VALUE_TESTVALUE]) {
             this.warningState[DataStore.VALUE_TESTVALUE] = true;
             showWarning(DataStore.VALUE_TESTVALUE);

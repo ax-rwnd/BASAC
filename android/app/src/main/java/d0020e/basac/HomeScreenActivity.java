@@ -22,7 +22,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         DataStore ds = (DataStore)getApplicationContext();
-        ds.mState.setContext(this);
+        //ds.mState.setContext(this);
 
         Button settings = (Button)findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {

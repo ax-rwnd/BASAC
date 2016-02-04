@@ -94,8 +94,7 @@ public class BluetoothClient extends Service {
                             Log.d(TAG, "Handler() msgRead: " + readMessage);
                             try {
                                 DataModel.getInstance().setValue(DataStore.VALUE_TESTVALUE, Integer.parseInt(readMessage));
-                                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                                SharedPreferences.Editor editor = sharedPref.edit();
+                                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
                                 editor.putInt("data_"+DataStore.VALUE_TESTVALUE, Integer.parseInt(readMessage));
                                 editor.apply();
                             } catch (NumberFormatException e) {
@@ -242,6 +241,10 @@ public class BluetoothClient extends Service {
                     .setAutoCancel(true);
             mNotifyMgr.notify(DataStore.NOTIFICATION_BLUETOOTH_LOST, mBuilder.build());
         }
+
+        // Reset StateController context
+        DataStore ds = (DataStore)getApplicationContext();
+        ds.getState().setContext(ds);
 
         stopSelf();
     }

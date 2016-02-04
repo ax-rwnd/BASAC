@@ -33,7 +33,7 @@ public class WarningActivity extends AppCompatActivity {
         int warningId = data.getInt("warning");
 
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING);
+        mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING+warningId);
 
         switch (warningId) {
             case DataStore.VALUE_TESTVALUE:
@@ -45,6 +45,9 @@ public class WarningActivity extends AppCompatActivity {
             default:
                 mWarningText.setText("Unknown warning id: " + warningId);
         }
+
+        DataStore ds = (DataStore)getApplication();
+        ds.mState.setWarningState(warningId, false);
     }
 
 }

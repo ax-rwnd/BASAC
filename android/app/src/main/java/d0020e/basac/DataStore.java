@@ -56,6 +56,7 @@ public class DataStore extends Application {
         DataModel.getInstance().addValue(10);
 
         mState = new StateController();
+        mState.setContext(this);
     }
 
 }
