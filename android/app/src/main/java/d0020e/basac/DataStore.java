@@ -11,9 +11,9 @@ import android.preference.PreferenceManager;
  */
 public class DataStore extends Application {
     // Notification
-    public static final int NOTIFICATION_WARNING = 1;
-    public static final int NOTIFICATION_BLUETOOTHCLIENT = 2;
-    public static final int NOTIFICATION_BLUETOOTH_LOST = 3;
+    public static final int NOTIFICATION_BLUETOOTHCLIENT = 1;
+    public static final int NOTIFICATION_BLUETOOTH_LOST = 2;
+    public static final int NOTIFICATION_WARNING = 3;   // 3-8
     // Bluetooth
     public static final int BLUETOOTH_REQUEST_CODE = 1;
     public static final int BLUETOOTH_RESULT_DEVICE = 2;
@@ -56,6 +56,7 @@ public class DataStore extends Application {
         DataModel.getInstance().addValue(10);
 
         mState = new StateController();
+        mState.setContext(this);
     }
 
 }

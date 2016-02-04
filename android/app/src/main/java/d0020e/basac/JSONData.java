@@ -36,9 +36,9 @@ public class JSONData {
         }
         finalJSON = new JSONObject();
         try {
-            //finalJSON.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
-            finalJSON.put("timestamp", new Date().getTime());
-            finalJSON.put("values" , new JSONObject());
+            finalJSON.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
+            finalJSON.put("timestamp", System.currentTimeMillis());
+            finalJSON.put("values", new JSONObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -50,6 +50,15 @@ public class JSONData {
         } catch (JSONException e) {
             e.printStackTrace();
             Log.d(TAG, "put() failed to put " + name + ": " + value.toString());
+        }
+    }
+
+    public void remove(String name) {
+        try {
+            finalJSON.getJSONObject("values").remove(name);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.d(TAG, "remove() failed to remove value: values." + name);
         }
     }
 
@@ -73,7 +82,7 @@ public class JSONData {
 
     public void logJSON() {
         try {
-            finalJSON.put("timestamp", new Date().getTime());
+            finalJSON.put("timestamp", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -82,11 +91,15 @@ public class JSONData {
 
     public JSONObject getJSON() {
         try {
-            finalJSON.put("timestamp", new Date().getTime());
+            finalJSON.put("timestamp", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return finalJSON;
+    }
+
+    public String toString() {
+        return this.finalJSON.toString();
     }
 
 }
