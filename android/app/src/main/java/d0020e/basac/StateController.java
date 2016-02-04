@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Toast;
 import android.view.View;
 
@@ -46,6 +47,7 @@ public class StateController extends Service implements Observer {
 
     private long last_update = 0;
     private int startId;
+    private Context mContext;
 
     //Service
     private ServiceHandler mServiceHandler;
@@ -59,6 +61,21 @@ public class StateController extends Service implements Observer {
         public void handleMessage(Message msg) {
             Log.d(TAG, "ServiceHandler msg: " + msg.arg1);
         }
+    }
+
+    public StateController(Context c) {
+        Log.d(TAG, "Constructor(Context)");
+        mContext = c;
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        last_update = sharedPref.getLong("last_update", System.currentTimeMillis());
+        json = new JSONData();
+        warningState = new boolean[5];
+        mMotionSensor = new MotionSensor(mContext);
+        DataModel.getInstance().addObserver(this);
+    }
+    public StateController() {
+        super();
+        Log.d(TAG, "Constructor()");
     }
 
     /**
@@ -101,6 +118,8 @@ public class StateController extends Service implements Observer {
     public void onDestroy() {
         stop();
         Log.d(TAG, "service destroyed");
+        DataStore ds = (DataStore)getApplication();
+        ds.mState = new StateController(ds);
         super.onDestroy();
     }
 
@@ -109,10 +128,12 @@ public class StateController extends Service implements Observer {
      * TODO: update notification when bluetooth is connected
      */
     public int onStartCommand(Intent intent, int flags, int startId) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mContext = this;
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
         last_update = sharedPref.getLong("last_update", System.currentTimeMillis());
         boolean startBluetooth = sharedPref.getBoolean("start_bluetooth", false);
 
+        DataModel.getInstance().deleteObservers();
         if (intent != null) {
             String stopString = intent.getStringExtra("STOP");
             if (stopString != null && stopString.length() > 0) {
@@ -142,7 +163,7 @@ public class StateController extends Service implements Observer {
         }
 
         // Show notification when service is running
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle("BASAC")
                 .setContentText("BASAC service started")
@@ -150,9 +171,9 @@ public class StateController extends Service implements Observer {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(
                         PendingIntent.getActivity(
-                                this,
+                                mContext,
                                 0,
-                                new Intent(this, HomeScreenActivity.class),
+                                new Intent(mContext, HomeScreenActivity.class),
                                 PendingIntent.FLAG_UPDATE_CURRENT
                         )
                 )
@@ -160,21 +181,28 @@ public class StateController extends Service implements Observer {
                         R.drawable.ic_notifications_black_24dp,
                         "Stop",
                         PendingIntent.getService(
-                                this,
+                                mContext,
                                 0,
-                                new Intent(this, StateController.class)
+                                new Intent(mContext, StateController.class)
                                         .putExtra("STOP", "STOP"),
                                 PendingIntent.FLAG_UPDATE_CURRENT));
 
-        NotificationManager mNotifyMgr = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.notify(DataStore.NOTIFICATION_SERVICE_RUNNING, mBuilder.build());
 
         DataStore ds = (DataStore)getApplication();
+        //ds.mState.stop();
         ds.mState = this;
 
         json = new JSONData();
         warningState = new boolean[5];
+        if (mMotionSensor != null) {
+            mMotionSensor.sm.unregisterListener(mMotionSensor);
+            mMotionSensor = null;
+        }
+
         mMotionSensor = new MotionSensor(this);
+        DataModel.getInstance().deleteObservers();
         DataModel.getInstance().addObserver(this);
 
         Log.d(TAG, "Service starting");
@@ -182,16 +210,12 @@ public class StateController extends Service implements Observer {
         return START_STICKY;
     }
 
-    public void setContext(Context c) {
-        this.mContext = c;
-        new MotionSensor(mContext);
-    }
-
     public synchronized void stop() {
         DataModel.getInstance().deleteObserver(this);
         stopBluetoothConnection();
+        mMotionSensor.sm.unregisterListener(mMotionSensor);
 
-        NotificationManager mNotifyMgr = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.cancel(DataStore.NOTIFICATION_SERVICE_RUNNING);
 
         Log.d(TAG, "stop()");
@@ -218,14 +242,14 @@ public class StateController extends Service implements Observer {
         Log.d(TAG, "Warning");
 
         // TODO: Send data back to arduino?
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setOngoing(true)
                 .setContentIntent(PendingIntent.getActivity(
-                        this,
+                        mContext,
                         0,
-                        new Intent(this, WarningActivity.class)
+                        new Intent(mContext, WarningActivity.class)
                                 .putExtra("warning", warningId),
                         PendingIntent.FLAG_UPDATE_CURRENT
                 ))
@@ -245,7 +269,7 @@ public class StateController extends Service implements Observer {
                         .setContentText("Unspecified warning!");
         }
 
-        NotificationManager mNotifyMgr = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING + warningId, mBuilder.build());
 
         if (!this.warningDialog) {
@@ -265,24 +289,27 @@ public class StateController extends Service implements Observer {
         Log.d(TAG, "Data updated");
         last_update = System.currentTimeMillis();
 
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        SharedPreferences.Editor editor = pref.edit();
         editor.putLong("last_update", last_update);
         editor.apply();
 
         if((DataModel.getInstance().getValue(DataStore.VALUE_TESTVALUE) > 30) && !this.warningState[DataStore.VALUE_TESTVALUE]) {
             this.warningState[DataStore.VALUE_TESTVALUE] = true;
             showWarning(DataStore.VALUE_TESTVALUE);
+            if (pref.getBoolean("pref_key_settings_in_danger_zone", false)) {
+                incidentReport(ACCIDENT_TEST);
+            }
         }
         //Triggers fall if "falling", not already triggered and inside dangerzone.
         if((DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) < MotionSensor.threshold)
-                && !this.warningState[DataStore.VALUE_ACCELEROMETER]
-                && pref.getBoolean("pref_key_settings_in_danger_zone", false)) {
-
+                && !this.warningState[DataStore.VALUE_ACCELEROMETER]) {
             this.warningState[DataStore.VALUE_ACCELEROMETER] = true;
             json.put("accelerometer", DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER));
             showWarning(DataStore.VALUE_ACCELEROMETER);
-            incidentReport(ACCIDENT_FALL);
-
+            if (pref.getBoolean("pref_key_settings_in_danger_zone", false)) {
+                incidentReport(ACCIDENT_FALL);
+            }
         }
         if (warningId != -1) {
             showWarning(warningId);
@@ -291,13 +318,12 @@ public class StateController extends Service implements Observer {
         json.put("test_value", DataModel.getInstance().getValue(DataStore.VALUE_TESTVALUE));
         json.logJSON();
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         if (pref.getBoolean("pref_key_settings_datalog", false)) {
             FileOutputStream outputStream;
             FileInputStream inputStream;
             try {
                 String line;
-                outputStream = this.openFileOutput("data.log", Context.MODE_APPEND);
+                outputStream = mContext.openFileOutput("data.log", Context.MODE_APPEND);
 
                 line = json.toString() + "\n";
 
@@ -310,7 +336,7 @@ public class StateController extends Service implements Observer {
             }
 
             try {
-                inputStream = this.openFileInput("data.log");
+                inputStream = mContext.openFileInput("data.log");
                 InputStreamReader reader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(reader);
                 StringBuilder sb = new StringBuilder();
@@ -340,20 +366,24 @@ public class StateController extends Service implements Observer {
                 incidentType = "none";
                 //kek
         }
-        new AlertDialog.Builder(mContext)
-                .setTitle(incidentType)
+        AlertDialog alert = new AlertDialog.Builder(mContext).
+                setTitle(incidentType)
                 .setMessage("Have you fallen?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
+                        // Send report
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
+                        // Don't send report
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+                .setCancelable(false)
+                .create();
+        alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        alert.show();
+
     }
 }

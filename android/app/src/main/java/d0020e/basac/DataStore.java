@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * Created by WeeDzCokie on 2016-01-28.
@@ -43,6 +44,7 @@ public class DataStore extends Application {
 
     @Override
     public void onCreate() {
+        Log.d("DataStore", "onCreate()");
         // TODO: Add values to match arduino data
         super.onCreate();
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -56,7 +58,8 @@ public class DataStore extends Application {
 
         // Move statecontroller init to a button on homescreen ("Start Monitoring")
         // temp StateController
-        mState = new StateController();
+        //mState = new StateController(this);
+        //DataModel.getInstance().addObserver(mState);
 
     }
 

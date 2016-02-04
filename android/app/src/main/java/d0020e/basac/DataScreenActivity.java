@@ -17,7 +17,6 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     private ProgressBar oxygenProgress;
 
     public int isRunning = 0;
-    private DataStore ds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +25,6 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
 
         oxygenProgress = (ProgressBar) findViewById(R.id.oxygen_bar);
         oxygenProgress.setProgress((int) Math.round(DataModel.getInstance().getValue(0)));
-
-        ds = (DataStore)getApplicationContext();
-        ds.mState.setContext(this);
 
         this.setLastUpdate();
 
@@ -46,7 +42,7 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     private void setLastUpdate() {
         DataStore ds = (DataStore)getApplication();
         Date date = new Date(ds.mState.getLastUpdate());
-        SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd hh:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
         TextView last_update = (TextView)findViewById(R.id.last_update);
         last_update.setText("Last update: " + format.format(date));
     }
@@ -82,12 +78,6 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         super.onStop();
         DataModel.getInstance().deleteObserver(this);
         this.isRunning = 2;
-    }
-
-    public void onResume() {
-        super.onResume();
-        ds.mState.setContext(this);
-
     }
 
 }
