@@ -21,9 +21,6 @@ public class HomeScreenActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DataStore ds = (DataStore)getApplicationContext();
-        //ds.mState.setContext(this);
-
         Button settings = (Button)findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +58,19 @@ public class HomeScreenActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void start_monitor(View view) {
+        DataStore ds = (DataStore)getApplication();
+        ds.mState.stopBluetoothConnection();
+        ds.mState = null;
+        startService(new Intent(this, StateController.class));
+    }
+
+    public void stop_monitor(View view) {
+        Intent intent = new Intent(this, StateController.class);
+        intent.putExtra("STOP", "STOP");
+        startService(intent);
     }
 
     public void startDataScreen(View view) {

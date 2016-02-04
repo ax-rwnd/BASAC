@@ -46,7 +46,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
-            android:name=".BluetoothClient"
+            android:name=".StateController"
             android:enabled="true"
             android:exported="false" />
 

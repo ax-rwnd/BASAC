@@ -41,7 +41,7 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
 
     private void setLastUpdate() {
         DataStore ds = (DataStore)getApplication();
-        Date date = new Date(ds.getState().getLastUpdate());
+        Date date = new Date(ds.mState.getLastUpdate());
         SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd hh:mm:ss");
         TextView last_update = (TextView)findViewById(R.id.last_update);
         last_update.setText("Last update: " + format.format(date));
