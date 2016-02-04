@@ -65,12 +65,9 @@ public class SettingsScreenActivity extends AppCompatActivity {
     }
 
     public void bluetooth_disconnect(View view) {
-        /*SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putBoolean("start_bluetooth", false);
         editor.apply();
-        Intent intent = new Intent(this, StateController.class)
-                .putExtra("STOP", "BLUETOOTH");
-        startService(intent);*/
         DataStore ds = (DataStore)getApplication();
         ds.mState.stopBluetoothConnection();
     }
@@ -103,10 +100,10 @@ public class SettingsScreenActivity extends AppCompatActivity {
                     TextView pairedDevice = (TextView) findViewById(R.id.bt_paired_device);
                     pairedDevice.setText(mDeviceAddress);
 
-                    /*SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
                     editor.putString("device_address", mDeviceAddress);
                     editor.putBoolean("start_bluetooth", true);
-                    editor.apply();*/
+                    editor.apply();
 
                     DataStore ds = (DataStore)getApplication();
                     ds.mState.startBluetoothConnection();
