@@ -43,7 +43,7 @@ public class MotionSensor extends Observable implements SensorEventListener{
             if (DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) != 10) {
                 DataModel.getInstance().setValue(DataStore.VALUE_ACCELEROMETER, 10);
             }
-            //Log.d("Motion Sensor", Double.toString(speed));
+            Log.d("Motion Sensor", Double.toString(speed));
             if (speed < threshold){
                 DataModel.getInstance().setValue(DataStore.VALUE_ACCELEROMETER, speed);
                 setChanged();
