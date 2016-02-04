@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -30,6 +31,8 @@ public class StateController implements Observer {
 
     private JSONData json;
 
+    private long last_update = new Date().getTime();
+
     public StateController() {
         json = new JSONData();
         warningState = new boolean[5];
@@ -39,6 +42,10 @@ public class StateController implements Observer {
 
     public void setContext(Context c) {
         this.mContext = c;
+    }
+
+    public long getLastUpdate() {
+        return last_update;
     }
 
     private void showWarning(int warningId) {
@@ -86,6 +93,7 @@ public class StateController implements Observer {
     public void update(Observable observable, Object data) {
         int warningId = -1;
         Log.d(TAG, "Data updated");
+        last_update = new Date().getTime();
         if((DataModel.getInstance().getValue(DataStore.VALUE_TESTVALUE) > 30) && !this.warningState[DataStore.VALUE_TESTVALUE]) {
             this.warningState[DataStore.VALUE_TESTVALUE] = true;
             warningId = DataStore.VALUE_TESTVALUE;

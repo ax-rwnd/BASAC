@@ -36,7 +36,7 @@ public class JSONData {
         }
         finalJSON = new JSONObject();
         try {
-            //finalJSON.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
+            finalJSON.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
             finalJSON.put("timestamp", new Date().getTime());
             finalJSON.put("values" , new JSONObject());
         } catch (JSONException e) {

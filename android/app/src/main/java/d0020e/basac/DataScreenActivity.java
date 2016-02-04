@@ -6,7 +6,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -23,6 +26,8 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         oxygenProgress = (ProgressBar) findViewById(R.id.oxygen_bar);
         oxygenProgress.setProgress((int)Math.round(DataModel.getInstance().getValue(0)));
 
+        this.setLastUpdate();
+
         Button dataButton = (Button) findViewById(R.id.action_progress);
         dataButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,6 +37,14 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         });
 
         this.isRunning = 1;
+    }
+
+    private void setLastUpdate() {
+        DataStore ds = (DataStore)getApplication();
+        Date date = new Date(ds.getState().getLastUpdate());
+        SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd hh:mm:ss");
+        TextView last_update = (TextView)findViewById(R.id.last_update);
+        last_update.setText("Last update: " + format.format(date));
     }
 
     public void updateProgressbar() {
@@ -48,6 +61,8 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
 
     public void update() {
         this.updateProgressbar();
+        this.setLastUpdate();
+
         /*if(mService.mModel.getWarningState()) {
             dataButton.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
         }*/
