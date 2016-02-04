@@ -20,6 +20,7 @@ import android.hardware.SensorManager;
 
 public class HomeScreenActivity extends AppCompatActivity implements SensorEventListener {
     private static final String TAG = "HomeScreen";
+    private DataStore ds;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +28,7 @@ public class HomeScreenActivity extends AppCompatActivity implements SensorEvent
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DataStore ds = (DataStore)getApplicationContext();
+        ds = (DataStore)getApplicationContext();
         ds.mState.setContext(this);
 
         /*Initialize accelerometer
@@ -87,6 +88,7 @@ public class HomeScreenActivity extends AppCompatActivity implements SensorEvent
 
     public void onResume() {
         super.onResume();
+        ds.mState.setContext(this);
 
     }
     private long lastEvent;
@@ -109,9 +111,8 @@ public class HomeScreenActivity extends AppCompatActivity implements SensorEvent
                 lastEvent = currentTime;
                 double speed = Math.sqrt(posX*posX+posY*posY+posZ*posZ);
                 //if (speed > threshold){
-                    Log.d("Motion Sensor", Double.toString(speed));
-                    DataModel.getInstance().setValue(1, speed);
                     //Log.d("Motion Sensor", Double.toString(speed));
+                    DataModel.getInstance().setValue(1, speed);
                 //}
 
             //}
