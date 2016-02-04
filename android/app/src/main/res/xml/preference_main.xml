@@ -16,6 +16,14 @@
             android:positiveButtonText="Yes"
             android:negativeButtonText="No" />
 
+        <CheckBoxPreference
+            android:key="pref_key_settings_in_danger_zone"
+            android:summary="Enables warnings"
+            android:title="In Danger Zone"
+            android:defaultValue="false" />
+
+
+
     </PreferenceCategory>
 
 

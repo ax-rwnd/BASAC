@@ -1,11 +1,13 @@
 package d0020e.basac;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.*;
@@ -14,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
+import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -36,6 +39,10 @@ public class StateController extends Service implements Observer {
     private boolean[] warningState;
 
     private JSONData json;
+
+
+    public static final int ACCIDENT_TEST = 0;
+    public static final int ACCIDENT_FALL = 1;
 
     private long last_update = 0;
     private int startId;
@@ -175,8 +182,9 @@ public class StateController extends Service implements Observer {
         return START_STICKY;
     }
 
-    public StateController() {
-
+    public void setContext(Context c) {
+        this.mContext = c;
+        new MotionSensor(mContext);
     }
 
     public synchronized void stop() {
@@ -265,10 +273,16 @@ public class StateController extends Service implements Observer {
             this.warningState[DataStore.VALUE_TESTVALUE] = true;
             showWarning(DataStore.VALUE_TESTVALUE);
         }
-        if((DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) < MotionSensor.threshold) && !this.warningState[DataStore.VALUE_ACCELEROMETER]) {
+        //Triggers fall if "falling", not already triggered and inside dangerzone.
+        if((DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) < MotionSensor.threshold)
+                && !this.warningState[DataStore.VALUE_ACCELEROMETER]
+                && pref.getBoolean("pref_key_settings_in_danger_zone", false)) {
+
             this.warningState[DataStore.VALUE_ACCELEROMETER] = true;
             json.put("accelerometer", DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER));
             showWarning(DataStore.VALUE_ACCELEROMETER);
+            incidentReport(ACCIDENT_FALL);
+
         }
         if (warningId != -1) {
             showWarning(warningId);
@@ -311,5 +325,35 @@ public class StateController extends Service implements Observer {
         }
         // Cleanup json data
         json.remove("accelerometer");
+    }
+
+    private void incidentReport(int typeOfIncident) {
+        String incidentType;
+        switch (typeOfIncident) {
+            case ACCIDENT_TEST:
+                incidentType = "Vest value exceeded";
+                break;
+            case ACCIDENT_FALL:
+                incidentType = "Fall accident";
+                break;
+            default:
+                incidentType = "none";
+                //kek
+        }
+        new AlertDialog.Builder(mContext)
+                .setTitle(incidentType)
+                .setMessage("Have you fallen?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 }
