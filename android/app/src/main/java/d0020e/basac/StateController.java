@@ -257,7 +257,7 @@ public class StateController extends Service implements Observer {
                 .setOngoing(true)
                 .setContentIntent(PendingIntent.getActivity(
                         mContext,
-                        0,
+                        DataStore.NOTIFICATION_WARNING + warningId,
                         new Intent(mContext, WarningActivity.class)
                                 .putExtra("warning", warningId),
                         PendingIntent.FLAG_UPDATE_CURRENT
