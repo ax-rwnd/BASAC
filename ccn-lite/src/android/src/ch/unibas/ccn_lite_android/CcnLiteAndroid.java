@@ -5,6 +5,7 @@ package ch.unibas.ccn_lite_android;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.io.*; //--- Needed for logWriter
 
 import android.app.Activity;
 import android.app.Activity;
@@ -139,10 +140,55 @@ public class CcnLiteAndroid extends Activity
         scanLeDevice(true);
     }
 
+/*Tanken med logWriter är att mha datat som kommer från appendToLog(String line), ska även kunna skapa en fil och spara ner samma data som skrivs ut i loggen för senare användning. Det ska även ingå att namnet
+på flen är själva timestampet för att lätt kunna se vilken som är den senaste.*/
+
+/*   private void logWriter(String line) {
+	
+	String filename = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
+	//String content = "This is a test content for file";
+	
+	FileWriter file = new FileWriter ("\\mnt\\sdcard\\filename.text");
+	if(!file.exists()){
+		file.createNewFile();
+	}
+	FileWriter fileW = new FileWriter(file, true);
+	BufferedWriter buffW = new BufferedWriter(buffW);
+	buffW.newline();
+	buffW.write(new Timestamp(system.currentTimeMillies())  + line);
+	//buffW.close();// stäng inte direkt, utan i slutet bara.	
+	
+
+
+	}
+*/
+public void logWriter(String line){
+	BufferedWriter bw = null;
+	//This try is for creating a file with date name and writing content (line) from appendToLog.
+	try{
+		String filename = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
+		bw = new BufferedWriter(new FileWriter(filename, true));
+		bw.write("this is a test -" + line);
+		bw.newline();	
+		bw.flush();
+	//This is an exception for error check for the try.
+	}catch(IOException e){
+		e.printStackTrace();	
+		system.out.println("this is wrong, check your code");
+	}finally{
+
+		if(bw!=null){
+			bw.close()
+		}
+	}
+	//Notera att vi nu gör bw.close() men den kommer nog försvinna med tiden då vi vill ha filen öppen under en session.
+}
+//Den här metoden skriver ut i loggen på ccn-lite appen.
     public void appendToLog(String line) {
         while (adapter.getCount() > 500)
             adapter.remove(adapter.getItem(0));
         adapter.add(line);
+	logWriter(line);
         adapter.notifyDataSetChanged();
     }
 
