@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 public class HomeScreenActivity extends AppCompatActivity {
     private static final String TAG = "HomeScreen";
-    private DataStore ds;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,9 +21,9 @@ public class HomeScreenActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ds = (DataStore)getApplicationContext();
-        ds.mState.setContext(this);
-
+        DataStore ds = (DataStore)getApplication();
+        ds.mState = new StateController(ds);
+        DataModel.getInstance().addObserver(ds.mState);
 
         Button settings = (Button)findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
@@ -65,6 +64,19 @@ public class HomeScreenActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void start_monitor(View view) {
+        DataStore ds = (DataStore)getApplication();
+        ds.mState.stop();
+        ds.mState = null;
+        startService(new Intent(this, StateController.class));
+    }
+
+    public void stop_monitor(View view) {
+        Intent intent = new Intent(this, StateController.class);
+        intent.putExtra("STOP", "STOP");
+        startService(intent);
+    }
+
     public void startDataScreen(View view) {
         Intent intent = new Intent(this, DataScreenActivity.class);
         startActivity(intent);
@@ -77,7 +89,6 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     public void onResume() {
         super.onResume();
-        ds.mState.setContext(this);
-
     }
+
 }

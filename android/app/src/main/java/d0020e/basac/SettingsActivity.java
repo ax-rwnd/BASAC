@@ -9,20 +9,11 @@ import android.widget.Button;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    DataStore ds;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ds = (DataStore)getApplicationContext();
-        ds.mState.setContext(this);
 
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
-    }
-
-    public void onResume() {
-        super.onResume();
-        ds.mState.setContext(this);
-
     }
 }

@@ -19,7 +19,6 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     private TextView oxygenValue, oxygenThreshold,accelValue,accelThreshold;
 
     public int isRunning = 0;
-    private DataStore ds;
 
     @Override
     //Todo: Change so threshold value is fetched from some fancy place
@@ -43,9 +42,6 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         oxygenProgress = (ProgressBar) findViewById(R.id.oxygen_bar);
         oxygenProgress.setProgress((int) Math.round(DataModel.getInstance().getValue(0)));
 
-        ds = (DataStore)getApplicationContext();
-        ds.mState.setContext(this);
-
         this.setLastUpdate();
 
         Button dataButton = (Button) findViewById(R.id.action_progress);
@@ -61,8 +57,8 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
 
     private void setLastUpdate() {
         DataStore ds = (DataStore)getApplication();
-        Date date = new Date(ds.getState().getLastUpdate());
-        SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd hh:mm:ss");
+        Date date = new Date(ds.mState.getLastUpdate());
+        SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
         TextView last_update = (TextView)findViewById(R.id.last_update);
         last_update.setText("Last update: " + format.format(date));
     }
@@ -113,12 +109,6 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         super.onStop();
         DataModel.getInstance().deleteObserver(this);
         this.isRunning = 2;
-    }
-
-    public void onResume() {
-        super.onResume();
-        ds.mState.setContext(this);
-
     }
 
 }
