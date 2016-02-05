@@ -132,47 +132,6 @@ public class BluetoothClient {
         }
     }
 
-    /*@Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null) {
-            String stopService = intent.getStringExtra("STOP");
-            if (stopService != null && stopService.length() > 0) {
-                BluetoothClient.intendedStop = true;
-                stop();
-                return 0;
-            }
-        }
-        if (BluetoothClient.mConnectedThread != null) {
-            Log.d(TAG, "Service already started");
-            return 0;
-        }
-
-        Log.d(TAG, "Service starting");
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            String address = sharedPref.getString("device_address", null);
-            Log.d(TAG, "Bluetooth device: " + address);
-            if (address != null) {
-                BluetoothClient.mDevice = mBluetoothAdapter.getRemoteDevice(address);
-                DataStore ds = (DataStore)getApplicationContext();
-                mStateController = ds.getState();
-                mStateController.setContext(this);
-                connect(BluetoothClient.mDevice);
-            } else {
-                Log.d(TAG, "Address = null, terminating");
-                stop();
-                return 0;
-            }
-        } else {
-            Toast.makeText(this, "Enable bluetooth", Toast.LENGTH_SHORT).show();
-            stop();
-            return 0;
-        }
-
-        return START_STICKY;
-    }*/
-
     /**
      * Start the ConnectThread to initiate a connection to a remote device.
      * @param device  The BluetoothDevice to connect
@@ -226,7 +185,34 @@ public class BluetoothClient {
 
         Toast.makeText(mContext, "Bluetooth disconnected", Toast.LENGTH_SHORT).show();
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.cancel(DataStore.NOTIFICATION_BLUETOOTHCLIENT);
+        if (StateController.serviceRunning) {
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
+            mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                    .setContentTitle("BASAC")
+                    .setContentText("BASAC service started")
+                    .setOngoing(true)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setContentIntent(
+                            PendingIntent.getActivity(
+                                    mContext,
+                                    0,
+                                    new Intent(mContext, HomeScreenActivity.class),
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            )
+                    )
+                    .addAction(
+                            R.drawable.ic_notifications_black_24dp,
+                            "Stop",
+                            PendingIntent.getService(
+                                    mContext,
+                                    0,
+                                    new Intent(mContext, StateController.class)
+                                            .putExtra("STOP", "STOP"),
+                                    PendingIntent.FLAG_UPDATE_CURRENT));
+            mNotifyMgr.notify(DataStore.NOTIFICATION_SERVICE_RUNNING, mBuilder.build());
+        } else {
+            mNotifyMgr.cancel(DataStore.NOTIFICATION_BLUETOOTHCLIENT);
+        }
 
         if (!BluetoothClient.intendedStop) {
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
@@ -266,33 +252,70 @@ public class BluetoothClient {
     public synchronized void manageConnectedSocket(BluetoothSocket socket, BluetoothDevice device) {
         Log.d(TAG, "connected");
         Toast.makeText(mContext, "Connected", Toast.LENGTH_SHORT).show();
-        // Show notification when bluetooth is connected
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
-                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                .setContentTitle("Bluetooth")
-                .setContentText("Bluetooth is connected")
-                .setOngoing(true)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentIntent(
-                        PendingIntent.getActivity(
-                                mContext,
-                                0,
-                                new Intent(mContext, HomeScreenActivity.class),
-                                PendingIntent.FLAG_UPDATE_CURRENT
-                        )
-                )
-                /*.addAction(
-                        R.drawable.ic_notifications_black_24dp,
-                        "Disconnect",
-                        PendingIntent.getService(
-                                mContext,
-                                0,
-                                new Intent(mContext, StateController.class)
-                                        .putExtra("STOP", "BLUETOOTH"),
-                                PendingIntent.FLAG_UPDATE_CURRENT))*/;
 
+        // Show notification when bluetooth is connected
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(DataStore.NOTIFICATION_BLUETOOTHCLIENT, mBuilder.build());
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
+        if (StateController.serviceRunning) {
+            // Merge service and bluetooth notification
+            mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                    .setContentTitle("BASAC")
+                    .setContentText("BASAC service started, Bluetooth connected")
+                    .setOngoing(true)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setContentIntent(
+                            PendingIntent.getActivity(
+                                    mContext,
+                                    0,
+                                    new Intent(mContext, HomeScreenActivity.class),
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            )
+                    )
+                    .addAction(
+                            R.drawable.ic_notifications_black_24dp,
+                            "Stop",
+                            PendingIntent.getService(
+                                    mContext,
+                                    0,
+                                    new Intent(mContext, StateController.class)
+                                            .putExtra("STOP", "STOP"),
+                                    PendingIntent.FLAG_UPDATE_CURRENT))
+                    .addAction(
+                            R.drawable.ic_notifications_black_24dp,
+                            "Disconnect",
+                            PendingIntent.getService(
+                                    mContext,
+                                    1,
+                                    new Intent(mContext, StateController.class)
+                                            .putExtra("STOP", "BLUETOOTH"),
+                                    PendingIntent.FLAG_UPDATE_CURRENT));
+            mNotifyMgr.notify(DataStore.NOTIFICATION_SERVICE_RUNNING, mBuilder.build());
+        } else {
+            // Show notification for bluetooth
+            mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                    .setContentTitle("Bluetooth")
+                    .setContentText("Bluetooth is connected")
+                    .setOngoing(true)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setContentIntent(
+                            PendingIntent.getActivity(
+                                    mContext,
+                                    0,
+                                    new Intent(mContext, HomeScreenActivity.class),
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            )
+                    )
+                    .addAction(
+                            R.drawable.ic_notifications_black_24dp,
+                            "Disconnect",
+                            PendingIntent.getService(
+                                    mContext,
+                                    0,
+                                    new Intent(mContext, StateController.class)
+                                            .putExtra("STOP", "BLUETOOTH"),
+                                    PendingIntent.FLAG_UPDATE_CURRENT));
+            mNotifyMgr.notify(DataStore.NOTIFICATION_BLUETOOTHCLIENT, mBuilder.build());
+        }
 
         // Cancel the thread that completed the connection
        if (mConnectThread != null) {
