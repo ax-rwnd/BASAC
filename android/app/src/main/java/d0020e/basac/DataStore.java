@@ -1,5 +1,6 @@
 package d0020e.basac;
 
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Handler;
