@@ -49,6 +49,7 @@ public class StateController extends Service implements Observer {
     private long last_update = 0;
     private int startId;
     private Context mContext;
+    public AlertDialog alertDialog;
 
     //Service
     private ServiceHandler mServiceHandler;
@@ -374,7 +375,7 @@ public class StateController extends Service implements Observer {
                 incidentType = "none";
                 //kek
         }
-        AlertDialog alert = new AlertDialog.Builder(mContext).
+        alertDialog = new AlertDialog.Builder(mContext).
                 setTitle(incidentType)
                 .setMessage("Have you fallen?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -390,8 +391,7 @@ public class StateController extends Service implements Observer {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .create();
-        alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        alert.show();
-
+        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        alertDialog.show();
     }
 }

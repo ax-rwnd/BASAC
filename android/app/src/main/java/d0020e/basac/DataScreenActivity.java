@@ -2,6 +2,7 @@ package d0020e.basac;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -94,9 +95,6 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         //this.updateAccelBarValues();
         //this.updateAccelValues();
         this.setLastUpdate();
-        /*if(mService.mModel.getWarningState()) {
-            dataButton.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
-        }*/
     }
 
     public void onStart() {
