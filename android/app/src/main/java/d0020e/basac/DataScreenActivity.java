@@ -8,6 +8,8 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -17,6 +19,7 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     private TextView oxygenValue, oxygenThreshold,accelValue,accelThreshold;
 
     public int isRunning = 0;
+    private DataStore ds;
 
     @Override
     //Todo: Change so threshold value is fetched from some fancy place
@@ -25,7 +28,7 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         setContentView(R.layout.activity_data_screen);
 
 
-        accelSeekBar = (SeekBar) findViewById(R.id.accel_seekBar);
+       /* accelSeekBar = (SeekBar) findViewById(R.id.accel_seekBar);
         accelSeekBar.setMax(50);
         accelSeekBar.setProgress((int) Math.round(DataModel.getInstance().getValue(1)));
 
@@ -36,9 +39,14 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         accelThreshold.setText("Threshold: " + 2);
         oxygenValue = (TextView) findViewById(R.id.current_value);
         oxygenThreshold = (TextView) findViewById(R.id.oxygen_threshold);
-        oxygenThreshold.setText("Threshold: " + 30);
+        oxygenThreshold.setText("Threshold: " + 30); */
         oxygenProgress = (ProgressBar) findViewById(R.id.oxygen_bar);
-        oxygenProgress.setProgress((int)Math.round(DataModel.getInstance().getValue(0)));
+        oxygenProgress.setProgress((int) Math.round(DataModel.getInstance().getValue(0)));
+
+        ds = (DataStore)getApplicationContext();
+        ds.mState.setContext(this);
+
+        this.setLastUpdate();
 
         Button dataButton = (Button) findViewById(R.id.action_progress);
         dataButton.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +57,14 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         });
 
         this.isRunning = 1;
+    }
+
+    private void setLastUpdate() {
+        DataStore ds = (DataStore)getApplication();
+        Date date = new Date(ds.getState().getLastUpdate());
+        SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd hh:mm:ss");
+        TextView last_update = (TextView)findViewById(R.id.last_update);
+        last_update.setText("Last update: " + format.format(date));
     }
 
     public void updateProgressbar() {
@@ -78,9 +94,10 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
 
     public void update() {
         this.updateProgressbar();
-        this.updateCurrentOxygenValues();
-        this.updateAccelBarValues();
-        this.updateAccelValues();
+        //this.updateCurrentOxygenValues();
+        //this.updateAccelBarValues();
+        //this.updateAccelValues();
+        this.setLastUpdate();
         /*if(mService.mModel.getWarningState()) {
             dataButton.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
         }*/
@@ -96,6 +113,12 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         super.onStop();
         DataModel.getInstance().deleteObserver(this);
         this.isRunning = 2;
+    }
+
+    public void onResume() {
+        super.onResume();
+        ds.mState.setContext(this);
+
     }
 
 }

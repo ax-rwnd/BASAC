@@ -33,15 +33,21 @@ public class WarningActivity extends AppCompatActivity {
         int warningId = data.getInt("warning");
 
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING);
+        mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING+warningId);
 
         switch (warningId) {
             case DataStore.VALUE_TESTVALUE:
                 mWarningText.setText("Test value is too high!");
                 break;
+            case DataStore.VALUE_ACCELEROMETER:
+                mWarningText.setText("Accelerometer, you are falling..");
+                break;
             default:
                 mWarningText.setText("Unknown warning id: " + warningId);
         }
+
+        DataStore ds = (DataStore)getApplication();
+        ds.mState.setWarningState(warningId, false);
     }
 
 }
