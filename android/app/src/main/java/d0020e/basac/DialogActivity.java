@@ -34,6 +34,9 @@ public class DialogActivity extends Activity {
                 finish();
             }
         });
-
+    }
+    @Override
+    public void onBackPressed() {
+        // Do nothing
     }
 }

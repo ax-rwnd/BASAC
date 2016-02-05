@@ -71,6 +71,7 @@ public class StateController extends Service implements Observer {
         json = new JSONData();
         warningState = new boolean[5];
         mMotionSensor = new MotionSensor(mContext);
+        DataModel.getInstance().deleteObservers();
         DataModel.getInstance().addObserver(this);
     }
     public StateController() {
