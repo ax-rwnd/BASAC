@@ -17,13 +17,15 @@ public class MotionSensor extends Observable implements SensorEventListener{
     public static int threshold = 2;
     private Context mContext;
 
+    public SensorManager sm;
+
     public MotionSensor(Context c){
         Log.d(TAG, "Contructor");
         this.mContext = c;
         /*Initialize accelerometer
          */
 
-        SensorManager sm = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
+        sm = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor smAccel = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sm.registerListener(this, smAccel, SensorManager.SENSOR_DELAY_NORMAL);
     }

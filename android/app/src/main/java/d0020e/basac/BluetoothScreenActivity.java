@@ -96,10 +96,6 @@ public class BluetoothScreenActivity extends AppCompatActivity {
             // Create the result Intent and include the MAC address
             Intent intent = new Intent();
             intent.putExtra("device_address", address);
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString("device_address", address);
-            editor.apply();
 
             // Set result and finish this Activity
             setResult(Activity.RESULT_OK, intent);

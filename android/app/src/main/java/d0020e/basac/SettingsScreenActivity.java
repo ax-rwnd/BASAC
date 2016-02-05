@@ -2,7 +2,9 @@ package d0020e.basac;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -63,9 +65,11 @@ public class SettingsScreenActivity extends AppCompatActivity {
     }
 
     public void bluetooth_disconnect(View view) {
-        Intent intent = new Intent(this, BluetoothClient.class)
-                .putExtra("STOP", "stop");
-        startService(intent);
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putBoolean("start_bluetooth", false);
+        editor.apply();
+        DataStore ds = (DataStore)getApplication();
+        ds.mState.stopBluetoothConnection();
     }
 
     public void bt_discoverable(View view) {
@@ -96,8 +100,13 @@ public class SettingsScreenActivity extends AppCompatActivity {
                     TextView pairedDevice = (TextView) findViewById(R.id.bt_paired_device);
                     pairedDevice.setText(mDeviceAddress);
 
-                    Intent intent = new Intent(this, BluetoothClient.class);
-                    startService(intent);
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+                    editor.putString("device_address", mDeviceAddress);
+                    editor.putBoolean("start_bluetooth", true);
+                    editor.apply();
+
+                    DataStore ds = (DataStore)getApplication();
+                    ds.mState.startBluetoothConnection();
                 }
                 break;
         }
