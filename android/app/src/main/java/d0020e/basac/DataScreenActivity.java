@@ -66,10 +66,6 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     public void update() {
         this.updateProgressbar();
         this.setLastUpdate();
-
-        /*if(mService.mModel.getWarningState()) {
-            dataButton.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
-        }*/
     }
 
     public void onStart() {
@@ -87,7 +83,6 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     public void onResume() {
         super.onResume();
         ds.mState.setContext(this);
-
     }
 
 }

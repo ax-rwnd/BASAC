@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class WarningActivity extends AppCompatActivity {
@@ -18,15 +19,6 @@ public class WarningActivity extends AppCompatActivity {
         setContentView(R.layout.activity_warning);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         Bundle data = getIntent().getExtras();
         TextView mWarningText = (TextView) findViewById(R.id.warning);
@@ -48,6 +40,29 @@ public class WarningActivity extends AppCompatActivity {
 
         DataStore ds = (DataStore)getApplication();
         ds.mState.setWarningState(warningId, false);
+
+        Button warningButton1 = (Button) findViewById(R.id.warning_button_1);
+        warningButton1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                submitReport(1);
+            }
+        });
+        Button warningButton2 = (Button) findViewById(R.id.warning_button_2);
+        warningButton2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                submitReport(2);
+            }
+        });
+        Button warningButton3 = (Button) findViewById(R.id.warning_button_3);
+        warningButton3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                submitReport(2);
+            }
+        });
+    }
+
+    private void submitReport(int typeOfAccident) {
+        //submits a report.
     }
 
 }
