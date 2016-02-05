@@ -25,11 +25,14 @@ public class WarningActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         ds = (DataStore)getApplicationContext();
+
         if(ds.mState.alertDialog != null) {
             this.alertDialog = ds.mState.alertDialog;
             this.alertDialog.cancel();
         }
+
         setContentView(R.layout.activity_warning);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
