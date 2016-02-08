@@ -31,6 +31,7 @@ import java.util.Observer;
  * Created by Sebastian on 04/12/2015.
  */
 public class StateController extends Service implements Observer {
+    public static boolean serviceRunning = false;
     private static String TAG = "StateController";
     private MotionSensor mMotionSensor;
     private BluetoothClient mBluetoothClient;
@@ -48,6 +49,7 @@ public class StateController extends Service implements Observer {
     private long last_update = 0;
     private int startId;
     private Context mContext;
+    public AlertDialog alertDialog;
 
     //Service
     private ServiceHandler mServiceHandler;
@@ -84,7 +86,7 @@ public class StateController extends Service implements Observer {
      */
     public void startBluetoothConnection() {
         if (mBluetoothClient == null || mBluetoothClient.getState() == BluetoothClient.STATE_NONE) {
-            mBluetoothClient = new BluetoothClient(this);
+            mBluetoothClient = new BluetoothClient(mContext);
         } else {
             Log.d(TAG, "Bluetooth already connected");
         }
@@ -141,6 +143,7 @@ public class StateController extends Service implements Observer {
                 Log.d(TAG, "stop: " + stopString);
                 if (stopString.equals("BLUETOOTH")) {
                     stopBluetoothConnection();
+                    startBluetooth = false;
                 } else if (stopString.equals("STOP")){
                     stop();
                     return 0;
@@ -207,6 +210,7 @@ public class StateController extends Service implements Observer {
         DataModel.getInstance().addObserver(this);
 
         Log.d(TAG, "Service starting");
+        StateController.serviceRunning = true;
 
         return START_STICKY;
     }
@@ -214,12 +218,17 @@ public class StateController extends Service implements Observer {
     public synchronized void stop() {
         DataModel.getInstance().deleteObserver(this);
         stopBluetoothConnection();
-        mMotionSensor.sm.unregisterListener(mMotionSensor);
+        if (mMotionSensor != null && mMotionSensor.sm != null) {
+            mMotionSensor.sm.unregisterListener(mMotionSensor);
+        }
 
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.cancel(DataStore.NOTIFICATION_SERVICE_RUNNING);
 
+        StateController.serviceRunning = false;
+
         Log.d(TAG, "stop()");
+
         super.stopSelf();
     }
 
@@ -249,7 +258,7 @@ public class StateController extends Service implements Observer {
                 .setOngoing(true)
                 .setContentIntent(PendingIntent.getActivity(
                         mContext,
-                        0,
+                        DataStore.NOTIFICATION_WARNING + warningId,
                         new Intent(mContext, WarningActivity.class)
                                 .putExtra("warning", warningId),
                         PendingIntent.FLAG_UPDATE_CURRENT
@@ -367,7 +376,7 @@ public class StateController extends Service implements Observer {
                 incidentType = "none";
                 //kek
         }
-        AlertDialog alert = new AlertDialog.Builder(mContext).
+        alertDialog = new AlertDialog.Builder(mContext).
                 setTitle(incidentType)
                 .setMessage("Have you fallen?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -383,8 +392,7 @@ public class StateController extends Service implements Observer {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .create();
-        alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        alert.show();
-
+        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        alertDialog.show();
     }
 }

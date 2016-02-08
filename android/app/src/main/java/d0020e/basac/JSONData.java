@@ -30,13 +30,11 @@ public class JSONData {
     private JSONObject finalJSON;
 
     public JSONData() {
-        if (BluetoothAdapter.getDefaultAdapter() == null) {
-            Log.e(TAG, "Bluetooth not available");
-            return;
-        }
         finalJSON = new JSONObject();
         try {
-            finalJSON.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
+            if (BluetoothAdapter.getDefaultAdapter() != null) {
+                finalJSON.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
+            }
             finalJSON.put("timestamp", System.currentTimeMillis());
             finalJSON.put("values", new JSONObject());
         } catch (JSONException e) {
