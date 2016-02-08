@@ -2,7 +2,6 @@ package d0020e.basac;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -15,41 +14,25 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class DataScreenActivity extends AppCompatActivity implements Observer {
-    private ProgressBar oxygenProgress,accelBar;
-    private SeekBar accelSeekBar;
-    private TextView oxygenValue, oxygenThreshold,accelValue,accelThreshold;
 
     public int isRunning = 0;
 
     @Override
     //Todo: Change so threshold value is fetched from some fancy place
+    /*
+    TODO: Add display for heartrate, temperature, airpressure, humidity, carbon monoxide
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_screen);
 
+        update();
 
-       /* accelSeekBar = (SeekBar) findViewById(R.id.accel_seekBar);
-        accelSeekBar.setMax(50);
-        accelSeekBar.setProgress((int) Math.round(DataModel.getInstance().getValue(1)));
-
-        accelValue = (TextView) findViewById(R.id.accel_value);
-        accelBar = (ProgressBar) findViewById(R.id.accelerometer_bar);
-        accelBar.setProgress((int)Math.round(DataModel.getInstance().getValue(1)));
-        accelThreshold = (TextView) findViewById(R.id.accel_threshold);
-        accelThreshold.setText("Threshold: " + 2);
-        oxygenValue = (TextView) findViewById(R.id.current_value);
-        oxygenThreshold = (TextView) findViewById(R.id.oxygen_threshold);
-        oxygenThreshold.setText("Threshold: " + 30); */
-        oxygenProgress = (ProgressBar) findViewById(R.id.oxygen_bar);
-        oxygenProgress.setProgress((int) Math.round(DataModel.getInstance().getValue(0)));
-
-        this.setLastUpdate();
-
-        Button dataButton = (Button) findViewById(R.id.action_progress);
+        Button dataButton = (Button) findViewById(R.id.update_data);
         dataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                incrementProgressbar();
+                update();
             }
         });
 
@@ -64,25 +47,29 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         last_update.setText("Last update: " + format.format(date));
     }
 
-    public void updateProgressbar() {
-        oxygenProgress.setProgress((int)Math.round(DataModel.getInstance().getValue(0)));
+    public void updateOxygenbar() {
+        ProgressBar bar = (ProgressBar) findViewById(R.id.oxygen_bar);
+        bar.setProgress((int) Math.round(DataModel.getInstance().getValue(DataStore.VALUE_OXYGEN)));
     }
-
-    public void updateCurrentOxygenValues(){
-        oxygenValue.setText("Current value: " + DataModel.getInstance().getValue(0));
+    public void updateTemperatureBar() {
+        ProgressBar bar = (ProgressBar) findViewById(R.id.temperature_bar);
+        bar.setProgress((int) Math.round(DataModel.getInstance().getValue(DataStore.VALUE_TEMPERATURE)));
     }
-    public void updateAccelValues(){
-        accelValue.setText("Current value: " + DataModel.getInstance().getValue(1));
+    public void updateHeartRateBar() {
+        ProgressBar bar = (ProgressBar) findViewById(R.id.heartrate_bar);
+        bar.setProgress((int) Math.round(DataModel.getInstance().getValue(DataStore.VALUE_HEARTRATE)));
     }
-    public void updateAccelBarValues(){
-        accelBar.setProgress((int)Math.round(DataModel.getInstance().getValue(1)));
-        accelSeekBar.setProgress((int)Math.round(DataModel.getInstance().getValue(1)));
+    public void updateAirPressureBar() {
+        ProgressBar bar = (ProgressBar) findViewById(R.id.airpressure_bar);
+        bar.setProgress((int) Math.round(DataModel.getInstance().getValue(DataStore.VALUE_AIRPRESSURE)));
     }
-
-
-
-    public void incrementProgressbar() {
-        DataModel.getInstance().setValue(0, DataModel.getInstance().getValue(0) + 5);
+    public void updateHumidityBar() {
+        ProgressBar bar = (ProgressBar) findViewById(R.id.humidity_bar);
+        bar.setProgress((int) Math.round(DataModel.getInstance().getValue(DataStore.VALUE_HUMIDITY)));
+    }
+    public void updateCoBar() {
+        ProgressBar bar = (ProgressBar) findViewById(R.id.co_bar);
+        bar.setProgress((int) Math.round(DataModel.getInstance().getValue(DataStore.VALUE_CO)));
     }
 
     public void update(Observable observable, Object data) {
@@ -90,11 +77,13 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     }
 
     public void update() {
-        this.updateProgressbar();
-        //this.updateCurrentOxygenValues();
-        //this.updateAccelBarValues();
-        //this.updateAccelValues();
-        this.setLastUpdate();
+        updateOxygenbar();
+        updateTemperatureBar();
+        updateHeartRateBar();
+        updateAirPressureBar();
+        updateHumidityBar();
+        updateCoBar();
+        setLastUpdate();
     }
 
     public void onStart() {

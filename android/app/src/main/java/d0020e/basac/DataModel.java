@@ -1,7 +1,6 @@
 package d0020e.basac;
 
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -18,12 +17,14 @@ public class DataModel extends Observable {
         return ourInstance;
     }
 
-    private DataModel() {
-        dataValues = new ArrayList<>();
-    }
+    private DataModel() {}
 
     public double getValue(int index) {
         return dataValues.get(index);
+    }
+
+    public int getSize() {
+        return dataValues.size();
     }
 
     public void addValue(double value) {
@@ -37,6 +38,8 @@ public class DataModel extends Observable {
             Log.e(TAG, "Index " + index + " is not set in DataModel");
             e.printStackTrace();
         }
+    }
+    public void setUpdate() {
         setChanged();
         notifyObservers();
     }

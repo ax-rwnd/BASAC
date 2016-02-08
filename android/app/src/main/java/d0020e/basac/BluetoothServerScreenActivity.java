@@ -13,10 +13,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class BluetoothServerScreenActivity extends AppCompatActivity {
@@ -24,6 +31,90 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
     private static final String NAME = "BASAC";
     private static final UUID MY_UUID = UUID.fromString("67f071e1-dbbc-47e6-903e-769a5e262ad2");
     private static final String TAG = "BTServer";
+
+
+    // Demo
+    private static boolean demoStart = false;
+    private ArrayList<JSONObject> demoData = new ArrayList<>();
+    private Thread demoThread;
+
+    public synchronized void beginDemo() {
+        if (demoThread != null) {
+            demoStart = false;
+            demoThread.interrupt();
+        }
+        demoStart = !demoStart;
+
+        demoThread = new Thread() {
+            int currentData = 0;
+            public void run() {
+                // demo data
+                JSONObject json = null;
+                try {
+                    json = new JSONObject();
+                    json.put("oxygen", 21)         // %
+                            .put("heartrate", 90)       // Beats / minute
+                            .put("temperature", 24)     // C
+                            .put("airpressure", 101325)     // Pa, ~ 1 atmosphere
+                            .put("humidity", 70)      // %
+                            .put("co", 3);        // Carbon monoxide, parts per million
+                    demoData.add(json);   // [0] = Normal/safe values
+
+                    json = new JSONObject();
+                    json.put("oxygen", 12)
+                            .put("heartrate", 140)
+                            .put("temperature", 24)
+                            .put("airpressure", 101325)
+                            .put("humidity", 70)
+                            .put("co", 3);
+                    demoData.add(json);   // [1] = Low oxygen levels
+
+                    json = new JSONObject();
+                    json.put("oxygen", 21)
+                            .put("heartrate", 130)
+                            .put("temperature", 24)
+                            .put("airpressure", 101325)
+                            .put("humidity", 70)
+                            .put("co", 100);
+                    demoData.add(json);   // [2] = High carbon monoxide levels
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                while (demoStart && currentData < demoData.size()) {
+                    try {
+                        ConnectedThread r;
+                        // Synchronize a copy of the ConnectedThread
+                        synchronized (this) {
+                            if (mState != BluetoothClient.STATE_CONNECTED) return;
+                            r = mConnectedThread;
+                        }
+                        // Perform the write unsynchronized
+                        r.write(demoData.get(currentData).toString().getBytes());
+                        Thread.sleep(5000);
+                        currentData++;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "Error in demoThread()");
+                    }
+                }
+                ConnectedThread r;
+                // Synchronize a copy of the ConnectedThread
+                synchronized (this) {
+                    if (mState != BluetoothClient.STATE_CONNECTED) return;
+                    r = mConnectedThread;
+                }
+                // Perform the write unsynchronized
+                r.write(demoData.get(0).toString().getBytes());     // Set default/safe values
+
+                Log.d(TAG, "demo end");
+            }
+        };
+        demoThread.start();
+    }
+
+    //
 
     private ConnectedThread mConnectedThread;
     private AcceptThread mAcceptThread;
@@ -71,6 +162,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
                     }
                     break;
                 case MESSAGE_WRITE:
+                    //ObjectOutputStream oos = new ObjectOutputStream()
                     if (msg.obj != null) {
                         byte[] writeBuf = (byte[]) msg.obj;
                         // construct a string from the buffer
@@ -113,6 +205,15 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
                     TextView view = (TextView) findViewById(R.id.bt_server_data_01);
                     String message = view.getText().toString();
                     sendMessage(message);
+                }
+            });
+            mSendButton = (Button) findViewById(R.id.send_demo_data);
+            mSendButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    // Send a message using content of the edit text widget
+                    TextView view = (TextView) findViewById(R.id.bt_server_data_01);
+                    String message = view.getText().toString();
+                    beginDemo();
                 }
             });
             mOutStringBuffer = new StringBuffer("");
@@ -321,11 +422,21 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         public void write(byte[] buffer) {
             try {
                 mmOutStream.write(buffer);
+
                 // Share the sent message back to the UI Activity
                 mHandler.obtainMessage(MESSAGE_WRITE, -1, -1, buffer)
                         .sendToTarget();
             } catch (IOException e) {
-                Log.e(TAG, "Exception during write", e);
+                Log.e(TAG, "Exception during write()", e);
+            }
+        }
+
+        public void writeObject(Object o) {
+            try {
+                ObjectOutputStream oos = new ObjectOutputStream(mmOutStream);
+                oos.writeObject(o);
+            } catch (IOException e) {
+                Log.e(TAG, "Exception during writeObject()", e);
             }
         }
 

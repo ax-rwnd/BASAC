@@ -3,26 +3,28 @@ package d0020e.basac;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
@@ -80,18 +82,34 @@ public class BluetoothClient {
                         break;
                     case MESSAGE_READ:
                         if (msg.obj != null) {
+
                             byte[] readBuf = (byte[]) msg.obj;
-                            // construct a string from the valid bytes in the buffer
                             String readMessage = new String(readBuf, 0, msg.arg1);
-                            Log.d(TAG, "Handler() msgRead: " + readMessage);
+
                             try {
-                                DataModel.getInstance().setValue(DataStore.VALUE_TESTVALUE, Integer.parseInt(readMessage));
+                                JSONObject json = new JSONObject(readMessage);
+                                DataModel.getInstance().setValue(DataStore.VALUE_OXYGEN, json.getInt("oxygen"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_CO, json.getInt("co"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_AIRPRESSURE, json.getInt("airpressure"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_TEMPERATURE, json.getInt("temperature"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_HEARTRATE, json.getInt("heartrate"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_HUMIDITY, json.getInt("humidity"));
+                                DataModel.getInstance().setUpdate();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            // construct a string from the valid bytes in the buffer
+                            /*Log.d(TAG, "Handler() msgRead: " + readMessage);
+                            try {
+                                DataModel.getInstance().setValue(DataStore.VALUE_OXYGEN, Integer.parseInt(readMessage));
                                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
-                                editor.putInt("data_"+DataStore.VALUE_TESTVALUE, Integer.parseInt(readMessage));
+                                editor.putInt("data_"+DataStore.VALUE_OXYGEN, Integer.parseInt(readMessage));
                                 editor.apply();
                             } catch (NumberFormatException e) {
                                 Log.e(TAG, "NumberFormatException: " + readMessage);
                             }
+                            */
                         }
                         break;
                     case MESSAGE_WRITE:
@@ -257,6 +275,7 @@ public class BluetoothClient {
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
         if (StateController.serviceRunning) {
+            mNotifyMgr.cancel(DataStore.NOTIFICATION_BLUETOOTHCLIENT);
             // Merge service and bluetooth notification
             mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
                     .setContentTitle("BASAC")
@@ -345,6 +364,12 @@ public class BluetoothClient {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
+        private ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        private ObjectOutput out = null;
+        private ObjectInput in = null;
+
+        private byte[] yourBytes = new byte[1024];
+
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
@@ -355,6 +380,7 @@ public class BluetoothClient {
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
+                out = new ObjectOutputStream(bos);
             } catch (IOException e) {
                 Log.e(TAG,"ConnectedThread() failed",e);
             }
@@ -370,11 +396,11 @@ public class BluetoothClient {
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
-                    // Read from the InputStream
                     bytes = mmInStream.read(buffer);
+
                     // Send the obtained bytes to the UI activity
-                    handler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
+                    handler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     connectionLost();

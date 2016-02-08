@@ -18,10 +18,10 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:id="@+id/action_progress"
+        android:id="@+id/update_data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Increment"
+        android:text="Update"
         android:layout_below="@+id/last_update"
         android:layout_alignParentStart="true" />
 
@@ -29,26 +29,105 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView"
-        android:layout_below="@+id/action_progress"
+        android:layout_below="@+id/update_data"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/action_progress">
+        android:layout_alignEnd="@+id/update_data">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true">
+            android:layout_height="wrap_content"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Oxygen"
+                android:id="@+id/textView2" />
 
             <ProgressBar
-                android:id="@+id/oxygen_bar"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/abc_action_bar_progress_bar_size"
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp" />
+                android:layout_height="wrap_content"
+                android:id="@+id/oxygen_bar"
+                android:max="30"
+                android:indeterminate="false"
+                style="?android:attr/progressBarStyleHorizontal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Temperature"
+                android:id="@+id/textView3" />
+
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/temperature_bar"
+                android:indeterminate="false"
+                android:max="80"
+                style="?android:attr/progressBarStyleHorizontal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Heart rate"
+                android:id="@+id/textView4" />
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/heartrate_bar"
+                android:max="200"
+                android:indeterminate="false" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Air pressure"
+                android:id="@+id/textView5" />
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/airpressure_bar"
+                android:max="400000" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Humidity"
+                android:id="@+id/textView6" />
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/humidity_bar"
+                android:max="100" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Carbon monoxide"
+                android:id="@+id/textView7" />
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/co_bar"
+                android:max="100" />
 
         </LinearLayout>
     </ScrollView>
+
 </RelativeLayout>

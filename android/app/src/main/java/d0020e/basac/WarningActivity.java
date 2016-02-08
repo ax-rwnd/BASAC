@@ -5,13 +5,9 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -45,8 +41,8 @@ public class WarningActivity extends AppCompatActivity {
         mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING+warningId);
 
         switch (warningId) {
-            case DataStore.VALUE_TESTVALUE:
-                mWarningText.setText("Test value is too high!");
+            case DataStore.VALUE_OXYGEN:
+                mWarningText.setText("Oxygen value is too low!");
                 break;
             case DataStore.VALUE_ACCELEROMETER:
                 mWarningText.setText("Accelerometer, you are falling..");

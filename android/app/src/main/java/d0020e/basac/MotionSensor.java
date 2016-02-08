@@ -14,7 +14,6 @@ import java.util.Observable;
  */
 public class MotionSensor extends Observable implements SensorEventListener{
     private static final String TAG ="MotionSensor";
-    public static int threshold = 2;
     private Context mContext;
 
     public SensorManager sm;
@@ -44,7 +43,7 @@ public class MotionSensor extends Observable implements SensorEventListener{
                 DataModel.getInstance().setValue(DataStore.VALUE_ACCELEROMETER, 10);
             }
             //Log.d("Motion Sensor", Double.toString(speed));
-            if (speed < threshold){
+            if (speed < DataStore.THRESHOLD_ACCELEROMETER_LOW){
                 DataModel.getInstance().setValue(DataStore.VALUE_ACCELEROMETER, speed);
                 setChanged();
                 notifyObservers(speed);
