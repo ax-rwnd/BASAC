@@ -84,6 +84,11 @@ public class SettingsScreenActivity extends AppCompatActivity {
         Log.d(TAG,"Set oxygen value = 0");
         Toast.makeText(getApplicationContext(),"Set oxygen value = 0", Toast.LENGTH_SHORT).show();
         DataModel.getInstance().setValue(DataStore.VALUE_OXYGEN, 0);
+        DataModel.getInstance().setUpdate();
+    }
+
+    public void view_set_values(View view) {
+        startActivity(new Intent(this, SetValues.class));
     }
 
     @Override

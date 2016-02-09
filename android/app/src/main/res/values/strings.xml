@@ -22,5 +22,6 @@
 
     <string name="accel_value">ACCEL VALUE</string>
     <string name="accel_threshold">ACCEL THRESHOLD</string>
+    <string name="update">Update</string>
 
 </resources>

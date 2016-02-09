@@ -5,9 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Observable;
@@ -18,10 +18,6 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     public int isRunning = 0;
 
     @Override
-    //Todo: Change so threshold value is fetched from some fancy place
-    /*
-    TODO: Add display for heartrate, temperature, airpressure, humidity, carbon monoxide
-     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_screen);

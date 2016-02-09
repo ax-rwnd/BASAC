@@ -1,6 +1,9 @@
 package d0020e.basac;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Observable;
 

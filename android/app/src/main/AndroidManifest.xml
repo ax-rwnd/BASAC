@@ -59,9 +59,10 @@
         <activity
             android:name=".SettingsActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".DialogActivity"
+        <activity
+            android:name=".DialogActivity"
             android:theme="@style/AppTheme.Dialog" />
+        <activity android:name=".SetValues"></activity>
     </application>
 
 </manifest>

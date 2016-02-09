@@ -22,7 +22,7 @@ public class WarningActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ds = (DataStore)getApplicationContext();
+        ds = (DataStore)getApplication();
 
         if(ds.mState.alertDialog != null) {
             this.alertDialog = ds.mState.alertDialog;
@@ -38,20 +38,30 @@ public class WarningActivity extends AppCompatActivity {
         warningId = data.getInt("warning");
 
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING+warningId);
+        mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING + warningId);
 
         switch (warningId) {
             case DataStore.VALUE_OXYGEN:
                 mWarningText.setText("Oxygen value is too low!");
                 break;
             case DataStore.VALUE_ACCELEROMETER:
-                mWarningText.setText("Accelerometer, you are falling..");
+                mWarningText.setText("Accelerometer");
+                break;
+            case DataStore.VALUE_AIRPRESSURE:
+                mWarningText.setText("Airpressure");
+                break;
+            case DataStore.VALUE_CO:
+                mWarningText.setText("Carbon monoxide");
+                break;
+            case DataStore.VALUE_HEARTRATE:
+                mWarningText.setText("Heart rate");
+                break;
+            case DataStore.VALUE_TEMPERATURE:
+                mWarningText.setText("Temperature");
                 break;
             default:
                 mWarningText.setText("Unknown warning id: " + warningId);
         }
-
-        ds = (DataStore)getApplication();
 
         Button warningButton1 = (Button) findViewById(R.id.warning_button_1);
         warningButton1.setOnClickListener(new View.OnClickListener() {

@@ -9,9 +9,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.*;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -32,12 +35,12 @@ public class StateController extends Service implements Observer {
     public static boolean serviceRunning = false;
     public static boolean bluetoothRunning = false;
     private static String TAG = "StateController";
-    private MotionSensor mMotionSensor;
-    private BluetoothClient mBluetoothClient;
+    private static MotionSensor mMotionSensor;
+    private static BluetoothClient mBluetoothClient;
 
-    private boolean warningDialog = false;
+    private static boolean warningDialog = false;
     //private boolean warningState = false;
-    private boolean[] warningState;
+    private static boolean[] warningState = new boolean[7];
 
     private JSONData json;
 
@@ -65,7 +68,6 @@ public class StateController extends Service implements Observer {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
         last_update = sharedPref.getLong("last_update", System.currentTimeMillis());
         json = new JSONData();
-        warningState = new boolean[7];
         mMotionSensor = new MotionSensor(mContext);
         DataModel.getInstance().deleteObservers();
         DataModel.getInstance().addObserver(this);
@@ -208,7 +210,6 @@ public class StateController extends Service implements Observer {
         mNotifyMgr.notify(DataStore.NOTIFICATION_SERVICE_RUNNING, mBuilder.build());
 
         json = new JSONData();
-        warningState = new boolean[7];
         if (mMotionSensor != null) {
             mMotionSensor.sm.unregisterListener(mMotionSensor);
             mMotionSensor = null;
@@ -287,6 +288,18 @@ public class StateController extends Service implements Observer {
                 mBuilder.setContentTitle("Carbon monoxide")
                         .setContentText("Carbon monoxide levels are too high!");
                 break;
+            case DataStore.VALUE_AIRPRESSURE:
+                mBuilder.setContentTitle("Air pressure")
+                        .setContentText("Air pressure");
+                break;
+            case DataStore.VALUE_HEARTRATE:
+                mBuilder.setContentTitle("Heart rate")
+                        .setContentText("Heart rate");
+                break;
+            case DataStore.VALUE_TEMPERATURE:
+                mBuilder.setContentTitle("Temperature")
+                        .setContentText("Temperature");
+                break;
             default:
                 mBuilder.setContentTitle("Warning!")
                         .setContentText("Unspecified warning!");
@@ -295,9 +308,9 @@ public class StateController extends Service implements Observer {
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING + warningId, mBuilder.build());
 
-        if (!this.warningDialog) {
+        if (!warningDialog) {
             Log.d(TAG, "Showing warning dialog");
-            this.warningDialog = true;
+            warningDialog = true;
         }
     }
 
@@ -354,8 +367,8 @@ public class StateController extends Service implements Observer {
         // Display warnings
         for (int warningId : warnings) {
             Log.d(TAG, "warning: " + warningId + " triggered!");
-            if (!this.warningState[warningId]) {
-                this.warningState[warningId] = true;
+            if (!warningState[warningId]) {
+                warningState[warningId] = true;
                 showWarning(warningId);
                 if (pref.getBoolean("pref_key_settings_in_danger_zone", false)) {
                     incidentReport(warningId);
