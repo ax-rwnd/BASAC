@@ -32,8 +32,8 @@ public class DataStore extends Application {
     public static int THRESHOLD_OXYGEN = 18;
     public static double THRESHOLD_ACCELEROMETER_LOW = 2;
     public static double THRESHOLD_ACCELEROMETER_HIGH = 30;
-    public static int THRESHOLD_TEMPERATURE_LOW = 8;
-    public static int THRESHOLD_TEMPERATURE_HIGH = 34;
+    public static int THRESHOLD_TEMPERATURE_LOW = 4;
+    public static int THRESHOLD_TEMPERATURE_HIGH = 40;
     public static int THRESHOLD_HEARTRATE_LOW = 20;
     public static int THRESHOLD_HEARTRATE_HIGH = 180;
     public static int THRESHOLD_AIRPRESSURE_LOW = 60000;

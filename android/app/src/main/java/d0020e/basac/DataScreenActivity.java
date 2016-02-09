@@ -77,7 +77,7 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         ProgressBar bar = (ProgressBar) findViewById(R.id.co_bar);
         bar.setProgress((int)DataModel.getInstance().getValue(DataStore.VALUE_CO));
         TextView text = (TextView) findViewById(R.id.co_value);
-        text.setText("CO: " + DataModel.getInstance().getValue(DataStore.VALUE_CO) + "%");
+        text.setText("CO: " + DataModel.getInstance().getValue(DataStore.VALUE_CO) + " PPM");
     }
 
     public void update(Observable observable, Object data) {

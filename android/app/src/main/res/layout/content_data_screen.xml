@@ -125,7 +125,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/co_bar"
-                android:max="100" />
+                android:max="100"
+                android:indeterminate="false" />
 
         </LinearLayout>
     </ScrollView>

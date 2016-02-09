@@ -4,13 +4,16 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -197,22 +200,45 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         super.onStart();
         if (mState == BluetoothClient.STATE_NONE) {
             // Initialize the send button with a listener that for click events
-            Button mSendButton = (Button) findViewById(R.id.bt_server_send);
+            Button mSendButton = (Button) findViewById(R.id.send_demo_data);
             mSendButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    // Send a message using content of the edit text widget
-                    TextView view = (TextView) findViewById(R.id.bt_server_data_01);
-                    String message = view.getText().toString();
-                    sendMessage(message);
+                    beginDemo();
                 }
             });
-            mSendButton = (Button) findViewById(R.id.send_demo_data);
+            mSendButton = (Button)findViewById(R.id.send_values);
             mSendButton.setOnClickListener(new View.OnClickListener() {
+                @Override
                 public void onClick(View v) {
-                    // Send a message using content of the edit text widget
-                    TextView view = (TextView) findViewById(R.id.bt_server_data_01);
-                    String message = view.getText().toString();
-                    beginDemo();
+                    int value;
+                    JSONObject json = new JSONObject();
+
+                    try {
+
+                        SeekBar seekBar = (SeekBar) findViewById(R.id.oxygen_seekBar);
+                        json.put("oxygen", seekBar.getProgress());
+
+                        seekBar = (SeekBar) findViewById(R.id.temperature_seekBar);
+                        json.put("temperature", seekBar.getProgress());
+
+                        seekBar = (SeekBar) findViewById(R.id.heartrate_seekBar);
+                        json.put("heartrate", seekBar.getProgress());
+
+                        seekBar = (SeekBar) findViewById(R.id.airpressure_seekBar);
+                        value = 300000 * seekBar.getProgress() / 100;
+                        json.put("airpressure", value);
+
+                        seekBar = (SeekBar) findViewById(R.id.humidity_seekBar);
+                        json.put("humidity", seekBar.getProgress());
+
+                        seekBar = (SeekBar) findViewById(R.id.co_seekBar);
+                        value = 200 * seekBar.getProgress() / 100;
+                        json.put("co", value);
+
+                        sendMessage(json.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             mOutStringBuffer = new StringBuffer("");

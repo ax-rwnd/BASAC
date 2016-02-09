@@ -12,10 +12,10 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/set_values">
+        android:id="@+id/linearLayout">
 
         <TextView
             android:layout_width="wrap_content"
@@ -27,7 +27,7 @@
         <SeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/oxygeen_seekBar"
+            android:id="@+id/oxygen_seekBar"
             android:layout_gravity="center_horizontal"
             android:max="30"
             android:progress="21"
@@ -122,7 +122,7 @@
         android:id="@+id/set_values"
         android:onClick="set_values"
         android:layout_gravity="center_horizontal"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

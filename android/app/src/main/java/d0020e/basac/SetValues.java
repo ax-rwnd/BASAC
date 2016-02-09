@@ -19,7 +19,7 @@ public class SetValues extends AppCompatActivity {
         int value;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
-        SeekBar seekBar = (SeekBar) findViewById(R.id.oxygeen_seekBar);
+        SeekBar seekBar = (SeekBar) findViewById(R.id.oxygen_seekBar);
         DataModel.getInstance().setValue(DataStore.VALUE_OXYGEN, seekBar.getProgress());
         editor.putInt("data_"+DataStore.VALUE_OXYGEN, seekBar.getProgress());
 
