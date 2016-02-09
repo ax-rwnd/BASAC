@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Oxygen"
-                android:id="@+id/textView2" />
+                android:id="@+id/oxygen_value" />
 
             <ProgressBar
                 android:layout_width="match_parent"
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Temperature"
-                android:id="@+id/textView3" />
+                android:id="@+id/temperature_value" />
 
             <ProgressBar
                 android:layout_width="match_parent"
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Heart rate"
-                android:id="@+id/textView4" />
+                android:id="@+id/heartrate_value" />
 
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
@@ -90,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Air pressure"
-                android:id="@+id/textView5" />
+                android:id="@+id/airpressure_value" />
 
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
@@ -104,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Humidity"
-                android:id="@+id/textView6" />
+                android:id="@+id/humidity_value" />
 
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Carbon monoxide"
-                android:id="@+id/textView7" />
+                android:id="@+id/co_value" />
 
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
