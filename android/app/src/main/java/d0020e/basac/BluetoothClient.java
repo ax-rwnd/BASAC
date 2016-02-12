@@ -3,26 +3,30 @@ package d0020e.basac;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
@@ -39,6 +43,7 @@ public class BluetoothClient {
 
     private static ConnectedThread mConnectedThread;
     private ConnectThread mConnectThread;
+    private ReconnectThread mReconnectThread;
 
     public static BluetoothDevice mDevice = null;
 
@@ -80,18 +85,34 @@ public class BluetoothClient {
                         break;
                     case MESSAGE_READ:
                         if (msg.obj != null) {
+
                             byte[] readBuf = (byte[]) msg.obj;
-                            // construct a string from the valid bytes in the buffer
                             String readMessage = new String(readBuf, 0, msg.arg1);
-                            Log.d(TAG, "Handler() msgRead: " + readMessage);
+
                             try {
-                                DataModel.getInstance().setValue(DataStore.VALUE_TESTVALUE, Integer.parseInt(readMessage));
+                                JSONObject json = new JSONObject(readMessage);
+                                DataModel.getInstance().setValue(DataStore.VALUE_OXYGEN, json.getInt("oxygen"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_CO, json.getInt("co"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_AIRPRESSURE, json.getInt("airpressure"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_TEMPERATURE, json.getInt("temperature"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_HEARTRATE, json.getInt("heartrate"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_HUMIDITY, json.getInt("humidity"));
+                                DataModel.getInstance().setUpdate();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            // construct a string from the valid bytes in the buffer
+                            /*Log.d(TAG, "Handler() msgRead: " + readMessage);
+                            try {
+                                DataModel.getInstance().setValue(DataStore.VALUE_OXYGEN, Integer.parseInt(readMessage));
                                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
-                                editor.putInt("data_"+DataStore.VALUE_TESTVALUE, Integer.parseInt(readMessage));
+                                editor.putInt("data_"+DataStore.VALUE_OXYGEN, Integer.parseInt(readMessage));
                                 editor.apply();
                             } catch (NumberFormatException e) {
                                 Log.e(TAG, "NumberFormatException: " + readMessage);
                             }
+                            */
                         }
                         break;
                     case MESSAGE_WRITE:
@@ -170,7 +191,11 @@ public class BluetoothClient {
 
     public synchronized void stop() {
         Log.d(TAG, "stop()");
-        setState(STATE_NONE);
+        setState(BluetoothClient.STATE_NONE);
+        if (mReconnectThread != null) {
+            mReconnectThread.interrupt();
+            mReconnectThread = null;
+        }
         if (mConnectThread != null) {
             mConnectThread.cancel();
             mConnectThread = null;
@@ -239,12 +264,13 @@ public class BluetoothClient {
      */
     private void connectionLost() {
         Log.d(TAG, "Connection lost");
-        //Toast.makeText(this, "Bluetooth connection lost", Toast.LENGTH_SHORT).show();
         BluetoothClient.this.stop();
+
+        mReconnectThread = new ReconnectThread();
+        mReconnectThread.start();
     }
     private void connectionFailed() {
         Log.d(TAG, "Connection failed");
-        //Toast.makeText(this, "Bluetooth connection failed", Toast.LENGTH_SHORT).show();
         BluetoothClient.intendedStop = true;
         BluetoothClient.this.stop();
     }
@@ -257,6 +283,7 @@ public class BluetoothClient {
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
         if (StateController.serviceRunning) {
+            mNotifyMgr.cancel(DataStore.NOTIFICATION_BLUETOOTHCLIENT);
             // Merge service and bluetooth notification
             mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
                     .setContentTitle("BASAC")
@@ -316,7 +343,11 @@ public class BluetoothClient {
                                     PendingIntent.FLAG_UPDATE_CURRENT));
             mNotifyMgr.notify(DataStore.NOTIFICATION_BLUETOOTHCLIENT, mBuilder.build());
         }
-
+        // Cancel any reconnect thread running
+        if (mReconnectThread != null) {
+            mReconnectThread.interrupt();
+            mReconnectThread = null;
+        }
         // Cancel the thread that completed the connection
        if (mConnectThread != null) {
             mConnectThread.cancel();
@@ -345,7 +376,14 @@ public class BluetoothClient {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
+        private ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        private ObjectOutput out = null;
+        private ObjectInput in = null;
+
+        private byte[] yourBytes = new byte[1024];
+
         public ConnectedThread(BluetoothSocket socket) {
+
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -355,6 +393,7 @@ public class BluetoothClient {
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
+                out = new ObjectOutputStream(bos);
             } catch (IOException e) {
                 Log.e(TAG,"ConnectedThread() failed",e);
             }
@@ -370,11 +409,10 @@ public class BluetoothClient {
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
-                    // Read from the InputStream
                     bytes = mmInStream.read(buffer);
                     // Send the obtained bytes to the UI activity
-                    handler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
+                    handler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     connectionLost();
@@ -441,7 +479,9 @@ public class BluetoothClient {
                 } catch (IOException closeException) {
                     Log.d(TAG, "ConnectThread run() mmSocket.close()");
                 }
-                connectionFailed();
+                if (mReconnectThread == null) {
+                    connectionFailed();
+                }
                 return;
             }
 
@@ -462,6 +502,54 @@ public class BluetoothClient {
                 Log.d(TAG, "ConnectThread cancel() mmSocket.close()");
             }
         }
+    }
+
+    /**
+     * TODO: show notification/toast message when attempting reconnect
+     */
+    private class ReconnectThread extends Thread {
+        int reconnectAttempt = 0;
+        int maxReconnectAttempt;
+        int timeout;
+        Boolean reconnect;
+
+        public ReconnectThread() {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+            maxReconnectAttempt = Integer.parseInt(sharedPref.getString("pref_key_settings_bluetooth_reconnect_attempts", "5"));
+            timeout = Integer.parseInt(sharedPref.getString("pref_key_settings_bluetooth_timeout", "5000"));
+            reconnect = sharedPref.getBoolean("pref_key_settings_bluetooth_reconnect", true);
+        }
+
+        public void run() {
+            Looper.prepare();
+            while (reconnectAttempt < maxReconnectAttempt && mConnectedThread == null) {
+                if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled() || !reconnect) {
+                    break;
+                }
+                Log.d(TAG, "ReconnectThread, attempt: " + (reconnectAttempt+1));
+                setState(BluetoothClient.STATE_NONE);
+                try {
+                    Thread.sleep(timeout);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "ReconnectThread.run() interrupted");
+                    break;
+                }
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+                String address = sharedPref.getString("device_address", null);
+                BluetoothClient.mDevice = mBluetoothAdapter.getRemoteDevice(address);
+                connect(BluetoothClient.mDevice);
+                reconnectAttempt++;
+                if (mConnectedThread != null) {
+                    break;
+                }
+            }
+            Log.d(TAG, "Exit ReconnectThread");
+            if (mConnectedThread == null) {
+                connectionFailed();
+            }
+        }
+
     }
 
 }
