@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -77,15 +78,13 @@ public class StateController extends Service implements Observer {
         Log.d(TAG, "Constructor()");
     }
 
-    /**
-     * TODO: Update service notification
-     */
     public void startBluetoothConnection() {
         StateController.bluetoothRunning = true;
         if (mBluetoothClient == null || mBluetoothClient.getState() == BluetoothClient.STATE_NONE) {
             mBluetoothClient = new BluetoothClient(mContext);
         } else {
             Log.d(TAG, "Bluetooth already connected");
+            Toast.makeText(mContext, "Already connected, try disconnecting or restarting service", Toast.LENGTH_SHORT).show();
         }
     }
     public void stopBluetoothConnection() {

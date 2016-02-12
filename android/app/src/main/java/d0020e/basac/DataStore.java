@@ -29,6 +29,7 @@ public class DataStore extends Application {
     public static final int VALUE_CO = 6;
 
     // Threshold values
+    // TODO: Set these values from settings and/or from server
     public static int THRESHOLD_OXYGEN = 18;
     public static double THRESHOLD_ACCELEROMETER_LOW = 2;
     public static double THRESHOLD_ACCELEROMETER_HIGH = 30;
