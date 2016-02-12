@@ -504,6 +504,9 @@ public class BluetoothClient {
         }
     }
 
+    /**
+     * TODO: show notification/toast message when attempting reconnect
+     */
     private class ReconnectThread extends Thread {
         int reconnectAttempt = 0;
         int maxReconnectAttempt;
@@ -512,18 +515,18 @@ public class BluetoothClient {
 
         public ReconnectThread() {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-            maxReconnectAttempt = sharedPref.getInt("pref_key_settings_bluetooth_reconnect_attempts", 5);
-            timeout = sharedPref.getInt("pref_key_settings_bluetooth_timeout", 5000);
+            maxReconnectAttempt = Integer.parseInt(sharedPref.getString("pref_key_settings_bluetooth_reconnect_attempts", "5"));
+            timeout = Integer.parseInt(sharedPref.getString("pref_key_settings_bluetooth_timeout", "5000"));
             reconnect = sharedPref.getBoolean("pref_key_settings_bluetooth_reconnect", true);
         }
 
         public void run() {
             Looper.prepare();
             while (reconnectAttempt < maxReconnectAttempt && mConnectedThread == null) {
-                if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+                if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled() || !reconnect) {
                     break;
                 }
-                Log.d(TAG, "ReconnectThread, attempt: " + reconnectAttempt);
+                Log.d(TAG, "ReconnectThread, attempt: " + (reconnectAttempt+1));
                 setState(BluetoothClient.STATE_NONE);
                 try {
                     Thread.sleep(timeout);
