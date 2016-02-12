@@ -59,8 +59,6 @@ public class BluetoothClient {
 
     private static boolean intendedStop = false;
 
-    private static int maxReconnectAttempt = 3;
-
     public static int mState = STATE_NONE;
 
     private static Handler mHandler = null;
@@ -508,10 +506,20 @@ public class BluetoothClient {
 
     private class ReconnectThread extends Thread {
         int reconnectAttempt = 0;
-        int timeout = 5000;
+        int maxReconnectAttempt;
+        int timeout;
+        Boolean reconnect;
+
+        public ReconnectThread() {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+            maxReconnectAttempt = sharedPref.getInt("pref_key_settings_bluetooth_reconnect_attempts", 5);
+            timeout = sharedPref.getInt("pref_key_settings_bluetooth_timeout", 5000);
+            reconnect = sharedPref.getBoolean("pref_key_settings_bluetooth_reconnect", true);
+        }
+
         public void run() {
             Looper.prepare();
-            while (reconnectAttempt < BluetoothClient.maxReconnectAttempt && mConnectedThread == null) {
+            while (reconnectAttempt < maxReconnectAttempt && mConnectedThread == null) {
                 if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
                     break;
                 }
