@@ -11,6 +11,9 @@ import android.util.Log;
  * Created by WeeDzCokie on 2016-01-28.
  */
 public class DataStore extends Application {
+    // Location
+    public static final int LOCATION_SAFE = 0;
+    public static final int LOCATION_DANGEROUS = 1;
     // Notification
     public static final int NOTIFICATION_BLUETOOTHCLIENT = 1;
     public static final int NOTIFICATION_BLUETOOTH_LOST = 2;

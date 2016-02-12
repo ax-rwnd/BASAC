@@ -1,4 +1,4 @@
-package d0020e.basac;
+package d0020e.basac.DialogPreference;
 
 import android.content.Context;
 import android.preference.DialogPreference;
@@ -8,9 +8,9 @@ import android.util.Log;
 /**
  * Created by WeeDzCokie on 2016-02-03.
  */
-public class ResetLogFileDialogPreference extends DialogPreference {
+public class ResetLogFile extends DialogPreference {
 
-    public ResetLogFileDialogPreference(Context context, AttributeSet attrs) {
+    public ResetLogFile(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 

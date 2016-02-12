@@ -370,7 +370,7 @@ public class StateController extends Service implements Observer {
             if (!warningState[warningId]) {
                 warningState[warningId] = true;
                 showWarning(warningId);
-                if (pref.getBoolean("pref_key_settings_in_danger_zone", false)) {
+                if (Integer.parseInt(pref.getString("pref_key_location", "0")) == DataStore.LOCATION_DANGEROUS) {
                     incidentReport(warningId);
                 }
             }
