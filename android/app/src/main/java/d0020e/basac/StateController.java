@@ -138,6 +138,10 @@ public class StateController extends Service implements Observer {
         DataStore ds = (DataStore)getApplication();
         ds.mState = this;
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        last_update = sharedPref.getLong("last_update", System.currentTimeMillis());
+        boolean startBluetooth = sharedPref.getBoolean("start_bluetooth", false);
+
         DataModel.getInstance().deleteObservers();
         if (intent != null) {
             String stopString = intent.getStringExtra("STOP");
@@ -149,6 +153,7 @@ public class StateController extends Service implements Observer {
                     SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
                     editor.putBoolean("start_bluetooth", false);
                     editor.apply();
+                    startBluetooth = false;
                     /*if (!StateController.serviceRunning) {
                         stop();
                         return START_NOT_STICKY;
@@ -162,7 +167,7 @@ public class StateController extends Service implements Observer {
             if (startString != null && startString.length() > 0) {
                 Log.d(TAG, "start: " + startString);
                 if (startString.equals("BLUETOOTH")) {
-                    startBluetoothConnection();
+                    startBluetooth = true;
                 }
                 /*if (!StateController.serviceRunning) {
                     return START_NOT_STICKY;
@@ -172,10 +177,6 @@ public class StateController extends Service implements Observer {
             msg.arg1 = startId;
             mServiceHandler.sendMessage(msg);
         }
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-        last_update = sharedPref.getLong("last_update", System.currentTimeMillis());
-        boolean startBluetooth = sharedPref.getBoolean("start_bluetooth", false);
 
         if (startBluetooth) {
             startBluetoothConnection();

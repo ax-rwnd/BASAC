@@ -4,17 +4,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -190,9 +187,6 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
             return;
         }
         setContentView(R.layout.activity_bluetooth_server_screen);
-
-        //Bundle data = getIntent().getExtras();
-
     }
 
     @Override
@@ -256,6 +250,11 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         stop();
         super.onDestroy();
     }
+    @Override
+    public void onPause() {
+        stop();
+        super.onPause();
+    }
 
     /**
      * Start the chat service. Specifically start AcceptThread to begin a
@@ -288,12 +287,13 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
         setState(BluetoothClient.STATE_NONE);
     }
 
+
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
-        if (mState != BluetoothClient.STATE_CONNECTED) {
+        /*if (mState != BluetoothClient.STATE_CONNECTED) {
             Toast.makeText(this, "Not connected", Toast.LENGTH_SHORT).show();
             return;
-        }
+        }*/
         // Check that there's actually something to send
         if (message.length() > 0) {
             // Get the message bytes and tell the BluetoothChatService to write
