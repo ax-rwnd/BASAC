@@ -2,9 +2,9 @@ package d0020e.basac;
 
 import android.bluetooth.BluetoothAdapter;
 import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.Date;
 
 /**
  * Created by weedz on 2016-02-03.

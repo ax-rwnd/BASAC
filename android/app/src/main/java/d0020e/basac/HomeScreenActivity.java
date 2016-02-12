@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 
 public class HomeScreenActivity extends AppCompatActivity {
@@ -23,8 +21,6 @@ public class HomeScreenActivity extends AppCompatActivity {
 
         DataStore ds = (DataStore)getApplication();
         ds.mState = new StateController(ds);
-
-        startActivity(new Intent(this, DialogActivity.class));
 
         Button settings = (Button)findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {

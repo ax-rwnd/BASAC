@@ -5,25 +5,26 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.*;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Toast;
-import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -32,22 +33,18 @@ import java.util.Observer;
  */
 public class StateController extends Service implements Observer {
     public static boolean serviceRunning = false;
+    public static boolean bluetoothRunning = false;
     private static String TAG = "StateController";
-    private MotionSensor mMotionSensor;
-    private BluetoothClient mBluetoothClient;
+    private static MotionSensor mMotionSensor;
+    private static BluetoothClient mBluetoothClient;
 
-    private boolean warningDialog = false;
+    private static boolean warningDialog = false;
     //private boolean warningState = false;
-    private boolean[] warningState;
+    private static boolean[] warningState = new boolean[7];
 
     private JSONData json;
 
-
-    public static final int ACCIDENT_TEST = 0;
-    public static final int ACCIDENT_FALL = 1;
-
     private long last_update = 0;
-    private int startId;
     private Context mContext;
     public AlertDialog alertDialog;
 
@@ -71,7 +68,6 @@ public class StateController extends Service implements Observer {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
         last_update = sharedPref.getLong("last_update", System.currentTimeMillis());
         json = new JSONData();
-        warningState = new boolean[5];
         mMotionSensor = new MotionSensor(mContext);
         DataModel.getInstance().deleteObservers();
         DataModel.getInstance().addObserver(this);
@@ -85,6 +81,7 @@ public class StateController extends Service implements Observer {
      * TODO: Update service notification
      */
     public void startBluetoothConnection() {
+        StateController.bluetoothRunning = true;
         if (mBluetoothClient == null || mBluetoothClient.getState() == BluetoothClient.STATE_NONE) {
             mBluetoothClient = new BluetoothClient(mContext);
         } else {
@@ -92,6 +89,11 @@ public class StateController extends Service implements Observer {
         }
     }
     public void stopBluetoothConnection() {
+        StateController.bluetoothRunning = false;
+        // Cancel bluetooth notification
+        NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotifyMgr.cancel(DataStore.NOTIFICATION_BLUETOOTHCLIENT);
+
         if (mBluetoothClient != null) {
             mBluetoothClient.setStop();
             mBluetoothClient.stop();
@@ -132,6 +134,10 @@ public class StateController extends Service implements Observer {
      */
     public int onStartCommand(Intent intent, int flags, int startId) {
         mContext = this;
+
+        DataStore ds = (DataStore)getApplication();
+        ds.mState = this;
+
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
         last_update = sharedPref.getLong("last_update", System.currentTimeMillis());
         boolean startBluetooth = sharedPref.getBoolean("start_bluetooth", false);
@@ -143,20 +149,30 @@ public class StateController extends Service implements Observer {
                 Log.d(TAG, "stop: " + stopString);
                 if (stopString.equals("BLUETOOTH")) {
                     stopBluetoothConnection();
+                    // Set preference
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+                    editor.putBoolean("start_bluetooth", false);
+                    editor.apply();
                     startBluetooth = false;
-                } else if (stopString.equals("STOP")){
+                    /*if (!StateController.serviceRunning) {
+                        stop();
+                        return START_NOT_STICKY;
+                    }*/
+                } else if (stopString.equals("STOP")) {
                     stop();
-                    return 0;
+                    return START_NOT_STICKY;
                 }
             }
-            /*String startString = intent.getStringExtra("START");
+            String startString = intent.getStringExtra("START");
             if (startString != null && startString.length() > 0) {
                 Log.d(TAG, "start: " + startString);
                 if (startString.equals("BLUETOOTH")) {
-                    startBluetoothConnection();
+                    startBluetooth = true;
                 }
-            }*/
-            this.startId = startId;
+                /*if (!StateController.serviceRunning) {
+                    return START_NOT_STICKY;
+                }*/
+            }
             Message msg = mServiceHandler.obtainMessage();
             msg.arg1 = startId;
             mServiceHandler.sendMessage(msg);
@@ -194,12 +210,7 @@ public class StateController extends Service implements Observer {
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.notify(DataStore.NOTIFICATION_SERVICE_RUNNING, mBuilder.build());
 
-        DataStore ds = (DataStore)getApplication();
-        //ds.mState.stop();
-        ds.mState = this;
-
         json = new JSONData();
-        warningState = new boolean[5];
         if (mMotionSensor != null) {
             mMotionSensor.sm.unregisterListener(mMotionSensor);
             mMotionSensor = null;
@@ -266,13 +277,29 @@ public class StateController extends Service implements Observer {
                 .setPriority(NotificationCompat.PRIORITY_MAX);
 
         switch (warningId) {
-            case DataStore.VALUE_TESTVALUE:
-                mBuilder.setContentTitle("Warning, Test value")
-                        .setContentText("Test value too high!");
+            case DataStore.VALUE_OXYGEN:
+                mBuilder.setContentTitle("Warning, Oxygen value!")
+                        .setContentText("Oxygen value is too low!");
                 break;
             case DataStore.VALUE_ACCELEROMETER:
                 mBuilder.setContentTitle("Accelerometer")
                         .setContentText("Accelerometer triggered warning");
+                break;
+            case DataStore.VALUE_CO:
+                mBuilder.setContentTitle("Carbon monoxide")
+                        .setContentText("Carbon monoxide levels are too high!");
+                break;
+            case DataStore.VALUE_AIRPRESSURE:
+                mBuilder.setContentTitle("Air pressure")
+                        .setContentText("Air pressure");
+                break;
+            case DataStore.VALUE_HEARTRATE:
+                mBuilder.setContentTitle("Heart rate")
+                        .setContentText("Heart rate");
+                break;
+            case DataStore.VALUE_TEMPERATURE:
+                mBuilder.setContentTitle("Temperature")
+                        .setContentText("Temperature");
                 break;
             default:
                 mBuilder.setContentTitle("Warning!")
@@ -282,9 +309,9 @@ public class StateController extends Service implements Observer {
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING + warningId, mBuilder.build());
 
-        if (!this.warningDialog) {
+        if (!warningDialog) {
             Log.d(TAG, "Showing warning dialog");
-            this.warningDialog = true;
+            warningDialog = true;
         }
     }
 
@@ -295,7 +322,11 @@ public class StateController extends Service implements Observer {
      * TODO: save json data to cache file for ccn-lite
      */
     public void update(Observable observable, Object data) {
-        int warningId = -1;
+        update();
+    }
+
+    public void update() {
+        ArrayList<Integer> warnings = new ArrayList<>();
         Log.d(TAG, "Data updated");
         last_update = System.currentTimeMillis();
 
@@ -304,28 +335,56 @@ public class StateController extends Service implements Observer {
         editor.putLong("last_update", last_update);
         editor.apply();
 
-        if((DataModel.getInstance().getValue(DataStore.VALUE_TESTVALUE) > 30) && !this.warningState[DataStore.VALUE_TESTVALUE]) {
-            this.warningState[DataStore.VALUE_TESTVALUE] = true;
-            showWarning(DataStore.VALUE_TESTVALUE);
-            if (pref.getBoolean("pref_key_settings_in_danger_zone", false)) {
-                incidentReport(ACCIDENT_TEST);
-            }
+        // Oxygen
+        if(DataModel.getInstance().getValue(DataStore.VALUE_OXYGEN) < DataStore.THRESHOLD_OXYGEN) {
+            warnings.add(DataStore.VALUE_OXYGEN);
         }
-        //Triggers fall if "falling", not already triggered and inside dangerzone.
-        if((DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) < MotionSensor.threshold)
-                && !this.warningState[DataStore.VALUE_ACCELEROMETER]) {
-            this.warningState[DataStore.VALUE_ACCELEROMETER] = true;
+        // Heart rate
+        if (DataModel.getInstance().getValue(DataStore.VALUE_HEARTRATE) < DataStore.THRESHOLD_HEARTRATE_LOW ||
+                DataModel.getInstance().getValue(DataStore.VALUE_HEARTRATE) > DataStore.THRESHOLD_HEARTRATE_HIGH) {
+            warnings.add(DataStore.VALUE_HEARTRATE);
+        }
+        // Temperature
+        if (DataModel.getInstance().getValue(DataStore.VALUE_TEMPERATURE) > DataStore.THRESHOLD_TEMPERATURE_HIGH ||
+                DataModel.getInstance().getValue(DataStore.VALUE_TEMPERATURE) < DataStore.THRESHOLD_TEMPERATURE_LOW) {
+
+            warnings.add(DataStore.VALUE_TEMPERATURE);
+        }
+        // Accelerometer
+        if(DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) < DataStore.THRESHOLD_ACCELEROMETER_LOW ||
+                DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) > DataStore.THRESHOLD_ACCELEROMETER_HIGH) {
             json.put("accelerometer", DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER));
-            showWarning(DataStore.VALUE_ACCELEROMETER);
-            if (pref.getBoolean("pref_key_settings_in_danger_zone", false)) {
-                incidentReport(ACCIDENT_FALL);
+            warnings.add(DataStore.VALUE_ACCELEROMETER);
+        }
+        // Air pressure
+        if (DataModel.getInstance().getValue(DataStore.VALUE_AIRPRESSURE) < DataStore.THRESHOLD_AIRPRESSURE_LOW ||
+                DataModel.getInstance().getValue(DataStore.VALUE_AIRPRESSURE) > DataStore.THRESHOLD_AIRPRESSURE_HIGH) {
+            warnings.add(DataStore.VALUE_AIRPRESSURE);
+        }
+        // Carbon monoxide
+        if (DataModel.getInstance().getValue(DataStore.VALUE_CO) > DataStore.THRESHOLD_CO) {
+            warnings.add(DataStore.VALUE_CO);
+        }
+        // Display warnings
+        for (int warningId : warnings) {
+            Log.d(TAG, "warning: " + warningId + " triggered!");
+            if (!warningState[warningId]) {
+                warningState[warningId] = true;
+                showWarning(warningId);
+                if (Integer.parseInt(pref.getString("pref_key_location", "0")) == DataStore.LOCATION_DANGEROUS) {
+                    incidentReport(warningId);
+                }
             }
         }
-        if (warningId != -1) {
-            showWarning(warningId);
-        }
+
         // update JSON data
-        json.put("test_value", DataModel.getInstance().getValue(DataStore.VALUE_TESTVALUE));
+        // TODO: exclude sensitive data
+        json.put("oxygen", DataModel.getInstance().getValue(DataStore.VALUE_OXYGEN));
+        json.put("temperature", DataModel.getInstance().getValue(DataStore.VALUE_TEMPERATURE));
+        json.put("heartrate", DataModel.getInstance().getValue(DataStore.VALUE_HEARTRATE));
+        json.put("airpressure", DataModel.getInstance().getValue(DataStore.VALUE_AIRPRESSURE));
+        json.put("humidity", DataModel.getInstance().getValue(DataStore.VALUE_HUMIDITY));
+        json.put("co", DataModel.getInstance().getValue(DataStore.VALUE_CO));
         json.logJSON();
 
         if (pref.getBoolean("pref_key_settings_datalog", false)) {
@@ -366,10 +425,10 @@ public class StateController extends Service implements Observer {
     private void incidentReport(int typeOfIncident) {
         String incidentType;
         switch (typeOfIncident) {
-            case ACCIDENT_TEST:
+            case DataStore.VALUE_OXYGEN:
                 incidentType = "Vest value exceeded";
                 break;
-            case ACCIDENT_FALL:
+            case DataStore.VALUE_ACCELEROMETER:
                 incidentType = "Fall accident";
                 break;
             default:
