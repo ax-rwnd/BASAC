@@ -57,7 +57,7 @@ public class BluetoothClient {
     public static final int MESSAGE_WRITE = 3;
     public static final int MESSAGE_DEVICE_NAME = 4;
 
-    private static boolean intendedStop = false;
+    private boolean intendedStop = false;
 
     public static int mState = STATE_NONE;
 
@@ -158,6 +158,7 @@ public class BluetoothClient {
      * @param device  The BluetoothDevice to connect
      */
     public synchronized void connect(BluetoothDevice device) {
+        intendedStop = false;
         //Log.d(TAG, "connect to: " + device);
         // Cancel any thread attempting to make a connection
         if (mState == STATE_CONNECTING) {
@@ -186,7 +187,7 @@ public class BluetoothClient {
     }
 
     public void setStop() {
-        BluetoothClient.intendedStop = true;
+        intendedStop = true;
     }
 
     public synchronized void stop() {
@@ -239,7 +240,7 @@ public class BluetoothClient {
             mNotifyMgr.cancel(DataStore.NOTIFICATION_BLUETOOTHCLIENT);
         }
 
-        if (!BluetoothClient.intendedStop) {
+        if (!intendedStop) {
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setSmallIcon(R.drawable.ic_notifications_black_24dp)
@@ -271,7 +272,7 @@ public class BluetoothClient {
     }
     private void connectionFailed() {
         Log.d(TAG, "Connection failed");
-        BluetoothClient.intendedStop = true;
+        intendedStop = true;
         BluetoothClient.this.stop();
     }
 
@@ -497,7 +498,9 @@ public class BluetoothClient {
         public void cancel() {
             try {
                 Log.d(TAG, "ConnectThread cancel()");
-                mmSocket.close();
+                if (mmSocket != null) {
+                    mmSocket.close();
+                }
             } catch (IOException e) {
                 Log.d(TAG, "ConnectThread cancel() mmSocket.close()");
             }
@@ -511,7 +514,8 @@ public class BluetoothClient {
         int reconnectAttempt = 0;
         int maxReconnectAttempt;
         int timeout;
-        Boolean reconnect;
+        boolean reconnect;
+        boolean interruptStatus = false;
 
         public ReconnectThread() {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -523,18 +527,19 @@ public class BluetoothClient {
         public void run() {
             Looper.prepare();
             while (reconnectAttempt < maxReconnectAttempt && mConnectedThread == null) {
-                if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled() || !reconnect) {
+                if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled() || !reconnect || intendedStop) {
                     break;
                 }
-                Log.d(TAG, "ReconnectThread, attempt: " + (reconnectAttempt+1));
                 setState(BluetoothClient.STATE_NONE);
                 try {
                     Thread.sleep(timeout);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     Log.d(TAG, "ReconnectThread.run() interrupted");
+                    interruptStatus = true;
                     break;
                 }
+                Log.d(TAG, "ReconnectThread, attempt: " + (reconnectAttempt+1));
                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
                 String address = sharedPref.getString("device_address", null);
                 BluetoothClient.mDevice = mBluetoothAdapter.getRemoteDevice(address);
@@ -545,7 +550,7 @@ public class BluetoothClient {
                 }
             }
             Log.d(TAG, "Exit ReconnectThread");
-            if (mConnectedThread == null) {
+            if (mConnectedThread == null && !interruptStatus) {
                 connectionFailed();
             }
         }
