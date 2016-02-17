@@ -87,7 +87,7 @@ public class WarningActivity extends AppCompatActivity {
         UserIncidentReport accidentReport = new UserIncidentReport(warningId, Integer.toString(typeOfAccident));
         alertDialog = new AlertDialog.Builder(WarningActivity.this).create();
         alertDialog.setTitle("Alert");
-        alertDialog.setMessage("Alert message to be shown");
+        alertDialog.setMessage(accidentReport.getReportMessage());
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
