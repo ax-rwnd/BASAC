@@ -78,12 +78,13 @@ public class WarningActivity extends AppCompatActivity {
         Button warningButton3 = (Button) findViewById(R.id.warning_button_3);
         warningButton3.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                submitReport(2);
+                submitReport(3);
             }
         });
     }
     //TODO: Make the reports actually submit something useful.
     private void submitReport(int typeOfAccident) {
+        UserIncidentReport accidentReport = new UserIncidentReport(warningId, Integer.toString(typeOfAccident));
         alertDialog = new AlertDialog.Builder(WarningActivity.this).create();
         alertDialog.setTitle("Alert");
         alertDialog.setMessage("Alert message to be shown");
