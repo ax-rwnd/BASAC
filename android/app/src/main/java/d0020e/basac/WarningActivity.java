@@ -15,12 +15,17 @@ public class WarningActivity extends AppCompatActivity {
 
     private DataStore ds;
     private int warningId;
+    private String alt1, alt2, alt3;
 
     private AlertDialog alertDialog;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.alt1 = "case 1";
+        this.alt2 = "case 2";
+        this.alt3 = "case 3";
 
         ds = (DataStore)getApplication();
 
@@ -46,6 +51,9 @@ public class WarningActivity extends AppCompatActivity {
                 break;
             case DataStore.VALUE_ACCELEROMETER:
                 mWarningText.setText("Accelerometer");
+                this.alt1 = "Need Help!";
+                this.alt2 = "Minor fall";
+                this.alt3 = "Nothing";
                 break;
             case DataStore.VALUE_AIRPRESSURE:
                 mWarningText.setText("Airpressure");
@@ -66,28 +74,32 @@ public class WarningActivity extends AppCompatActivity {
         Button warningButton1 = (Button) findViewById(R.id.warning_button_1);
         warningButton1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                submitReport(1);
+                submitReport(warningId, alt1);
             }
         });
+        warningButton1.setText(this.alt1);
         Button warningButton2 = (Button) findViewById(R.id.warning_button_2);
         warningButton2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                submitReport(2);
+                submitReport(warningId, alt2);
             }
         });
+        warningButton2.setText(this.alt2);
         Button warningButton3 = (Button) findViewById(R.id.warning_button_3);
         warningButton3.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                submitReport(3);
+                submitReport(warningId, alt3);
             }
         });
+        warningButton3.setText(this.alt3);
     }
     //TODO: Make the reports actually submit something useful.
-    private void submitReport(int typeOfAccident) {
-        UserIncidentReport accidentReport = new UserIncidentReport(warningId, Integer.toString(typeOfAccident));
+    private void submitReport(int typeOfAccident, String optionChosen) {
+        UserIncidentReport accidentReport = new UserIncidentReport(warningId, optionChosen);
+
         alertDialog = new AlertDialog.Builder(WarningActivity.this).create();
         alertDialog.setTitle("Alert");
-        alertDialog.setMessage(accidentReport.getReportMessage());
+        alertDialog.setMessage(accidentReport.getReportMessage()+" at "+accidentReport.getTimeStamp());
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
