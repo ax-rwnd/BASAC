@@ -24,6 +24,8 @@ JSON structure:
 }
 
  */
+
+    //TODO: comment.
 public class JSONData {
     private static final String TAG = "JSONData";
 
