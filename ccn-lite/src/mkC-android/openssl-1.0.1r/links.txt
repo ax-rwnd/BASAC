@@ -1,0 +1,3 @@
+openssl-for-android-x86-64-and-mips64
+compilin-the-latest-openssl-for-android
+
