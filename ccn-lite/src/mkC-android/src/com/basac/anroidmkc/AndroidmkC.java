@@ -25,7 +25,7 @@ public class AndroidmkC extends Activity
 		AlertDialog.Builder alertDB = new AlertDialog.Builder(this);
 		alertDB.setTitle("Hello World!");
 		alertDB.create().show();
-	new AndroidmkC().generateContent("Hello World!", "/mnt/sdcard/infile.txt", "/mnt/sdcard/test.ndntlv");
+	new AndroidmkC().generateContent("/ndn/hello-world", "/mnt/sdcard/infile.txt", "/mnt/sdcard/test.ndntlv");
 	
     }
 }
