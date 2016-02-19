@@ -44,7 +44,6 @@ public class StateController extends Service implements Observer {
     private static boolean[] warningState = new boolean[7];
 
     private JSONData json;
-    private JSONData reportJson; //TODO: Add reports to this JSON.
 
     private long last_update = 0;
     private Context mContext;
@@ -396,6 +395,7 @@ public class StateController extends Service implements Observer {
 
                 line = json.toString() + "\n";
 
+                Log.d("Files Directory", String.valueOf(mContext.getFilesDir()));
                 Log.d(TAG, line);
 
                 outputStream.write(line.getBytes());

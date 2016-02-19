@@ -7,9 +7,14 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.io.FileOutputStream;
+import java.text.DateFormat;
 
 public class WarningActivity extends AppCompatActivity {
 
@@ -18,10 +23,13 @@ public class WarningActivity extends AppCompatActivity {
     private String alt1, alt2, alt3;
 
     private AlertDialog alertDialog;
+    private JSONData reportJson;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_warning);
 
         this.alt1 = "case 1";
         this.alt2 = "case 2";
@@ -33,8 +41,9 @@ public class WarningActivity extends AppCompatActivity {
             this.alertDialog = ds.mState.alertDialog;
             this.alertDialog.cancel();
         }
+        reportJson = new JSONData();
+        RelativeLayout layout = (RelativeLayout) View.inflate(this, R.layout.content_warning, null);
 
-        setContentView(R.layout.activity_warning);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -92,14 +101,40 @@ public class WarningActivity extends AppCompatActivity {
             }
         });
         warningButton3.setText(this.alt3);
+
+      /*  Button testbutton1 = new Button(this);
+        testbutton1.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT));
+        testbutton1.setText("test");
+        layout.addView(testbutton1); */
+
     }
-    //TODO: Make the reports actually submit something useful.
     private void submitReport(int typeOfAccident, String optionChosen) {
         UserIncidentReport accidentReport = new UserIncidentReport(warningId, optionChosen);
+        reportJson.put("AccidentTimeStamp", accidentReport.getTimeStamp());
+        reportJson.put("AccidentType", accidentReport.getType());
+        reportJson.put("AccidentMessage", accidentReport.getReportMessage());
+        reportJson.logJSON();
+        Log.d("JSON REPORT", reportJson.toString());
+
+        String filename = "report:"+accidentReport.getTimeStamp()+".txt";
+        String string = accidentReport.getTimeStamp()+"::"+accidentReport.getType()+"::"+accidentReport.getReportMessage();
+        FileOutputStream outputStream;
+
+        try{
+            outputStream = getApplication().openFileOutput(filename, Context.MODE_WORLD_READABLE); //TODO: Dont use this! (very dangerous)
+            outputStream.write(string.getBytes());
+            outputStream.close();
+            Log.d("Files Directory Report", String.valueOf(getApplication().getFilesDir()));
+            Log.d("Content", string);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         alertDialog = new AlertDialog.Builder(WarningActivity.this).create();
         alertDialog.setTitle("Alert");
-        alertDialog.setMessage(accidentReport.getReportMessage()+" at "+accidentReport.getTimeStamp());
+        alertDialog.setMessage(accidentReport.getReportMessage()+" at "+ DateFormat.getInstance().format(accidentReport.getTimeStamp()));
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
