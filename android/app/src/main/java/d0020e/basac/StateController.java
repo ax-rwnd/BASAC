@@ -31,6 +31,8 @@ import java.util.Observer;
 
 /**
  * Created by Sebastian on 04/12/2015.
+ *
+ * TODO: Do not trigger warnings/collect data if statecontroller is set not to monitor to user
  */
 public class StateController extends Service implements Observer {
     public static boolean serviceRunning = false;
@@ -40,7 +42,6 @@ public class StateController extends Service implements Observer {
     private static BluetoothClient mBluetoothClient;
 
     private static boolean warningDialog = false;
-    //private boolean warningState = false;
     private static boolean[] warningState = new boolean[7];
 
     private JSONData json;

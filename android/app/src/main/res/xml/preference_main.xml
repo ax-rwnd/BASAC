@@ -14,9 +14,9 @@
             android:title="Log"
             android:defaultValue="false" />
 
-        <d0020e.basac.DialogPreference.ResetLogFile
+        <d0020e.basac.Settings.ResetLogFile
             android:key="pref_key_settings_delete_log_file"
-            android:title="Delete log file"
+            android:title="Delete log file?"
             android:positiveButtonText="Yes"
             android:negativeButtonText="No" />
 
@@ -53,13 +53,26 @@
             android:key="button_dev_settings"
             android:title="Developer settings"
             android:persistent="false">
-            <ListPreference
-                android:title="Mock location"
-                android:summary="Simulate location"
-                android:key="pref_key_location"
-                android:entries="@array/mockLocation"
-                android:entryValues="@array/mockLocation_values"
-                android:defaultValue="0" />
+            <PreferenceCategory
+                android:title="Location"
+                android:key="pref_key_settings_location">
+                <d0020e.basac.Settings.ListPreference
+                    android:title="Mock location"
+                    android:summary="Simulate location"
+                    android:key="pref_key_location"
+                    android:entries="@array/mockLocation"
+                    android:entryValues="@array/mockLocation_values"
+                    android:defaultValue="0" />
+            </PreferenceCategory>
+            <PreferenceCategory
+                android:title="Accelerometer"
+                android:key="pref_key_settings_accelerometer">
+                <CheckBoxPreference
+                    android:key="settings_accelerometer_enable"
+                    android:title="Enable accelerometer"
+                    android:defaultValue="true" />
+
+            </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
 
