@@ -7,7 +7,14 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="d0020e.basac.BluetoothClientScreenActivity">
+    tools:context="d0020e.basac.BluetoothServerScreenActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Demo"
+        android:onClick="send_demo_data"
+        android:id="@+id/send_demo_data" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -22,37 +29,127 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/bt_status_client">
+        android:layout_above="@+id/bt_status_client"
+        android:layout_below="@+id/send_demo_data">
 
-        <EditText
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bt_server_data_01" />
+            android:layout_height="match_parent"
+            android:id="@+id/scrollView3"
+            android:layout_gravity="center_horizontal" >
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bt_server_data_02" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout2" >
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bt_server_data_03" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Oxygen level"
+                    android:layout_gravity="center_horizontal" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send data"
-            android:id="@+id/bt_server_send" />
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/oxygen_seekBar"
+                    android:layout_gravity="center_horizontal"
+                    android:max="30"
+                    android:progress="21"
+                    android:indeterminate="false" />
 
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bt_server_log"
-            android:layout_gravity="center_horizontal"
-            android:choiceMode="none" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Temperature"
+                    android:layout_gravity="center_horizontal" />
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/temperature_seekBar"
+                    android:layout_gravity="center_horizontal"
+                    android:max="80"
+                    android:progress="24"
+                    android:indeterminate="false" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Heart rate"
+                    android:layout_gravity="center_horizontal" />
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/heartrate_seekBar"
+                    android:layout_gravity="center_horizontal"
+                    android:max="200"
+                    android:progress="60"
+                    android:indeterminate="false" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Air pressure"
+                    android:layout_gravity="center_horizontal" />
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/airpressure_seekBar"
+                    android:layout_gravity="center_horizontal"
+                    android:max="100"
+                    android:progress="34"
+                    android:indeterminate="false" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Humidity"
+                    android:layout_gravity="center_horizontal" />
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/humidity_seekBar"
+                    android:layout_gravity="center_horizontal"
+                    android:max="100"
+                    android:progress="70"
+                    android:indeterminate="false" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Carbon monoxide"
+                    android:layout_gravity="center_horizontal" />
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/co_seekBar"
+                    android:layout_gravity="center_horizontal"
+                    android:max="100"
+                    android:progress="0"
+                    android:indeterminate="false" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Send values"
+                    android:id="@+id/send_values"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </ScrollView>
+
     </LinearLayout>
 
 </RelativeLayout>

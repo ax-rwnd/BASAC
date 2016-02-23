@@ -2,9 +2,9 @@ package d0020e.basac;
 
 import android.bluetooth.BluetoothAdapter;
 import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.Date;
 
 /**
  * Created by weedz on 2016-02-03.
@@ -24,19 +24,19 @@ JSON structure:
 }
 
  */
+
+    //TODO: comment.
 public class JSONData {
     private static final String TAG = "JSONData";
 
     private JSONObject finalJSON;
 
     public JSONData() {
-        if (BluetoothAdapter.getDefaultAdapter() == null) {
-            Log.e(TAG, "Bluetooth not available");
-            return;
-        }
         finalJSON = new JSONObject();
         try {
-            finalJSON.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
+            if (BluetoothAdapter.getDefaultAdapter() != null) {
+                finalJSON.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
+            }
             finalJSON.put("timestamp", System.currentTimeMillis());
             finalJSON.put("values", new JSONObject());
         } catch (JSONException e) {

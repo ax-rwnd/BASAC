@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--
+    TODO: Move bluetooth connect to this setting activity.
+    -->
+
     <PreferenceCategory
         android:title="Settings"
         android:key="pref_key_settings">
@@ -10,21 +14,53 @@
             android:title="Log"
             android:defaultValue="false" />
 
-        <d0020e.basac.ResetLogFileDialogPreference
+        <d0020e.basac.DialogPreference.ResetLogFile
             android:key="pref_key_settings_delete_log_file"
             android:title="Delete log file"
             android:positiveButtonText="Yes"
             android:negativeButtonText="No" />
 
-        <CheckBoxPreference
-            android:key="pref_key_settings_in_danger_zone"
-            android:summary="Enables warnings"
-            android:title="In Danger Zone"
-            android:defaultValue="false" />
-
-
-
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="Bluetooth"
+        android:key="pref_key_settings_bluetooth">
+        <CheckBoxPreference
+            android:key="pref_key_settings_bluetooth_reconnect"
+            android:summary="Reconnect bluetooth connection if lost"
+            android:title="Reconnect"
+            android:defaultValue="true" />
+        <EditTextPreference
+            android:dependency="pref_key_settings_bluetooth_reconnect"
+            android:key="pref_key_settings_bluetooth_timeout"
+            android:summary="Bluetooth reconnect timeout"
+            android:title="Timeout"
+            android:inputType="number"
+            android:defaultValue="5000" />
+        <EditTextPreference
+            android:dependency="pref_key_settings_bluetooth_reconnect"
+            android:key="pref_key_settings_bluetooth_reconnect_attempts"
+            android:summary="Bluetooth reconnect attempts"
+            android:title="Reconnect attempts"
+            android:inputType="number"
+            android:defaultValue="5" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Developer settings"
+        android:key="pref_settings_developer">
+        <PreferenceScreen
+            android:key="button_dev_settings"
+            android:title="Developer settings"
+            android:persistent="false">
+            <ListPreference
+                android:title="Mock location"
+                android:summary="Simulate location"
+                android:key="pref_key_location"
+                android:entries="@array/mockLocation"
+                android:entryValues="@array/mockLocation_values"
+                android:defaultValue="0" />
+        </PreferenceScreen>
+    </PreferenceCategory>
 
 </PreferenceScreen>

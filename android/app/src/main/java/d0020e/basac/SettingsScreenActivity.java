@@ -81,9 +81,14 @@ public class SettingsScreenActivity extends AppCompatActivity {
     }
 
     public void temp_func(View view) {
-        Log.d(TAG,"Set test value = 100");
-        Toast.makeText(getApplicationContext(),"Set test value = 100", Toast.LENGTH_SHORT).show();
-        DataModel.getInstance().setValue(0,100);
+        Log.d(TAG,"Set oxygen value = 0");
+        Toast.makeText(getApplicationContext(),"Set oxygen value = 0", Toast.LENGTH_SHORT).show();
+        DataModel.getInstance().setValue(DataStore.VALUE_OXYGEN, 0);
+        DataModel.getInstance().setUpdate();
+    }
+
+    public void view_set_values(View view) {
+        startActivity(new Intent(this, SetValues.class));
     }
 
     @Override
@@ -105,8 +110,9 @@ public class SettingsScreenActivity extends AppCompatActivity {
                     editor.putBoolean("start_bluetooth", true);
                     editor.apply();
 
-                    DataStore ds = (DataStore)getApplication();
-                    ds.mState.startBluetoothConnection();
+                    Intent intent = new Intent(this, StateController.class);
+                    intent.putExtra("START", "BLUETOOTH");
+                    startService(intent);
                 }
                 break;
         }
