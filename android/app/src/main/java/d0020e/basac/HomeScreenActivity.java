@@ -22,6 +22,8 @@ public class HomeScreenActivity extends AppCompatActivity {
         DataStore ds = (DataStore)getApplication();
         ds.mState = new StateController(ds);
 
+
+
         Button settings = (Button)findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,8 +86,12 @@ public class HomeScreenActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+
     public void onResume() {
         super.onResume();
     }
+
+
 
 }
