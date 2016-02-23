@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,15 +16,14 @@ public class WarningActivity extends AppCompatActivity {
 
     private DataStore ds;
     private int warningId;
-
+    private SendAlarmTCP sat;
     private AlertDialog alertDialog;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         ds = (DataStore)getApplication();
-
+        new connectTask().execute("");
         if(ds.mState.alertDialog != null) {
             this.alertDialog = ds.mState.alertDialog;
             this.alertDialog.cancel();
@@ -95,11 +95,33 @@ public class WarningActivity extends AppCompatActivity {
                         finish();
                     }
                 });
+
         alertDialog.show();
+        transmitToServer(warningId);
     }
 
+    public void transmitToServer(int warningId){
+        String temp = "WaringId: " + Integer.toString(warningId);
+        sat.sendAlarm(temp);
+    }
     @Override //to prevent user from just leaving the warning submission.
     public void onBackPressed() {
 
     }
+
+    public class connectTask extends AsyncTask<String, String, SendAlarmTCP> {
+        @Override
+        protected SendAlarmTCP doInBackground(String... message){
+            sat = new SendAlarmTCP(new SendAlarmTCP.OnMessageReceived() {
+                @Override
+                public void messageReceived(String message) {
+                    publishProgress(message);
+                }
+            });
+            sat.run();
+            return null;
+        }
+
+    }
+
 }
