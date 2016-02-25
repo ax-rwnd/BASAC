@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:basac="http://schemas.android.com/apk/res-auto">
 
     <!--
     TODO: Move bluetooth connect to this setting activity.
@@ -86,15 +88,19 @@
                 <d0020e.basac.Settings.SeekBarPreference
                     android:key="accelerometer_low"
                     android:title="Accelerometer calibration low"
+                    android:dialogMessage="Trigger a warning if accelerometer is below this value"
                     android:dependency="settings_accelerometer_enable"
-                    android:max="8"
+                    basac:maxValue="8"
+                    basac:minValue="0"
                     android:defaultValue="3" />
                 <d0020e.basac.Settings.SeekBarPreference
                     android:key="accelerometer_high"
-                    android:title="Accelerometer calibration highs"
+                    android:title="Accelerometer calibration high"
+                    android:dialogMessage="Trigger a warning if accelerometer is above this value"
                     android:dependency="settings_accelerometer_enable"
-                    android:max="50"
-                    android:defaultValue="30" />
+                    basac:maxValue="80"
+                    basac:minValue="12"
+                    android:defaultValue="50" />
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>

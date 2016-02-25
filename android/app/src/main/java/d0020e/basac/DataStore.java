@@ -65,7 +65,6 @@ public class DataStore extends Application {
 
     @Override
     public void onCreate() {
-        Log.d("DataStore", "onCreate()");
         // TODO: Add values to match arduino data
         super.onCreate();
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);

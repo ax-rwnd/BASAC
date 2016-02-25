@@ -15,6 +15,7 @@ public class ListPreference extends android.preference.ListPreference {
     @Override
     public void onAttachedToActivity() {
         setSummary(getEntry());
+        super.onAttachedToActivity();
     }
 
     @Override
