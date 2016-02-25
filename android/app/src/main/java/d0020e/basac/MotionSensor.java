@@ -20,8 +20,7 @@ public class MotionSensor implements SensorEventListener{
 
     public SensorManager sm;
 
-    public MotionSensor(Context c){
-        Log.d(TAG, "Contructor");
+    public MotionSensor(Context c) {
         this.mContext = c;
 
         sm = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
