@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import java.util.Date;//
+import java.io.*; //--- Needed for logWriter
+import java.text.*;// logWriter
+
 import android.app.Activity;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -37,6 +41,7 @@ import android.os.Handler;
 
 public class CcnLiteAndroid extends Activity
 {
+    static String filename = "/mnt/sdcard/"+((Long)System.currentTimeMillis()).toString()+".log"; //This is for logWriter.
     ArrayAdapter adapter;
     TextView debuglevel;
     BluetoothAdapter BTadapter;
@@ -139,10 +144,37 @@ public class CcnLiteAndroid extends Activity
         scanLeDevice(true);
     }
 
+/*This is the method used to get the String line fro appendToLog and use the data collected to write it to a file, this is because we want to have a backup if the mobile screen is updating and displaying the correct data that the ccn-lite application detects.*/
+public void logWriter(String line){
+	BufferedWriter bw = null;
+	//This try is for creating a file with date name and writing content (line) from appendToLog.
+	try{
+		bw = new BufferedWriter(new FileWriter(filename, true));
+		bw.write("this is a test -" + line);
+		bw.newLine();	
+		bw.flush();
+	//This is an exception for error check for the try.
+	}catch(IOException e){
+		e.printStackTrace();	
+		System.out.println("this is wrong, check your code");
+	}finally{
+
+		if(bw!=null){
+			try{
+				bw.close();
+			}catch(IOException eo){
+				eo.printStackTrace();
+			}
+		}
+	}
+	//Notera att vi nu gör bw.close() men den kommer nog försvinna med tiden då vi vill ha filen öppen under en session.
+}
+//Den här metoden skriver ut i loggen på ccn-lite appen.
     public void appendToLog(String line) {
         while (adapter.getCount() > 500)
             adapter.remove(adapter.getItem(0));
         adapter.add(line);
+	logWriter("This is a test : " + line);
         adapter.notifyDataSetChanged();
     }
 
