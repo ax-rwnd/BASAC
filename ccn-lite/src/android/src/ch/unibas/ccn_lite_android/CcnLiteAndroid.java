@@ -5,7 +5,10 @@ package ch.unibas.ccn_lite_android;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import java.util.Date;//
 import java.io.*; //--- Needed for logWriter
+import java.text.*;// logWriter
 
 import android.app.Activity;
 import android.app.Activity;
@@ -38,6 +41,7 @@ import android.os.Handler;
 
 public class CcnLiteAndroid extends Activity
 {
+    static String filename = "/mnt/sdcard/"+((Long)System.currentTimeMillis()).toString()+".log"; //This is for logWriter.
     ArrayAdapter adapter;
     TextView debuglevel;
     BluetoothAdapter BTadapter;
@@ -140,45 +144,27 @@ public class CcnLiteAndroid extends Activity
         scanLeDevice(true);
     }
 
-/*Tanken med logWriter är att mha datat som kommer från appendToLog(String line), ska även kunna skapa en fil och spara ner samma data som skrivs ut i loggen för senare användning. Det ska även ingå att namnet
-på flen är själva timestampet för att lätt kunna se vilken som är den senaste.*/
-
-/*   private void logWriter(String line) {
-	
-	String filename = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
-	//String content = "This is a test content for file";
-	
-	FileWriter file = new FileWriter ("\\mnt\\sdcard\\filename.text");
-	if(!file.exists()){
-		file.createNewFile();
-	}
-	FileWriter fileW = new FileWriter(file, true);
-	BufferedWriter buffW = new BufferedWriter(buffW);
-	buffW.newline();
-	buffW.write(new Timestamp(system.currentTimeMillies())  + line);
-	//buffW.close();// stäng inte direkt, utan i slutet bara.	
-	
-
-
-	}
-*/
+/*This is the method used to get the String line fro appendToLog and use the data collected to write it to a file, this is because we want to have a backup if the mobile screen is updating and displaying the correct data that the ccn-lite application detects.*/
 public void logWriter(String line){
 	BufferedWriter bw = null;
 	//This try is for creating a file with date name and writing content (line) from appendToLog.
 	try{
-		String filename = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
 		bw = new BufferedWriter(new FileWriter(filename, true));
 		bw.write("this is a test -" + line);
-		bw.newline();	
+		bw.newLine();	
 		bw.flush();
 	//This is an exception for error check for the try.
 	}catch(IOException e){
 		e.printStackTrace();	
-		system.out.println("this is wrong, check your code");
+		System.out.println("this is wrong, check your code");
 	}finally{
 
 		if(bw!=null){
-			bw.close()
+			try{
+				bw.close();
+			}catch(IOException eo){
+				eo.printStackTrace();
+			}
 		}
 	}
 	//Notera att vi nu gör bw.close() men den kommer nog försvinna med tiden då vi vill ha filen öppen under en session.
@@ -188,7 +174,7 @@ public void logWriter(String line){
         while (adapter.getCount() > 500)
             adapter.remove(adapter.getItem(0));
         adapter.add(line);
-	logWriter(line);
+	logWriter("This is a test : " + line);
         adapter.notifyDataSetChanged();
     }
 
