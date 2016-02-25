@@ -21,8 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Oxygen level"
-            android:layout_gravity="center_horizontal" />
+            android:text="Oxygen level" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -37,8 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Temperature"
-            android:layout_gravity="center_horizontal" />
+            android:text="Temperature" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -53,8 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Heart rate"
-            android:layout_gravity="center_horizontal" />
+            android:text="Heart rate" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -69,8 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Air pressure"
-            android:layout_gravity="center_horizontal" />
+            android:text="Air pressure" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -85,8 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Humidity"
-            android:layout_gravity="center_horizontal" />
+            android:text="Humidity" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -101,8 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Carbon monoxide"
-            android:layout_gravity="center_horizontal" />
+            android:text="Carbon monoxide" />
 
         <SeekBar
             android:layout_width="match_parent"

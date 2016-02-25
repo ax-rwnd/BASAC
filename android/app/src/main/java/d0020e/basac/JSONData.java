@@ -29,42 +29,42 @@ JSON structure:
 public class JSONData {
     private static final String TAG = "JSONData";
 
-    private JSONObject finalJSON;
+    private JSONObject json;
 
     public JSONData() {
-        finalJSON = new JSONObject();
+        json = new JSONObject();
         try {
             if (BluetoothAdapter.getDefaultAdapter() != null) {
-                finalJSON.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
+                json.put("MAC", BluetoothAdapter.getDefaultAdapter().getAddress());
             }
-            finalJSON.put("timestamp", System.currentTimeMillis());
-            finalJSON.put("values", new JSONObject());
+            json.put("timestamp", System.currentTimeMillis());
+            json.put("data", new JSONObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void put(String name, Object value) {
+    public void putData(String name, Object value) {
         try {
-            finalJSON.getJSONObject("values").put(name, value);
+            json.getJSONObject("data").put(name, value);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.d(TAG, "put() failed to put " + name + ": " + value.toString());
+            Log.d(TAG, "putData() failed to put " + name + ": " + value.toString());
         }
     }
 
-    public void remove(String name) {
+    public void removeData(String name) {
         try {
-            finalJSON.getJSONObject("values").remove(name);
+            json.getJSONObject("data").remove(name);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.d(TAG, "remove() failed to remove value: values." + name);
+            Log.d(TAG, "removeData() failed to remove value: values." + name);
         }
     }
 
-    public Object getDataValues(String name) {
+    public Object getDataValue(String name) {
         try {
-            return finalJSON.getJSONObject("values").get(name);
+            return json.getJSONObject("data").get(name);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -73,7 +73,7 @@ public class JSONData {
 
     public Object get(String name) {
         try {
-            return finalJSON.get(name);
+            return json.get(name);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -82,24 +82,24 @@ public class JSONData {
 
     public void logJSON() {
         try {
-            finalJSON.put("timestamp", System.currentTimeMillis());
+            json.put("timestamp", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "JSONData: " + finalJSON.toString());
+        Log.d(TAG, json.toString());
     }
 
     public JSONObject getJSON() {
         try {
-            finalJSON.put("timestamp", System.currentTimeMillis());
+            json.put("timestamp", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return finalJSON;
+        return json;
     }
 
     public String toString() {
-        return this.finalJSON.toString();
+        return this.json.toString();
     }
 
 }

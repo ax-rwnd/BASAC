@@ -6,8 +6,8 @@
     -->
 
     <PreferenceCategory
-        android:title="Settings"
-        android:key="pref_key_settings">
+        android:title="Log"
+        android:key="pref_key_settings_log">
         <CheckBoxPreference
             android:key="pref_key_settings_datalog"
             android:summary="Enable data log"
@@ -47,6 +47,17 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="Dialog"
+        android:key="pref_key_settings_dialog">
+        <CheckBoxPreference
+            android:key="settings_show_dialog"
+            android:title="Show dialog on warning"
+            android:summary="Show an alert dialog when a warning is triggered in addition to notification"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
         android:title="Developer settings"
         android:key="pref_settings_developer">
         <PreferenceScreen
@@ -64,6 +75,7 @@
                     android:entryValues="@array/mockLocation_values"
                     android:defaultValue="0" />
             </PreferenceCategory>
+
             <PreferenceCategory
                 android:title="Accelerometer"
                 android:key="pref_key_settings_accelerometer">
@@ -71,7 +83,18 @@
                     android:key="settings_accelerometer_enable"
                     android:title="Enable accelerometer"
                     android:defaultValue="true" />
-
+                <d0020e.basac.Settings.SeekBarPreference
+                    android:key="accelerometer_low"
+                    android:title="Accelerometer calibration low"
+                    android:dependency="settings_accelerometer_enable"
+                    android:max="8"
+                    android:defaultValue="3" />
+                <d0020e.basac.Settings.SeekBarPreference
+                    android:key="accelerometer_high"
+                    android:title="Accelerometer calibration highs"
+                    android:dependency="settings_accelerometer_enable"
+                    android:max="50"
+                    android:defaultValue="30" />
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
