@@ -12,6 +12,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import d0020e.basac.Bluetooth.BluetoothScreenActivity;
+import d0020e.basac.Bluetooth.BluetoothServerScreenActivity;
+
 public class SettingsScreenActivity extends AppCompatActivity {
 
     private static final String TAG = "SettingsScreen";
@@ -64,12 +67,27 @@ public class SettingsScreenActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * TODO: disconnect arduino bluetooth connection if established
+     * @param view
+     */
     public void bluetooth_disconnect(View view) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putBoolean("start_bluetooth", false);
         editor.apply();
         DataStore ds = (DataStore)getApplication();
         ds.mState.stopBluetoothConnection();
+    }
+
+    public void connect_arduino(View view) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putString("device_address", "");
+        editor.putBoolean("start_bluetooth_arduino", true);
+        editor.apply();
+
+        Intent intent = new Intent(this, StateController.class);
+        intent.putExtra("START", "BLUETOOTH");
+        startService(intent);
     }
 
     public void bt_discoverable(View view) {

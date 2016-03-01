@@ -50,9 +50,9 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
     }
     public void updateTemperatureBar() {
         ProgressBar bar = (ProgressBar) findViewById(R.id.temperature_bar);
-        bar.setProgress((int)DataModel.getInstance().getValue(DataStore.VALUE_TEMPERATURE));
+        bar.setProgress((int)DataModel.getInstance().getValue(DataStore.VALUE_ENV_TEMPERATURE));
         TextView text = (TextView) findViewById(R.id.temperature_value);
-        text.setText(DataModel.getInstance().getValue(DataStore.VALUE_TEMPERATURE) + " C");
+        text.setText(DataModel.getInstance().getValue(DataStore.VALUE_ENV_TEMPERATURE) + " C");
     }
     public void updateHeartRateBar() {
         ProgressBar bar = (ProgressBar) findViewById(R.id.heartrate_bar);

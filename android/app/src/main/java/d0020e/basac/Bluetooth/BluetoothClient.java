@@ -1,4 +1,4 @@
-package d0020e.basac;
+package d0020e.basac.Bluetooth;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -29,6 +29,13 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.UUID;
+
+import d0020e.basac.DataModel;
+import d0020e.basac.DataStore;
+import d0020e.basac.HomeScreenActivity;
+import d0020e.basac.R;
+import d0020e.basac.SettingsScreenActivity;
+import d0020e.basac.StateController;
 
 /**
  * TODO: Display connection status to the user, notify if connection failed
@@ -94,7 +101,7 @@ public class BluetoothClient {
                                 DataModel.getInstance().setValue(DataStore.VALUE_OXYGEN, json.getInt("oxygen"));
                                 DataModel.getInstance().setValue(DataStore.VALUE_CO, json.getInt("co"));
                                 DataModel.getInstance().setValue(DataStore.VALUE_AIRPRESSURE, json.getInt("airpressure"));
-                                DataModel.getInstance().setValue(DataStore.VALUE_TEMPERATURE, json.getInt("temperature"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_ENV_TEMPERATURE, json.getInt("temperature"));
                                 DataModel.getInstance().setValue(DataStore.VALUE_HEARTRATE, json.getInt("heartrate"));
                                 DataModel.getInstance().setValue(DataStore.VALUE_HUMIDITY, json.getInt("humidity"));
                                 DataModel.getInstance().setUpdate();

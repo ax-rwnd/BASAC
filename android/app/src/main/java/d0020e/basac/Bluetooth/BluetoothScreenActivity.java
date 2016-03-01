@@ -1,4 +1,4 @@
-package d0020e.basac;
+package d0020e.basac.Bluetooth;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Set;
+
+import d0020e.basac.R;
 
 public class BluetoothScreenActivity extends AppCompatActivity {
 

@@ -28,8 +28,8 @@ public class DataModel extends Observable {
         return dataValues.size();
     }
 
-    public void addValue(double value) {
-        dataValues.add(value);
+    public void addValue(int index, double value) {
+        dataValues.add(index, value);
     }
 
     public void setValue(int index, double value) {

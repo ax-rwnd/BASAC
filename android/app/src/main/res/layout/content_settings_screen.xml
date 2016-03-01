@@ -55,7 +55,7 @@
         android:text="Disconnect"
         android:id="@+id/bluetooth_client"
         android:onClick="bluetooth_disconnect"
-        android:layout_alignTop="@+id/bluetooth_service"
+        android:layout_below="@+id/bluetooth_service"
         android:layout_toEndOf="@+id/bt_discoverable" />
 
     <TextView
@@ -73,8 +73,8 @@
         android:text="Show warning"
         android:id="@+id/tmp_button"
         android:onClick="temp_func"
-        android:layout_below="@+id/bluetooth_client"
-        android:layout_alignStart="@+id/bluetooth_client" />
+        android:layout_below="@+id/bt_discoverable"
+        android:layout_toEndOf="@+id/toggle_bluetooth" />
 
     <Button
         android:layout_width="wrap_content"
@@ -84,5 +84,14 @@
         android:id="@+id/set_values"
         android:layout_below="@+id/bt_discoverable"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connect arduino"
+        android:onClick="connect_arduino"
+        android:id="@+id/connect_arduino"
+        android:layout_below="@+id/bluetooth_connect"
+        android:layout_alignStart="@+id/bluetooth_client" />
 
 </RelativeLayout>

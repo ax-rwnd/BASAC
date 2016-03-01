@@ -24,8 +24,8 @@ public class SetValues extends AppCompatActivity {
         editor.putInt("data_"+DataStore.VALUE_OXYGEN, seekBar.getProgress());
 
         seekBar = (SeekBar) findViewById(R.id.temperature_seekBar);
-        DataModel.getInstance().setValue(DataStore.VALUE_TEMPERATURE, seekBar.getProgress());
-        editor.putInt("data_"+DataStore.VALUE_TEMPERATURE, seekBar.getProgress());
+        DataModel.getInstance().setValue(DataStore.VALUE_ENV_TEMPERATURE, seekBar.getProgress());
+        editor.putInt("data_"+DataStore.VALUE_ENV_TEMPERATURE, seekBar.getProgress());
 
         seekBar = (SeekBar) findViewById(R.id.heartrate_seekBar);
         DataModel.getInstance().setValue(DataStore.VALUE_HEARTRATE, seekBar.getProgress());

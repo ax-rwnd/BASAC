@@ -72,7 +72,7 @@ public class WarningActivity extends AppCompatActivity {
             case DataStore.VALUE_HEARTRATE:
                 mWarningText.setText("Heart rate");
                 break;
-            case DataStore.VALUE_TEMPERATURE:
+            case DataStore.VALUE_ENV_TEMPERATURE:
                 mWarningText.setText("Temperature");
                 break;
             default:

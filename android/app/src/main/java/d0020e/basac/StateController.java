@@ -12,7 +12,6 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -25,11 +24,12 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.SortedMap;
 import java.util.TreeMap;
+
+import d0020e.basac.Bluetooth.BluetoothArduino;
+import d0020e.basac.Bluetooth.BluetoothClient;
 
 /**
  * Created by Sebastian on 04/12/2015.
@@ -42,6 +42,7 @@ public class StateController extends Service implements Observer {
     private static String TAG = "StateController";
     private static MotionSensor mMotionSensor;
     private static BluetoothClient mBluetoothClient;
+    private static BluetoothArduino mBluetoothArduino;
 
     public static boolean warningDialog = false;
     private static boolean[] warningState = new boolean[7];
@@ -84,11 +85,29 @@ public class StateController extends Service implements Observer {
 
     public void startBluetoothConnection() {
         StateController.bluetoothRunning = true;
-        if (mBluetoothClient == null || mBluetoothClient.getState() == BluetoothClient.STATE_NONE) {
-            mBluetoothClient = new BluetoothClient(mContext);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        if (sharedPref.getBoolean("start_bluetooth_arduino", false)) {
+            // TODO: Make sure ArduinoReciever is working
+            if (mBluetoothArduino == null) {
+                /*  Blue tooth device address
+                -- "00:06:66:08:5F:6F"
+                "00:06:66:73:E7:81"
+                "00:06:66:08:E7:D7"
+                "20:FA:BB:01:98:3F"
+                "20:FA:BB:01:9A:FB"
+                "20:FA:BB:01:9C:17"*/
+                mBluetoothArduino = new BluetoothArduino(mContext, "00:06:66:08:5F:6F");
+            } else {
+                Log.d(TAG, "Bluetooth already connected");
+                Toast.makeText(mContext, "Already connected, try disconnecting or restarting service", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            Log.d(TAG, "Bluetooth already connected");
-            Toast.makeText(mContext, "Already connected, try disconnecting or restarting service", Toast.LENGTH_SHORT).show();
+            if (mBluetoothClient == null || mBluetoothClient.getState() == BluetoothClient.STATE_NONE) {
+                mBluetoothClient = new BluetoothClient(mContext);
+            } else {
+                Log.d(TAG, "Bluetooth already connected");
+                Toast.makeText(mContext, "Already connected, try disconnecting or restarting service", Toast.LENGTH_SHORT).show();
+            }
         }
     }
     public void stopBluetoothConnection() {
@@ -97,6 +116,10 @@ public class StateController extends Service implements Observer {
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.cancel(DataStore.NOTIFICATION_BLUETOOTHCLIENT);
 
+        if (mBluetoothArduino != null) {
+            mBluetoothArduino.stop();
+            mBluetoothArduino = null;
+        }
         if (mBluetoothClient != null) {
             mBluetoothClient.setStop();
             mBluetoothClient.stop();
@@ -262,6 +285,9 @@ public class StateController extends Service implements Observer {
     }
 
     private void showWarning(int warningId) {
+        if (mBluetoothArduino != null) {
+            mBluetoothArduino.turnonvibe();
+        }
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
         if (pref.getBoolean("settings_warning_show_dialog", false)) {
             Log.d(TAG, "Showing warning dialog");
@@ -307,7 +333,7 @@ public class StateController extends Service implements Observer {
                     mBuilder.setContentTitle("Heart rate")
                             .setContentText("Heart rate");
                     break;
-                case DataStore.VALUE_TEMPERATURE:
+                case DataStore.VALUE_ENV_TEMPERATURE:
                     mBuilder.setContentTitle("Temperature")
                             .setContentText("Temperature");
                     break;
@@ -361,10 +387,10 @@ public class StateController extends Service implements Observer {
             warnings.add(DataStore.VALUE_HEARTRATE);
         }
         // Temperature
-        if (DataModel.getInstance().getValue(DataStore.VALUE_TEMPERATURE) > DataStore.THRESHOLD_TEMPERATURE_HIGH ||
-                DataModel.getInstance().getValue(DataStore.VALUE_TEMPERATURE) < DataStore.THRESHOLD_TEMPERATURE_LOW) {
+        if (DataModel.getInstance().getValue(DataStore.VALUE_ENV_TEMPERATURE) > DataStore.THRESHOLD_ENV_TEMPERATURE_HIGH ||
+                DataModel.getInstance().getValue(DataStore.VALUE_ENV_TEMPERATURE) < DataStore.THRESHOLD_ENV_TEMPERATURE_LOW) {
 
-            warnings.add(DataStore.VALUE_TEMPERATURE);
+            warnings.add(DataStore.VALUE_ENV_TEMPERATURE);
         }
         // Accelerometer
         if(DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) < pref.getInt("accelerometer_low", DataStore.THRESHOLD_ACCELEROMETER_LOW) ||
@@ -393,7 +419,7 @@ public class StateController extends Service implements Observer {
         // update JSON data
         // TODO: exclude sensitive data
         json.putData("oxygen", DataModel.getInstance().getValue(DataStore.VALUE_OXYGEN));
-        json.putData("temperature", DataModel.getInstance().getValue(DataStore.VALUE_TEMPERATURE));
+        json.putData("temperature", DataModel.getInstance().getValue(DataStore.VALUE_ENV_TEMPERATURE));
         json.putData("heartrate", DataModel.getInstance().getValue(DataStore.VALUE_HEARTRATE));
         json.putData("airpressure", DataModel.getInstance().getValue(DataStore.VALUE_AIRPRESSURE));
         json.putData("humidity", DataModel.getInstance().getValue(DataStore.VALUE_HUMIDITY));
