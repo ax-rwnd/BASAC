@@ -13,16 +13,26 @@ import android.widget.Button;
 public class HomeScreenActivity extends AppCompatActivity {
     private static final String TAG = "HomeScreen";
 
+    static {
+        System.loadLibrary("crypto");
+        System.loadLibrary("ssl");
+        System.loadLibrary("androidmkc");
+    }
+
+    private native int generateContent(String content, String ipath, String opath);
+
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DataStore ds = (DataStore)getApplication();
+        d0020e.basac.DataStore ds = (DataStore)getApplication();
         ds.mState = new StateController(ds);
 
-
+        generateContent("/ndn/", "/data/media/0/infile.txt", "/data/media/0/outfile.txt");
 
         Button settings = (Button)findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
