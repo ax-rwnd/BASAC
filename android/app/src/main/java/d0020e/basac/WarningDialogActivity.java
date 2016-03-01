@@ -11,11 +11,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * TODO: add a timer to automatically send a report if user don't respond.
+ * TODO: cancel timer if user interacts with dialog
  */
 
-public class DialogActivity extends Activity {
-    private static final String TAG = "DialogActivity";
+public class WarningDialogActivity extends Activity {
+    private static final String TAG = "WarningDialogActivity";
     private String reportMessage;
 
     @Override
@@ -53,12 +53,18 @@ public class DialogActivity extends Activity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Report sent", Toast.LENGTH_SHORT).show();
-                // Stuff to send report
-                NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING + warningId);
-                UserIncidentReport accidentReport = new UserIncidentReport(DialogActivity.this, warningId, reportMessage);
-                accidentReport.submitReport();
+                if (StateController.getWarningState(warningId)) {
+                    Toast.makeText(getApplicationContext(), "Report sent", Toast.LENGTH_SHORT).show();
+                    DataStore ds = (DataStore) getApplication();
+                    ds.mState.cancelCountDown(warningId);
+                    // Stuff to send report
+                    NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING + warningId);
+                    UserIncidentReport accidentReport = new UserIncidentReport(WarningDialogActivity.this, warningId, reportMessage);
+                    accidentReport.submitReport();
+                } else {
+                    Toast.makeText(WarningDialogActivity.this, "Report already sent", Toast.LENGTH_SHORT).show();
+                }
                 finish();
             }
         });

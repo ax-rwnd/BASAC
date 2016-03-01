@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 /**
  * Created by WeeDzCokie on 2016-01-28.
@@ -34,8 +33,8 @@ public class DataStore extends Application {
     // Threshold values
     // TODO: Set these values from settings and/or from server
     public static int THRESHOLD_OXYGEN = 18;
-    public static double THRESHOLD_ACCELEROMETER_LOW = 2;
-    public static double THRESHOLD_ACCELEROMETER_HIGH = 30;
+    public static int THRESHOLD_ACCELEROMETER_LOW = 2;
+    public static int THRESHOLD_ACCELEROMETER_HIGH = 40;
     public static int THRESHOLD_TEMPERATURE_LOW = 4;
     public static int THRESHOLD_TEMPERATURE_HIGH = 40;
     public static int THRESHOLD_HEARTRATE_LOW = 20;

@@ -4,9 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.DialogPreference;
-import android.preference.Preference;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -48,8 +46,13 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
     @Override
     public void onAttachedToActivity() {
-        setSummary("Current value: " + String.valueOf(getPersistedInt(mDefault)));
+        updateSummary();
         super.onAttachedToActivity();
+    }
+
+    private void updateSummary() {
+        String v = String.valueOf(getPersistedInt(mDefault));
+        setSummary("Current value: " + (mSuffix == null ? v : v.concat(" " + mSuffix)));
     }
 
     @Override
@@ -115,7 +118,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
                     persistInt(mValue);
                     callChangeListener(mValue);
                 }
-                setSummary("Current value: " + String.valueOf(mValue));
+                updateSummary();
                 getDialog().dismiss();
             }
         });

@@ -7,9 +7,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
-import android.util.Log;
-
-import java.util.Observable;
 
 /**
  * Created by Joppe on 2016-01-27.

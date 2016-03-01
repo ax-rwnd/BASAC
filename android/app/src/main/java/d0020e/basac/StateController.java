@@ -1,6 +1,5 @@
 package d0020e.basac;
 
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,6 +12,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -23,9 +23,13 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Created by Sebastian on 04/12/2015.
@@ -46,6 +50,8 @@ public class StateController extends Service implements Observer {
 
     private static long last_update = 0;
     private Context mContext;
+
+    private CountDownThread mCDThread;
 
     //Service
     private ServiceHandler mServiceHandler;
@@ -257,60 +263,72 @@ public class StateController extends Service implements Observer {
 
     private void showWarning(int warningId) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
-        if (pref.getBoolean("settings_show_dialog", false)) {
+        if (pref.getBoolean("settings_warning_show_dialog", false)) {
             Log.d(TAG, "Showing warning dialog");
-            Intent intent = new Intent(mContext, DialogActivity.class);
+            Intent intent = new Intent(mContext, WarningDialogActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("IncidentId", warningId);
             mContext.startActivity(intent);
         }
 
-        // TODO: Send data back to arduino?
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                .setOngoing(true)
-                .setContentIntent(PendingIntent.getActivity(
-                        mContext,
-                        DataStore.NOTIFICATION_WARNING + warningId,
-                        new Intent(mContext, WarningActivity.class)
-                                .putExtra("warning", warningId),
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                ))
-                .setPriority(NotificationCompat.PRIORITY_MAX);
+        if (pref.getBoolean("settings_warning_show_notification", true)) {
+            // TODO: Send data back to arduino?
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                    .setOngoing(true)
+                    .setContentIntent(PendingIntent.getActivity(
+                            mContext,
+                            DataStore.NOTIFICATION_WARNING + warningId,
+                            new Intent(mContext, WarningActivity.class)
+                                    .putExtra("warning", warningId),
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    ))
+                    .setPriority(NotificationCompat.PRIORITY_MAX);
 
-        switch (warningId) {
-            case DataStore.VALUE_OXYGEN:
-                mBuilder.setContentTitle("Warning, Oxygen value!")
-                        .setContentText("Oxygen value is too low!");
-                break;
-            case DataStore.VALUE_ACCELEROMETER:
-                mBuilder.setContentTitle("Accelerometer")
-                        .setContentText("Accelerometer triggered warning");
-                break;
-            case DataStore.VALUE_CO:
-                mBuilder.setContentTitle("Carbon monoxide")
-                        .setContentText("Carbon monoxide levels are too high!");
-                break;
-            case DataStore.VALUE_AIRPRESSURE:
-                mBuilder.setContentTitle("Air pressure")
-                        .setContentText("Air pressure");
-                break;
-            case DataStore.VALUE_HEARTRATE:
-                mBuilder.setContentTitle("Heart rate")
-                        .setContentText("Heart rate");
-                break;
-            case DataStore.VALUE_TEMPERATURE:
-                mBuilder.setContentTitle("Temperature")
-                        .setContentText("Temperature");
-                break;
-            default:
-                mBuilder.setContentTitle("Warning!")
-                        .setContentText("Unspecified warning!");
+            switch (warningId) {
+                case DataStore.VALUE_OXYGEN:
+                    mBuilder.setContentTitle("Warning, Oxygen value!")
+                            .setContentText("Oxygen value is too low!");
+                    break;
+                case DataStore.VALUE_ACCELEROMETER:
+                    mBuilder.setContentTitle("Accelerometer")
+                            .setContentText("Accelerometer triggered warning");
+                    break;
+                case DataStore.VALUE_CO:
+                    mBuilder.setContentTitle("Carbon monoxide")
+                            .setContentText("Carbon monoxide levels are too high!");
+                    break;
+                case DataStore.VALUE_AIRPRESSURE:
+                    mBuilder.setContentTitle("Air pressure")
+                            .setContentText("Air pressure");
+                    break;
+                case DataStore.VALUE_HEARTRATE:
+                    mBuilder.setContentTitle("Heart rate")
+                            .setContentText("Heart rate");
+                    break;
+                case DataStore.VALUE_TEMPERATURE:
+                    mBuilder.setContentTitle("Temperature")
+                            .setContentText("Temperature");
+                    break;
+                default:
+                    mBuilder.setContentTitle("Warning!")
+                            .setContentText("Unspecified warning!");
+            }
+
+            NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING + warningId, mBuilder.build());
         }
-
-        NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING + warningId, mBuilder.build());
+        // TODO: start countdown for automatic report thing
+        if (pref.getBoolean("settings_warning_automatic_report", true)) {
+            if (mCDThread == null) {
+                mCDThread = new CountDownThread(StateController.this);
+            }
+            mCDThread.add(warningId, pref.getInt("settings_warning_report_timeout", 10) * 1000);
+            if (!mCDThread.isAlive()) {
+                mCDThread.start();
+            }
+        }
     }
 
     @Override
@@ -349,8 +367,8 @@ public class StateController extends Service implements Observer {
             warnings.add(DataStore.VALUE_TEMPERATURE);
         }
         // Accelerometer
-        if(DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) < DataStore.THRESHOLD_ACCELEROMETER_LOW ||
-                DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) > DataStore.THRESHOLD_ACCELEROMETER_HIGH) {
+        if(DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) < pref.getInt("accelerometer_low", DataStore.THRESHOLD_ACCELEROMETER_LOW) ||
+                DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) > pref.getInt("accelerometer_high", DataStore.THRESHOLD_ACCELEROMETER_HIGH)) {
             json.putData("accelerometer", DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER));
             warnings.add(DataStore.VALUE_ACCELEROMETER);
         }
@@ -417,6 +435,64 @@ public class StateController extends Service implements Observer {
         }
         // Cleanup json data
         json.removeData("accelerometer");
+    }
+
+    public void cancelCountDown(int warningId) {
+        if (mCDThread != null) {
+            mCDThread.remove(warningId);
+        }
+    }
+    // TODO: Add time left on notification
+    private class CountDownThread extends Thread {
+        private static final String TAG = "CountDownThread";
+        TreeMap<Long, Integer> countDown;
+        WeakReference<StateController> mStateController;
+
+        public CountDownThread(StateController s) {
+            countDown = new TreeMap<>();
+            mStateController = new WeakReference<>(s);
+        }
+        public void add(int warningId, int timeOut) {
+            countDown.put(System.currentTimeMillis() + timeOut, warningId);
+        }
+        public void remove(int warningId) {
+            countDown.values().remove(warningId);
+            Log.d(TAG, countDown.toString());
+        }
+        public void run() {
+            while(countDown.size() > 0) {
+                Log.d(TAG, "run()");
+                try {
+                    Thread.sleep(1000);
+                    if (countDown.size() > 0 && countDown.firstKey() < System.currentTimeMillis()) {
+                        Looper.prepare();
+                        // TODO: Send report and cancel pending notification and/or dialog
+                        Log.d(TAG, "Remove countdown for " + countDown.get(countDown.firstKey()));
+                        NotificationManager mNotifyMgr = (NotificationManager) mStateController.get().mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                        mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING + countDown.get(countDown.firstKey()));
+
+                        StateController.setWarningState(countDown.get(countDown.firstKey()), false);
+                        UserIncidentReport accidentReport = new UserIncidentReport(mStateController.get().mContext, countDown.get(countDown.firstKey()), "auto-report");
+                        countDown.remove(countDown.firstKey());
+                        accidentReport.submitReport();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
+            Log.d(TAG, "run() end");
+            mStateController.get().mCDThread.cancel();
+            mStateController.get().mCDThread = null;
+        }
+
+        /**
+         * Stop all pending countdowns
+         */
+        public void cancel() {
+            Log.d(TAG, "cancel()");
+        }
+
     }
 
 }

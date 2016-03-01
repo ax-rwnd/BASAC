@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -40,6 +39,9 @@ public class WarningActivity extends AppCompatActivity {
             Toast.makeText(this, "Report already sent", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        DataStore ds = (DataStore)getApplication();
+        ds.mState.cancelCountDown(warningId);
 
         this.alt1 = "case 1";
         this.alt2 = "case 2";

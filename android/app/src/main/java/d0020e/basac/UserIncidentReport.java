@@ -3,6 +3,7 @@ package d0020e.basac;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.FileOutputStream;
 
@@ -34,6 +35,7 @@ public class UserIncidentReport {
         reportJson.putData("AccidentMessage", reportMessage);
         reportJson.logJSON();
         Log.d("Report", reportJson.toString());
+        Toast.makeText(mContext, "Report sent", Toast.LENGTH_SHORT).show();
 
         String filename = "report:" + getTimeStamp() + ".txt";
         String string = getTimeStamp() + "::" + getType() + "::"+getReportMessage();

@@ -520,7 +520,7 @@ public class BluetoothClient {
         public ReconnectThread() {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
             maxReconnectAttempt = Integer.parseInt(sharedPref.getString("pref_key_settings_bluetooth_reconnect_attempts", "5"));
-            timeout = Integer.parseInt(sharedPref.getString("pref_key_settings_bluetooth_timeout", "5000"));
+            timeout = Integer.parseInt(sharedPref.getString("pref_key_settings_bluetooth_timeout", "5")) * 1000;
             reconnect = sharedPref.getBoolean("pref_key_settings_bluetooth_reconnect", true);
         }
 

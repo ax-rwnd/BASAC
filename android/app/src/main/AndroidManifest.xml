@@ -60,7 +60,7 @@
             android:name=".SettingsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".DialogActivity"
+            android:name=".WarningDialogActivity"
             android:theme="@style/AppTheme.Dialog" />
         <activity android:name=".SetValues"></activity>
     </application>

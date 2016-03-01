@@ -37,8 +37,9 @@
             android:key="pref_key_settings_bluetooth_timeout"
             android:summary="Bluetooth reconnect timeout"
             android:title="Timeout"
+            android:dialogMessage="Timeout in seconds"
             android:inputType="number"
-            android:defaultValue="5000" />
+            android:defaultValue="5" />
         <EditTextPreference
             android:dependency="pref_key_settings_bluetooth_reconnect"
             android:key="pref_key_settings_bluetooth_reconnect_attempts"
@@ -49,13 +50,32 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Dialog"
+        android:title="Warnings &amp; reports"
         android:key="pref_key_settings_dialog">
         <CheckBoxPreference
-            android:key="settings_show_dialog"
+            android:key="settings_warning_show_dialog"
             android:title="Show dialog on warning"
-            android:summary="Show an alert dialog when a warning is triggered in addition to notification"
+            android:summary="Show an alert dialog when a warning is triggered"
             android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="settings_warning_show_notification"
+            android:title="Show notification on warning"
+            android:summary="Show a notification when a warning is triggered"
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="settings_warning_automatic_report"
+            android:title="Automatic report"
+            android:summary="Automatically send a report after specified time"
+            android:defaultValue="true" />
+        <d0020e.basac.Settings.SeekBarPreference
+            android:key="settings_warning_report_timeout"
+            android:title="Report timeout"
+            android:dialogMessage="Time to wait before automatically send a report"
+            basac:minValue="5"
+            basac:maxValue="30"
+            android:text="seconds"
+            android:dependency="settings_warning_automatic_report"
+            android:defaultValue="10" />
     </PreferenceCategory>
 
 
@@ -92,7 +112,7 @@
                     android:dependency="settings_accelerometer_enable"
                     basac:maxValue="8"
                     basac:minValue="0"
-                    android:defaultValue="3" />
+                    android:defaultValue="2" />
                 <d0020e.basac.Settings.SeekBarPreference
                     android:key="accelerometer_high"
                     android:title="Accelerometer calibration high"
@@ -100,7 +120,7 @@
                     android:dependency="settings_accelerometer_enable"
                     basac:maxValue="80"
                     basac:minValue="12"
-                    android:defaultValue="50" />
+                    android:defaultValue="40" />
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
