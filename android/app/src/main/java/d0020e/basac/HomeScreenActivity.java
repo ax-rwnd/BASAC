@@ -92,6 +92,4 @@ public class HomeScreenActivity extends AppCompatActivity {
         super.onResume();
     }
 
-
-
 }

@@ -78,26 +78,16 @@
             android:defaultValue="10" />
     </PreferenceCategory>
 
-
+    <!--
+    TODO: use slider for all threshold values?
+    -->
     <PreferenceCategory
-        android:title="Developer settings"
-        android:key="pref_settings_developer">
+        android:title="Threshold values"
+        android:key="pref_settings_thresholds">
         <PreferenceScreen
-            android:key="button_dev_settings"
-            android:title="Developer settings"
+            android:key="button_thresholds"
+            android:title="Threshold values"
             android:persistent="false">
-            <PreferenceCategory
-                android:title="Location"
-                android:key="pref_key_settings_location">
-                <d0020e.basac.Settings.ListPreference
-                    android:title="Mock location"
-                    android:summary="Simulate location"
-                    android:key="pref_key_location"
-                    android:entries="@array/mockLocation"
-                    android:entryValues="@array/mockLocation_values"
-                    android:defaultValue="0" />
-            </PreferenceCategory>
-
             <PreferenceCategory
                 android:title="Accelerometer"
                 android:key="pref_key_settings_accelerometer">
@@ -121,6 +111,69 @@
                     basac:maxValue="80"
                     basac:minValue="12"
                     android:defaultValue="40" />
+            </PreferenceCategory>
+            <PreferenceCategory
+                android:key="pref_key_settings_env_temperature"
+                android:title="Environment temperature">
+                <EditTextPreference
+                    android:key="threshold_env_temperature_min"
+                    android:title="Lower threshold"
+                    android:defaultValue="4"
+                    android:summary="Set minimum temperature in degrees celsius"
+                    android:inputType="number" />
+                <EditTextPreference
+                    android:key="threshold_env_temperature_max"
+                    android:title="Upper threshold"
+                    android:defaultValue="50"
+                    android:summary="Set maximum temperature in degrees celsius"
+                    android:inputType="number" />
+            </PreferenceCategory>
+            <PreferenceCategory
+                android:key="pref_key_settings_skin_temperature"
+                android:title="Skin temperature">
+                <EditTextPreference
+                    android:key="threshold_skin_temperature_min"
+                    android:title="Lower threshold"
+                    android:defaultValue="10"
+                    android:summary="Set minimum temperature in degrees celsius"
+                    android:inputType="number" />
+                <EditTextPreference
+                    android:key="threshold_skin_temperature_max"
+                    android:title="Upper threshold"
+                    android:defaultValue="35"
+                    android:summary="Set maximum temperature in degrees celsius"
+                    android:inputType="number" />
+            </PreferenceCategory>
+            <PreferenceCategory
+                android:key="pref_key_settings_co_gas"
+                android:title="CO gas">
+                <EditTextPreference
+                    android:key="threshold_co_max"
+                    android:title="Upper threshold"
+                    android:defaultValue="30"
+                    android:summary="Set the maximum gas level in PPM"
+                    android:inputType="number" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Developer settings"
+        android:key="pref_settings_developer">
+        <PreferenceScreen
+            android:key="button_dev_settings"
+            android:title="Developer settings"
+            android:persistent="false">
+            <PreferenceCategory
+                android:title="Location"
+                android:key="pref_key_settings_location">
+                <d0020e.basac.Settings.ListPreference
+                    android:title="Mock location"
+                    android:summary="Simulate location"
+                    android:key="pref_key_location"
+                    android:entries="@array/mockLocation"
+                    android:entryValues="@array/mockLocation_values"
+                    android:defaultValue="0" />
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
