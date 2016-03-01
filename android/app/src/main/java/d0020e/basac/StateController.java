@@ -331,8 +331,12 @@ public class StateController extends Service implements Observer {
                             .setContentText("Heart rate");
                     break;
                 case DataStore.VALUE_ENV_TEMPERATURE:
-                    mBuilder.setContentTitle("Temperature")
-                            .setContentText("Temperature");
+                    mBuilder.setContentTitle("Environment temperature")
+                            .setContentText("Environment temperature");
+                    break;
+                case DataStore.VALUE_SKIN_TEMPERATURE:
+                    mBuilder.setContentTitle("Skin temperature")
+                            .setContentText("Skin temperature");
                     break;
                 default:
                     mBuilder.setContentTitle("Warning!")

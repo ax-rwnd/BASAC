@@ -36,15 +36,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Temperature" />
+            android:text="Environment temperature" />
 
         <SeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/temperature_seekBar"
+            android:id="@+id/env_temperature_seekBar"
             android:layout_gravity="center_horizontal"
             android:max="80"
             android:progress="24"
+            android:indeterminate="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Skin temperature"
+            android:id="@+id/textView" />
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/skin_temperature_seekBar"
+            android:layout_gravity="center_horizontal"
+            android:max="100"
+            android:progress="20"
             android:indeterminate="false" />
 
         <TextView

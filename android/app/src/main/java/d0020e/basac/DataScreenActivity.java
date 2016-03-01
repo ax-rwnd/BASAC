@@ -51,11 +51,17 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
         TextView text = (TextView) findViewById(R.id.oxygen_value);
         text.setText(DataModel.getInstance().getValue(DataStore.VALUE_OXYGEN) + "%");
     }
-    public void updateTemperatureBar() {
-        ProgressBar bar = (ProgressBar) findViewById(R.id.temperature_bar);
+    public void updateEnvTemperatureBar() {
+        ProgressBar bar = (ProgressBar) findViewById(R.id.env_temperature_bar);
         bar.setProgress((int)DataModel.getInstance().getValue(DataStore.VALUE_ENV_TEMPERATURE));
-        TextView text = (TextView) findViewById(R.id.temperature_value);
+        TextView text = (TextView) findViewById(R.id.env_temperature_value);
         text.setText(DataModel.getInstance().getValue(DataStore.VALUE_ENV_TEMPERATURE) + " C");
+    }
+    public void updateSkinTemperatureBar() {
+        ProgressBar bar = (ProgressBar) findViewById(R.id.skin_temperature_bar);
+        bar.setProgress((int)DataModel.getInstance().getValue(DataStore.VALUE_SKIN_TEMPERATURE));
+        TextView text = (TextView) findViewById(R.id.skin_temperature_value);
+        text.setText(DataModel.getInstance().getValue(DataStore.VALUE_SKIN_TEMPERATURE) + " C");
     }
     public void updateHeartRateBar() {
         ProgressBar bar = (ProgressBar) findViewById(R.id.heartrate_bar);
@@ -88,7 +94,8 @@ public class DataScreenActivity extends AppCompatActivity implements Observer {
 
     public void update() {
         updateOxygenBar();
-        updateTemperatureBar();
+        updateEnvTemperatureBar();
+        updateSkinTemperatureBar();
         updateHeartRateBar();
         updateAirPressureBar();
         updateHumidityBar();

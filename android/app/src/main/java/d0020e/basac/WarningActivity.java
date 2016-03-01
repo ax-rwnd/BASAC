@@ -73,7 +73,10 @@ public class WarningActivity extends AppCompatActivity {
                 mWarningText.setText("Heart rate");
                 break;
             case DataStore.VALUE_ENV_TEMPERATURE:
-                mWarningText.setText("Temperature");
+                mWarningText.setText("Environment temperature");
+                break;
+            case DataStore.VALUE_SKIN_TEMPERATURE:
+                mWarningText.setText("Skin temperature");
                 break;
             default:
                 mWarningText.setText("Unknown warning id: " + warningId);
