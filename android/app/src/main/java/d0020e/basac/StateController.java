@@ -45,7 +45,7 @@ public class StateController extends Service implements Observer {
     private static BluetoothArduino mBluetoothArduino;
 
     public static boolean warningDialog = false;
-    private static boolean[] warningState = new boolean[7];
+    private static boolean[] warningState = new boolean[8];
 
     private JSONData json;
 
@@ -155,9 +155,6 @@ public class StateController extends Service implements Observer {
     }
 
     @Override
-    /**
-     * TODO: update notification when bluetooth is connected
-     */
     public int onStartCommand(Intent intent, int flags, int startId) {
         mContext = this;
 
@@ -345,7 +342,6 @@ public class StateController extends Service implements Observer {
             NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
             mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING + warningId, mBuilder.build());
         }
-        // TODO: start countdown for automatic report thing
         if (pref.getBoolean("settings_warning_automatic_report", true)) {
             if (mCDThread == null) {
                 mCDThread = new CountDownThread(StateController.this);
@@ -386,15 +382,19 @@ public class StateController extends Service implements Observer {
                 DataModel.getInstance().getValue(DataStore.VALUE_HEARTRATE) > DataStore.THRESHOLD_HEARTRATE_HIGH) {
             warnings.add(DataStore.VALUE_HEARTRATE);
         }
-        // Temperature
-        if (DataModel.getInstance().getValue(DataStore.VALUE_ENV_TEMPERATURE) > DataStore.THRESHOLD_ENV_TEMPERATURE_HIGH ||
-                DataModel.getInstance().getValue(DataStore.VALUE_ENV_TEMPERATURE) < DataStore.THRESHOLD_ENV_TEMPERATURE_LOW) {
-
+        // Environment temperature
+        if (DataModel.getInstance().getValue(DataStore.VALUE_ENV_TEMPERATURE) > Integer.parseInt(pref.getString("threshold_env_temperature_max", String.valueOf(DataStore.THRESHOLD_ENV_TEMPERATURE_HIGH))) ||
+                DataModel.getInstance().getValue(DataStore.VALUE_ENV_TEMPERATURE) < Integer.parseInt(pref.getString("threshold_env_temperature_min", String.valueOf(DataStore.THRESHOLD_ENV_TEMPERATURE_LOW)))) {
             warnings.add(DataStore.VALUE_ENV_TEMPERATURE);
         }
+        // Skin temperature
+        if (DataModel.getInstance().getValue(DataStore.VALUE_SKIN_TEMPERATURE) > Integer.parseInt(pref.getString("threshold_skin_temperature_max", String.valueOf(DataStore.THRESHOLD_SKIN_TEMPERATURE_HIGH))) ||
+                DataModel.getInstance().getValue(DataStore.VALUE_SKIN_TEMPERATURE) < Integer.parseInt(pref.getString("threshold_skin_temperature_min", String.valueOf(DataStore.THRESHOLD_SKIN_TEMPERATURE_LOW)))) {
+            warnings.add(DataStore.VALUE_SKIN_TEMPERATURE);
+        }
         // Accelerometer
-        if(DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) < pref.getInt("accelerometer_low", DataStore.THRESHOLD_ACCELEROMETER_LOW) ||
-                DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) > pref.getInt("accelerometer_high", DataStore.THRESHOLD_ACCELEROMETER_HIGH)) {
+        if(DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) < Integer.parseInt(pref.getString("accelerometer_low", String.valueOf(DataStore.THRESHOLD_ACCELEROMETER_LOW))) ||
+                DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) > Integer.parseInt(pref.getString("accelerometer_high", String.valueOf(DataStore.THRESHOLD_ACCELEROMETER_HIGH)))) {
             json.putData("accelerometer", DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER));
             warnings.add(DataStore.VALUE_ACCELEROMETER);
         }
@@ -404,7 +404,7 @@ public class StateController extends Service implements Observer {
             warnings.add(DataStore.VALUE_AIRPRESSURE);
         }
         // Carbon monoxide
-        if (DataModel.getInstance().getValue(DataStore.VALUE_CO) > DataStore.THRESHOLD_CO) {
+        if (DataModel.getInstance().getValue(DataStore.VALUE_CO) > Integer.parseInt(pref.getString("threshold_co_max", String.valueOf(DataStore.THRESHOLD_CO)))) {
             warnings.add(DataStore.VALUE_CO);
         }
         // Display warnings
@@ -492,7 +492,6 @@ public class StateController extends Service implements Observer {
                     Thread.sleep(1000);
                     if (countDown.size() > 0 && countDown.firstKey() < System.currentTimeMillis()) {
                         Looper.prepare();
-                        // TODO: Send report and cancel pending notification and/or dialog
                         Log.d(TAG, "Remove countdown for " + countDown.get(countDown.firstKey()));
                         NotificationManager mNotifyMgr = (NotificationManager) mStateController.get().mContext.getSystemService(Context.NOTIFICATION_SERVICE);
                         mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING + countDown.get(countDown.firstKey()));

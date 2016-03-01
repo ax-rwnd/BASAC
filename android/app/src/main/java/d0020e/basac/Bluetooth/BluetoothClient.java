@@ -37,10 +37,6 @@ import d0020e.basac.R;
 import d0020e.basac.SettingsScreenActivity;
 import d0020e.basac.StateController;
 
-/**
- * TODO: Display connection status to the user, notify if connection failed
- */
-
 public class BluetoothClient {
     private static final String NAME = "BASAC";
     private static final UUID MY_UUID = UUID.fromString("67f071e1-dbbc-47e6-903e-769a5e262ad2");
@@ -267,9 +263,6 @@ public class BluetoothClient {
         }
     }
 
-    /**
-     * TODO: Retry connection X times before stopping threads
-     */
     private void connectionLost() {
         Log.d(TAG, "Connection lost");
         BluetoothClient.this.stop();

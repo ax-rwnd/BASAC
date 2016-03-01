@@ -12,6 +12,9 @@ import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * TODO: Show threshold values
+ */
 public class DataScreenActivity extends AppCompatActivity implements Observer {
 
     public int isRunning = 0;

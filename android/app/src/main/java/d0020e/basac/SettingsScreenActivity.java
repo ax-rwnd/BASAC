@@ -68,12 +68,13 @@ public class SettingsScreenActivity extends AppCompatActivity {
     }
 
     /**
-     * TODO: disconnect arduino bluetooth connection if established
+     *
      * @param view
      */
     public void bluetooth_disconnect(View view) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putBoolean("start_bluetooth", false);
+        editor.putBoolean("start_bluetooth_arduino", false);
         editor.apply();
         DataStore ds = (DataStore)getApplication();
         ds.mState.stopBluetoothConnection();

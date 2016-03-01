@@ -1,31 +1,19 @@
 package d0020e.basac.Bluetooth;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.LightingColorFilter;
-import android.graphics.drawable.Drawable;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import at.abraxas.amarino.AmarinoIntent;
 import at.abraxas.amarino.Amarino;
-
+import at.abraxas.amarino.AmarinoIntent;
 import d0020e.basac.DataModel;
 import d0020e.basac.DataStore;
-import d0020e.basac.R;
 
 /**
  * Created by WeeDzCokie on 2016-03-01.

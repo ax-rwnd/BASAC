@@ -32,7 +32,6 @@ public class DataStore extends Application {
     public static final int VALUE_SKIN_TEMPERATURE = 7;
 
     // Threshold values
-    // TODO: Set these values from settings and/or from server
     public static int THRESHOLD_OXYGEN = 18;
     public static int THRESHOLD_ACCELEROMETER_LOW = 2;
     public static int THRESHOLD_ACCELEROMETER_HIGH = 40;
@@ -41,10 +40,10 @@ public class DataStore extends Application {
     public static int THRESHOLD_SKIN_TEMPERATURE_LOW = 10;
     public static int THRESHOLD_SKIN_TEMPERATURE_HIGH = 35;
     public static int THRESHOLD_HEARTRATE_LOW = 20;
-    public static int THRESHOLD_HEARTRATE_HIGH = 180;
+    public static int THRESHOLD_HEARTRATE_HIGH = 200;
     public static int THRESHOLD_AIRPRESSURE_LOW = 60000;
     public static int THRESHOLD_AIRPRESSURE_HIGH = 150000;
-    public static int THRESHOLD_CO = 25;
+    public static int THRESHOLD_CO = 30;
 
     public StateController mState;
 

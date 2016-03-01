@@ -52,7 +52,7 @@ public class UserIncidentReport {
             e.printStackTrace();
         }
 
-        //transmitToServer(warningId);
+        transmitToServer(warningId);
     }
 
     public void transmitToServer(int warningId) {
