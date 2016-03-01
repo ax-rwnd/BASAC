@@ -40,12 +40,31 @@
             android:layout_height="wrap_content"
             android:weightSum="1">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Oxygen"
-                android:id="@+id/oxygen_value" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Oxygen"
+                    android:id="@+id/oxygen"
+                    android:layout_above="@+id/oxygen_bar"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="false" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/oxygen_value"
+                    android:layout_above="@+id/oxygen_bar"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="false"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentRight="false" />
+            </RelativeLayout>
 
             <ProgressBar
                 android:layout_width="match_parent"
@@ -53,29 +72,89 @@
                 android:id="@+id/oxygen_bar"
                 android:max="30"
                 android:indeterminate="false"
-                style="?android:attr/progressBarStyleHorizontal" />
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="false" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Temperature"
-                android:id="@+id/temperature_value" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Environment temperature"
+                    android:id="@+id/temperature"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/env_temperature_value"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
 
             <ProgressBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/temperature_bar"
+                android:id="@+id/env_temperature_bar"
                 android:indeterminate="false"
                 android:max="80"
                 style="?android:attr/progressBarStyleHorizontal" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Skin temperature"
+                    android:id="@+id/skin_temperature"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/skin_temperature_value"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Heart rate"
-                android:id="@+id/heartrate_value" />
+                android:id="@+id/skin_temperature_bar"
+                android:indeterminate="false"
+                android:max="80" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Heart rate"
+                    android:id="@+id/heartrate"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/heartrate_value"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
 
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
@@ -85,12 +164,25 @@
                 android:max="200"
                 android:indeterminate="false" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Air pressure"
-                android:id="@+id/airpressure_value" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Air pressure"
+                    android:id="@+id/airpressure" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/airpressure_value"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
 
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
@@ -99,12 +191,25 @@
                 android:id="@+id/airpressure_bar"
                 android:max="400000" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Humidity"
-                android:id="@+id/humidity_value" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Humidity"
+                    android:id="@+id/humidity" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/humidity_value"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
 
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
@@ -113,12 +218,25 @@
                 android:id="@+id/humidity_bar"
                 android:max="100" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Carbon monoxide"
-                android:id="@+id/co_value" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Carbon monoxide"
+                    android:id="@+id/co" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/co_value"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
 
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"

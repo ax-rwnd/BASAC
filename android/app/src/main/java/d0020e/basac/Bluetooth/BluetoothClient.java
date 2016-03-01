@@ -1,4 +1,4 @@
-package d0020e.basac;
+package d0020e.basac.Bluetooth;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -30,9 +30,12 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-/**
- * TODO: Display connection status to the user, notify if connection failed
- */
+import d0020e.basac.DataModel;
+import d0020e.basac.DataStore;
+import d0020e.basac.HomeScreenActivity;
+import d0020e.basac.R;
+import d0020e.basac.SettingsScreenActivity;
+import d0020e.basac.StateController;
 
 public class BluetoothClient {
     private static final String NAME = "BASAC";
@@ -94,7 +97,7 @@ public class BluetoothClient {
                                 DataModel.getInstance().setValue(DataStore.VALUE_OXYGEN, json.getInt("oxygen"));
                                 DataModel.getInstance().setValue(DataStore.VALUE_CO, json.getInt("co"));
                                 DataModel.getInstance().setValue(DataStore.VALUE_AIRPRESSURE, json.getInt("airpressure"));
-                                DataModel.getInstance().setValue(DataStore.VALUE_TEMPERATURE, json.getInt("temperature"));
+                                DataModel.getInstance().setValue(DataStore.VALUE_ENV_TEMPERATURE, json.getInt("temperature"));
                                 DataModel.getInstance().setValue(DataStore.VALUE_HEARTRATE, json.getInt("heartrate"));
                                 DataModel.getInstance().setValue(DataStore.VALUE_HUMIDITY, json.getInt("humidity"));
                                 DataModel.getInstance().setUpdate();
@@ -260,9 +263,6 @@ public class BluetoothClient {
         }
     }
 
-    /**
-     * TODO: Retry connection X times before stopping threads
-     */
     private void connectionLost() {
         Log.d(TAG, "Connection lost");
         BluetoothClient.this.stop();
@@ -520,7 +520,7 @@ public class BluetoothClient {
         public ReconnectThread() {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
             maxReconnectAttempt = Integer.parseInt(sharedPref.getString("pref_key_settings_bluetooth_reconnect_attempts", "5"));
-            timeout = Integer.parseInt(sharedPref.getString("pref_key_settings_bluetooth_timeout", "5000"));
+            timeout = Integer.parseInt(sharedPref.getString("pref_key_settings_bluetooth_timeout", "5")) * 1000;
             reconnect = sharedPref.getBoolean("pref_key_settings_bluetooth_reconnect", true);
         }
 

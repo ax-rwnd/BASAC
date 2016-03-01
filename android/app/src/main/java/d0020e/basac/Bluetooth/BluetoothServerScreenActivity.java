@@ -1,4 +1,4 @@
-package d0020e.basac;
+package d0020e.basac.Bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -24,6 +24,8 @@ import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.UUID;
+
+import d0020e.basac.R;
 
 public class BluetoothServerScreenActivity extends AppCompatActivity {
 

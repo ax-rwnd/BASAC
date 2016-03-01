@@ -21,8 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Oxygen level"
-            android:layout_gravity="center_horizontal" />
+            android:text="Oxygen level" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -37,13 +36,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Temperature"
-            android:layout_gravity="center_horizontal" />
+            android:text="Environment temperature" />
 
         <SeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/temperature_seekBar"
+            android:id="@+id/env_temperature_seekBar"
             android:layout_gravity="center_horizontal"
             android:max="80"
             android:progress="24"
@@ -53,8 +51,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Heart rate"
-            android:layout_gravity="center_horizontal" />
+            android:text="Skin temperature"
+            android:id="@+id/textView" />
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/skin_temperature_seekBar"
+            android:layout_gravity="center_horizontal"
+            android:max="100"
+            android:progress="20"
+            android:indeterminate="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Heart rate" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -69,8 +82,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Air pressure"
-            android:layout_gravity="center_horizontal" />
+            android:text="Air pressure" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -85,8 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Humidity"
-            android:layout_gravity="center_horizontal" />
+            android:text="Humidity" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -101,8 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Carbon monoxide"
-            android:layout_gravity="center_horizontal" />
+            android:text="Carbon monoxide" />
 
         <SeekBar
             android:layout_width="match_parent"

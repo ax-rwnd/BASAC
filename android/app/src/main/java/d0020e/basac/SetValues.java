@@ -1,9 +1,9 @@
 package d0020e.basac;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.SeekBar;
 
@@ -23,9 +23,13 @@ public class SetValues extends AppCompatActivity {
         DataModel.getInstance().setValue(DataStore.VALUE_OXYGEN, seekBar.getProgress());
         editor.putInt("data_"+DataStore.VALUE_OXYGEN, seekBar.getProgress());
 
-        seekBar = (SeekBar) findViewById(R.id.temperature_seekBar);
-        DataModel.getInstance().setValue(DataStore.VALUE_TEMPERATURE, seekBar.getProgress());
-        editor.putInt("data_"+DataStore.VALUE_TEMPERATURE, seekBar.getProgress());
+        seekBar = (SeekBar) findViewById(R.id.env_temperature_seekBar);
+        DataModel.getInstance().setValue(DataStore.VALUE_ENV_TEMPERATURE, seekBar.getProgress());
+        editor.putInt("data_"+DataStore.VALUE_ENV_TEMPERATURE, seekBar.getProgress());
+
+        seekBar = (SeekBar) findViewById(R.id.skin_temperature_seekBar);
+        DataModel.getInstance().setValue(DataStore.VALUE_SKIN_TEMPERATURE, seekBar.getProgress());
+        editor.putInt("data_"+DataStore.VALUE_SKIN_TEMPERATURE, seekBar.getProgress());
 
         seekBar = (SeekBar) findViewById(R.id.heartrate_seekBar);
         DataModel.getInstance().setValue(DataStore.VALUE_HEARTRATE, seekBar.getProgress());

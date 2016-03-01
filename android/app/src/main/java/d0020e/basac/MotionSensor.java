@@ -1,13 +1,12 @@
 package d0020e.basac;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
-
-import java.util.Observable;
+import android.preference.PreferenceManager;
 
 /**
  * Created by Joppe on 2016-01-27.
@@ -18,8 +17,7 @@ public class MotionSensor implements SensorEventListener{
 
     public SensorManager sm;
 
-    public MotionSensor(Context c){
-        Log.d(TAG, "Contructor");
+    public MotionSensor(Context c) {
         this.mContext = c;
 
         sm = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
@@ -32,6 +30,11 @@ public class MotionSensor implements SensorEventListener{
         Sensor sensor = event.sensor;
 
         if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+            // Do not trigger a warning if accelerometer is disabled in settings
+            if (!pref.getBoolean("settings_accelerometer_enable", true)) {
+                return;
+            }
             double posX = event.values[0];
             double posY = event.values[1];
             double posZ = event.values[2];
@@ -40,7 +43,7 @@ public class MotionSensor implements SensorEventListener{
             if (DataModel.getInstance().getValue(DataStore.VALUE_ACCELEROMETER) != 10) {
                 DataModel.getInstance().setValue(DataStore.VALUE_ACCELEROMETER, 10);
             }
-            if (speed < DataStore.THRESHOLD_ACCELEROMETER_LOW) {
+            if (speed < DataStore.THRESHOLD_ACCELEROMETER_LOW || speed > DataStore.THRESHOLD_ACCELEROMETER_HIGH) {
                 DataModel.getInstance().setValue(DataStore.VALUE_ACCELEROMETER, speed);
                 DataModel.getInstance().setUpdate();
             }
