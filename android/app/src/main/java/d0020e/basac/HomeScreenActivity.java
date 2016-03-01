@@ -13,6 +13,14 @@ import android.widget.Button;
 public class HomeScreenActivity extends AppCompatActivity {
     private static final String TAG = "HomeScreen";
 
+    static {
+        System.loadLibrary("crypto");
+        System.loadLibrary("ssl");
+        System.loadLibrary("androidmkc");
+    }
+
+    private native int generateContent(String content, String ipath, String opath);
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
@@ -22,7 +30,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         DataStore ds = (DataStore)getApplication();
         ds.mState = new StateController(ds);
 
-
+        generateContent("/ndn/hello-world", "/mnt/sdcard/infile.txt", "/mnt/sdcard/test.ndntlv");
 
         Button settings = (Button)findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
