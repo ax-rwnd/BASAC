@@ -78,6 +78,10 @@ public class StateController extends Service implements Observer {
         DataModel.getInstance().deleteObservers();
         DataModel.getInstance().addObserver(this);
     }
+
+    /**
+     * Called when starting StateController as a service
+     */
     public StateController() {
         super();
         Log.d(TAG, "Constructor()");
@@ -175,6 +179,7 @@ public class StateController extends Service implements Observer {
                     // Set preference
                     SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
                     editor.putBoolean("start_bluetooth", false);
+                    editor.putBoolean("start_bluetooth_arduino", false);
                     editor.apply();
                     startBluetooth = false;
                 } else if (stopString.equals("STOP")) {
