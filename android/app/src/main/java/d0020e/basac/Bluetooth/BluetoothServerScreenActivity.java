@@ -1,4 +1,4 @@
-package d0020e.basac.bluetooth;
+package d0020e.basac.Bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

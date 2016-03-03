@@ -1,4 +1,4 @@
-package d0020e.basac.bluetooth;
+package d0020e.basac.Bluetooth;
 
 import android.app.Notification;
 import android.app.NotificationManager;
