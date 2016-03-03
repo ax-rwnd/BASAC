@@ -1,11 +1,9 @@
-package d0020e.basac.Bluetooth;
+package d0020e.basac.bluetooth;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.ArrayList;

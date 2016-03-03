@@ -28,8 +28,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.TreeMap;
 
-import d0020e.basac.Bluetooth.BluetoothArduino;
-import d0020e.basac.Bluetooth.BluetoothClient;
+import d0020e.basac.bluetooth.BluetoothArduino;
+import d0020e.basac.bluetooth.BluetoothClient;
 
 /**
  * Created by Sebastian on 04/12/2015.
