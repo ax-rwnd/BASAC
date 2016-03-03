@@ -81,8 +81,9 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     public void stop_monitor(View view) {
         Intent intent = new Intent(this, StateController.class);
-        intent.putExtra("STOP", "STOP");
-        startService(intent);
+        /*intent.putExtra("STOP", "STOP");
+        startService(intent);*/
+        stopService(intent);
     }
 
     public void startDataScreen(View view) {

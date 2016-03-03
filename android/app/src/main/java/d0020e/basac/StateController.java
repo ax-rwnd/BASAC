@@ -251,6 +251,7 @@ public class StateController extends Service implements Observer {
     }
 
     public synchronized void stop() {
+        Log.d(TAG, "stop()");
         DataModel.getInstance().deleteObserver(this);
         stopBluetoothConnection();
         if (mMotionSensor != null && mMotionSensor.sm != null) {
@@ -262,18 +263,24 @@ public class StateController extends Service implements Observer {
 
         StateController.serviceRunning = false;
 
-        Log.d(TAG, "stop()");
-
         super.stopSelf();
     }
 
-    public boolean stopService(Intent name) {
-        if (mBluetoothClient != null) {
-            mBluetoothClient.stop();
-        }
+    /*public boolean stopService(Intent name) {
         Log.d(TAG, "stopService()");
+        DataModel.getInstance().deleteObserver(this);
+        stopBluetoothConnection();
+        if (mMotionSensor != null && mMotionSensor.sm != null) {
+            mMotionSensor.sm.unregisterListener(mMotionSensor);
+        }
+
+        NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotifyMgr.cancel(DataStore.NOTIFICATION_SERVICE_RUNNING);
+
+        StateController.serviceRunning = false;
+
         return super.stopService(name);
-    }
+    }*/
 
     public long getLastUpdate() {
         return last_update;
