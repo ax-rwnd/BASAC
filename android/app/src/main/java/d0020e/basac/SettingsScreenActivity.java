@@ -83,6 +83,7 @@ public class SettingsScreenActivity extends AppCompatActivity {
     public void connect_arduino(View view) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString("device_address", "");
+        editor.putBoolean("start_bluetooth", false);
         editor.putBoolean("start_bluetooth_arduino", true);
         editor.apply();
 
@@ -127,6 +128,7 @@ public class SettingsScreenActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
                     editor.putString("device_address", mDeviceAddress);
                     editor.putBoolean("start_bluetooth", true);
+                    editor.putBoolean("start_bluetooth_arduino", false);
                     editor.apply();
 
                     Intent intent = new Intent(this, StateController.class);

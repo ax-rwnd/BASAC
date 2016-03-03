@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -21,7 +19,7 @@ import d0020e.basac.DataStore;
 public class BluetoothArduino {
     private static final String TAG = "BluetoothArduino";
 
-    private ArduinoReceiver arduinoReceiver = new ArduinoReceiver();
+    private ArduinoReceiver arduinoReceiver;
 
     private Context mContext;
     private String device_address;
@@ -36,7 +34,7 @@ public class BluetoothArduino {
 
 
     // shared preferences variables
-    boolean viberCheckbox = false;
+    /*boolean viberCheckbox = false;
     boolean soundcheckbox = false;
     boolean pachubecheckbox = false;
     boolean localstorage = false;
@@ -56,7 +54,7 @@ public class BluetoothArduino {
     boolean Fallstatus  = false;
     int Max_heartrate =210,Min_heartrate = 40;
     float max_bodytempin,min_bodytempin,max_envtemp,min_envtemp;
-
+*/
     ArrayList<Float> flo= new ArrayList<>();
     ArrayList<Float> values1= new ArrayList<>();
     ArrayList<Long> time= new ArrayList<>();
@@ -68,12 +66,22 @@ public class BluetoothArduino {
         device_address = address;
 
         // in order to receive broadcasted intents we need to register our receiver
-        mContext.registerReceiver(arduinoReceiver, new IntentFilter(AmarinoIntent.ACTION_RECEIVED));
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(AmarinoIntent.ACTION_RECEIVED);
+        intentFilter.addAction(AmarinoIntent.ACTION_CONNECT);
+        intentFilter.addAction(AmarinoIntent.ACTION_CONNECTED);
+        intentFilter.addAction(AmarinoIntent.ACTION_CONNECTION_FAILED);
+        intentFilter.addAction(AmarinoIntent.ACTION_PAIRING_REQUESTED);
+        intentFilter.addAction(AmarinoIntent.ACTION_DISCONNECTED);
+
+        arduinoReceiver = new ArduinoReceiver();
+        mContext.registerReceiver(arduinoReceiver, intentFilter);
         // this is how you tell Amarino to connect to a specific BT device from within your own code
         Amarino.connect(mContext, device_address);
     }
 
     public void stop() {
+        Log.d(TAG, "stop()");
         // if you connect in onStart() you must not forget to disconnect when your app is closed
         Amarino.disconnect(mContext, device_address);
 
@@ -84,31 +92,6 @@ public class BluetoothArduino {
     public void turnonvibe() {
         int om = 220;
         Amarino.sendDataToArduino(mContext, device_address, 'A', om);
-    }
-
-    // Get the Shared Preferences Values
-    private void getPrefs() {
-        // Get the xml/preferences.xml preferences
-        SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(mContext);
-        viberCheckbox = prefs.getBoolean("checkboxPref", true);
-        soundcheckbox = prefs.getBoolean("soundcheckboxPref", true);
-        pachubecheckbox = prefs.getBoolean("pachubecheckboxPref", true);
-        localstorage = prefs.getBoolean("localcheckboxPref", false);
-        Emergencycontact = prefs.getString("emergencycontact","123456789");
-        emailaddress  = prefs.getString("emailaddress", "");
-        Globaltimeout = prefs.getString("timeout","60");
-        Global_Time = Integer.parseInt(Globaltimeout);
-        Global_Time = (Global_Time)*1000;     // Global time out
-
-        Skinlowerthresholdtemp = prefs.getString("skinlowerthresholdtemp","10");
-        Skinupperthresholdtemp = prefs.getString("skinupperthresholdtemp", "35");
-        Environmentlowerthresholdtemp = prefs.getString("Environmentlowerthresholdtemp", "-50");
-        Environmentupperthresholdtemp = prefs.getString("Environmentupperthresholdtemp", "50");
-
-        cogasminimum = prefs.getString("cogasminimum", "0");
-        cogasmaximum = prefs.getString("cogasmaximum", "100");
-
     }
 
 
@@ -123,24 +106,37 @@ public class BluetoothArduino {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if(AmarinoIntent.ACTION_RECEIVED.equals(intent.getAction()))
-            {
+            if (AmarinoIntent.ACTION_CONNECTED.equals(intent.getAction())) {
+                Log.d(TAG, "Connected");
+            }
+            if (AmarinoIntent.ACTION_CONNECT.equals(intent.getAction())) {
+                Log.d(TAG, "Connect");
+            }
+            if (AmarinoIntent.ACTION_DISCONNECTED.equals(intent.getAction())) {
+                Log.d(TAG, "Disconnected");
+            }
+            if (AmarinoIntent.ACTION_CONNECTION_FAILED.equals(intent.getAction())) {
+                Log.d(TAG, "Connection failed");
+            }
+            if (AmarinoIntent.ACTION_PAIRING_REQUESTED.equals(intent.getAction())) {
+                Log.d(TAG, "Pairing requested");
+            }
+            if (AmarinoIntent.ACTION_RECEIVED.equals(intent.getAction())) {
                 // the type of data which is added to the intent
                 final int dataType = intent.getIntExtra(AmarinoIntent.EXTRA_DATA_TYPE, -1);
-                if (dataType == AmarinoIntent.STRING_EXTRA){
+                Log.d(TAG, "DataType: " + dataType);
+                if (dataType == AmarinoIntent.STRING_EXTRA) {
                     data = intent.getStringExtra(AmarinoIntent.EXTRA_DATA);
+                    Log.d(TAG, "Data: " + data);
 
-                    if (data != null){
-
-
+                    if (data != null) {
                         String patternStr = ","; //separator value
                         fields = data.split(patternStr);//array where values will be stored.
                         //s = fields;   // Copy of string
                         char c = fields[0].charAt(0);
 
-                        if((c == '@'))    // check if the data is in correct format
-
-                        {
+                        // check if the data is in correct format
+                        if ((c == '@')) {
                             // user name text field
                             //String text = "\u00A0"+"User name:"+"\n" +"\u00A0"+username +"\n"+ "\u00A0"+"Login Time:"+"\n"+ "\u00A0"+Starttime+"\n"+ "\u00A0"+"Status:"+ "\u00A0"+"connected";
                             String text = "\u00A0"+"User name:"+"\u00A0"+"WeeDz" +"\n"+ "\u00A0"+"Login time:"+ "\u00A0"+ System.currentTimeMillis()+"\n"+ "\u00A0"+"Status:"+ "\u00A0"+"connected";
@@ -181,59 +177,60 @@ public class BluetoothArduino {
                                 }
                             },60000); //Every 60 seconds*/
 
-                            if(fields[1] != null && !fields[1].isEmpty() && !fields[1].trim().isEmpty())  // Temperature in
-                            {
+                            // Temperature in
+                            if (fields[1] != null && !fields[1].isEmpty() && !fields[1].trim().isEmpty()) {
                                 float f = Float.valueOf(fields[1].trim());
-                                tempin = Float.valueOf(fields[1].trim());
+                                /*tempin = Float.valueOf(fields[1].trim());
+                                values1.add((float) Math.round(tempin));
+                                time1.add(System.currentTimeMillis());*/
 
                                 // ------ Set value in DataModel ------
                                 DataModel.getInstance().setValue(DataStore.VALUE_SKIN_TEMPERATURE, f);
 
-                                values1.add((float) Math.round(tempin));
-                                time1.add(System.currentTimeMillis());
 
                                 //tv3.setText(tempin+" "+(char) 0x00B0 +"C" );  //tv2
                                 //tv3.setTextColor(Color.BLACK);
-                                max_bodytempin = Float.valueOf(Skinupperthresholdtemp.trim());
+                                /*max_bodytempin = Float.valueOf(Skinupperthresholdtemp.trim());
                                 min_bodytempin = Float.valueOf(Skinlowerthresholdtemp.trim());
                                 if( tempin >= max_bodytempin)
                                 {
-                                    //tv3.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFF62217));
+                                    tv3.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFF62217));
                                 }
                                 else
                                 {
-                                    //tv3.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
-                                }
+                                    tv3.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
+                                }*/
 
                             }
 
-                            if(fields[2] != null && !fields[2].isEmpty() && !fields[2].trim().isEmpty())  // Temperature out
-                            {
+                            // Temperature out
+                            if (fields[2] != null && !fields[2].isEmpty() && !fields[2].trim().isEmpty()) {
                                 float f = Float.valueOf(fields[2].trim());
-                                tempout = Float.valueOf(fields[2].trim());
+                                /*tempout = Float.valueOf(fields[2].trim());
+                                flo.add((float) Math.round(f));
+                                time.add(System.currentTimeMillis());*/
 
                                 // ------ Set value in DataModel ------
                                 DataModel.getInstance().setValue(DataStore.VALUE_ENV_TEMPERATURE, f);
 
-                                flo.add((float) Math.round(f));
-                                time.add(System.currentTimeMillis());
 
-                                max_envtemp = Float.valueOf(Environmentupperthresholdtemp.trim());
-                                min_envtemp = Float.valueOf(Environmentlowerthresholdtemp.trim());
+                                //max_envtemp = Float.valueOf(Environmentupperthresholdtemp.trim());
+                                //min_envtemp = Float.valueOf(Environmentlowerthresholdtemp.trim());
 
                                 //tv4.setText(f+" "+(char) 0x00B0 +"C" );  //tv3
                                 //tv4.setTextColor(Color.BLACK);
-                                if( f >= max_envtemp)
+                                /*if( f >= max_envtemp)
                                 {
-                                    //tv4.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFF62217));
+                                    tv4.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFF62217));
                                 }
                                 else
                                 {
-                                    //tv4.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
-                                }
+                                    tv4.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
+                                }*/
                             }
-                            if(fields[3] != null && !fields[3].isEmpty() && !fields[3].trim().isEmpty())  // Humidity
-                            {
+
+                            // Humidity
+                            if (fields[3] != null && !fields[3].isEmpty() && !fields[3].trim().isEmpty()) {
                                 float f = Float.valueOf(fields[3].trim());
 
                                 // ------ Set value in DataModel ------
@@ -241,33 +238,33 @@ public class BluetoothArduino {
 
                                 //tv1.setText(f+" "+"% rH" );
                                 //tv1.setTextColor(Color.BLACK);
-                                if( (f > 80) || (f < 20))
+                                /*if ((f > 80) || (f < 20))
                                 {
-                                    //tv1.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFF62217));
+                                    tv1.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFF62217));
                                 }
                                 else
                                 {
-                                    //tv1.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
-                                }
+                                    tv1.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
+                                }*/
                             }
 
-                            if(fields[4] != null && !fields[4].isEmpty() && !fields[4].trim().isEmpty())  // Heart beat
-                            {
+                            // Heart beat
+                            if (fields[4] != null && !fields[4].isEmpty() && !fields[4].trim().isEmpty()) {
                                 int heart_beat = Integer.parseInt(fields[4]);
 
                                 // ------ Set value in DataModel ------
                                 DataModel.getInstance().setValue(DataStore.VALUE_HEARTRATE, heart_beat);
 
-                                if((heart_beat <= 210) && (heart_beat >= 38) ){
+                                /*if ((heart_beat <= 210) && (heart_beat >= 38)) {
                                     //tv2.setText(fields[4]+" "+"bpm" );
                                     //tv2.setTextColor(Color.BLACK);
                                     //tv2.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
-                                    HeartBeat = Integer.toString(heart_beat);
-                                }
+                                    //HeartBeat = Integer.toString(heart_beat);
+                                }*/
                             }
 
-                            if(fields[5] != null && !fields[5].isEmpty() && !fields[5].trim().isEmpty())    // CO gas
-                            {
+                            // CO gas
+                            if (fields[5] != null && !fields[5].isEmpty() && !fields[5].trim().isEmpty()) {
                                 float f = Float.valueOf(fields[5].trim());
 
                                 // ------ Set value in DataModel ------
@@ -277,23 +274,23 @@ public class BluetoothArduino {
                                 //tv5.setTextColor(Color.BLACK);
                                 //tv5.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
                             }
-                            if(fields[6] != null && !fields[6].isEmpty() && !fields[6].trim().isEmpty())
-                            {
-                                int n = Integer.parseInt(fields[6]);
-                                if(n == 1)
-                                {
 
-                                    //Emergencybutton = false;
+                            if (fields[6] != null && !fields[6].isEmpty() && !fields[6].trim().isEmpty()) {
+                                int n = Integer.parseInt(fields[6]);
+                                Log.d(TAG, "unknown value, fields[7]: " + fields[6]);
+                                /*if(n == 1)
+                                {
+                                    Emergencybutton = false;
                                 }
                                 else
                                 {
-                                    //Emergencybutton = true;
-                                }
+                                    Emergencybutton = true;
+                                }*/
                             }
-                            if(fields[7] != null && !fields[7].isEmpty() && !fields[7].trim().isEmpty())
-                            {
+
+                            if (fields[7] != null && !fields[7].isEmpty() && !fields[7].trim().isEmpty()) {
                                 float f = Float.valueOf(fields[7].trim());
-                                Log.d(TAG, "unknown value, fields[7]: " + f);
+                                Log.d(TAG, "unknown value, fields[7]: " + fields[7]);
                                 /*if(f > 4.55)
                                 {
                                     percentage = "100";
@@ -315,18 +312,16 @@ public class BluetoothArduino {
                                     imageButton.setImageDrawable((Drawable)getResources().getDrawable(R.drawable.l));
                                 }*/
                             }
-                            if(fields[8] != null && !fields[8].isEmpty() && !fields[8].trim().isEmpty())
-                            {
-                                //X_axis = Integer.parseInt(fields[8]);
+
+                            /*if (fields[8] != null && !fields[8].isEmpty() && !fields[8].trim().isEmpty()) {
+                                X_axis = Integer.parseInt(fields[8]);
                             }
-                            if(fields[9] != null && !fields[9].isEmpty() && !fields[9].trim().isEmpty())
-                            {
-                                //X_axis = Integer.parseInt(fields[9]);
+                            if (fields[9] != null && !fields[9].isEmpty() && !fields[9].trim().isEmpty()) {
+                                X_axis = Integer.parseInt(fields[9]);
                             }
-                            if(fields[10] != null && !fields[10].isEmpty() && !fields[10].trim().isEmpty())
-                            {
-                                //Z_axis = Integer.parseInt(fields[10]);
-                            }
+                            if (fields[10] != null && !fields[10].isEmpty() && !fields[10].trim().isEmpty()) {
+                                Z_axis = Integer.parseInt(fields[10]);
+                            }*/
                         }
                     }
                 }

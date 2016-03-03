@@ -62,7 +62,7 @@
         <activity
             android:name=".WarningDialogActivity"
             android:theme="@style/AppTheme.Dialog" />
-        <activity android:name=".SetValues"></activity>
+        <activity android:name=".SetValues" />
     </application>
 
 </manifest>

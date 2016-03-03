@@ -2,6 +2,7 @@ package d0020e.basac;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -30,7 +31,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         DataStore ds = (DataStore)getApplication();
         ds.mState = new StateController(ds);
 
-        generateContent("/ndn/hello-world", "/mnt/sdcard/infile.txt", "/mnt/sdcard/test.ndntlv");
+        generateContent("/ndn/hello-world", Environment.getExternalStorageDirectory().getPath() + "/infile.txt", Environment.getExternalStorageDirectory().getPath() + "/test.ndntlv");
 
         Button settings = (Button)findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
@@ -80,8 +81,9 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     public void stop_monitor(View view) {
         Intent intent = new Intent(this, StateController.class);
-        intent.putExtra("STOP", "STOP");
-        startService(intent);
+        /*intent.putExtra("STOP", "STOP");
+        startService(intent);*/
+        stopService(intent);
     }
 
     public void startDataScreen(View view) {
