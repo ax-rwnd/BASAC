@@ -1,3 +1,3 @@
-set solib-search-path /home/axel/code/BASAC/ccn-lite/src/mkC-android/obj/local/armeabi
+set solib-search-path ./obj/local/armeabi
 source /home/axel/android-sdk-linux/ndk-bundle/prebuilt/common/gdb/common.setup
-directory /home/axel/android-sdk-linux/ndk-bundle/platforms/android-21/arch-arm/usr/include /home/axel/code/BASAC/ccn-lite/src/mkC-android/jni/openssl-1.0.2/include/ /home/axel/android-sdk-linux/ndk-bundle/sources/cxx-stl/system
+directory /home/axel/android-sdk-linux/ndk-bundle/platforms/android-21/arch-arm/usr/include jni/openssl-1.0.2/include/ /home/axel/android-sdk-linux/ndk-bundle/sources/cxx-stl/system

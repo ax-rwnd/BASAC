@@ -22,6 +22,7 @@ public class WarningActivity extends AppCompatActivity {
     private String alt1, alt2, alt3;
 
     private JSONData reportJson;
+    DataStore ds;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class WarningActivity extends AppCompatActivity {
             finish();
         }
 
-        DataStore ds = (DataStore)getApplication();
+        ds = (DataStore)getApplication();
         ds.mState.cancelCountDown(warningId);
 
         this.alt1 = "case 1";
@@ -107,7 +108,7 @@ public class WarningActivity extends AppCompatActivity {
     }
     private void submitReport(String optionChosen) {
         UserIncidentReport accidentReport = new UserIncidentReport(this, warningId, optionChosen);
-        accidentReport.submitReport();
+        accidentReport.submitReport(ds.mState);
 
         AlertDialog alertDialog = new AlertDialog.Builder(WarningActivity.this)
                 .setTitle("Alert")

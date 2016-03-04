@@ -18,6 +18,7 @@ public class UserIncidentReport {
     private JSONData reportJson;
     private Context mContext;
     private SendAlarmTCP sat;
+    private StateController mState;
 
     public UserIncidentReport(Context c, int warningId, String message) {
         mContext = c;
@@ -29,7 +30,8 @@ public class UserIncidentReport {
         StateController.setWarningState(warningId, false);
     }
 
-    public void submitReport() {
+    public void submitReport(StateController mState) {
+        this.mState = mState;
         reportJson.putData("AccidentTimeStamp", timeStamp);
         reportJson.putData("AccidentType", warningId);
         reportJson.putData("AccidentMessage", reportMessage);
@@ -37,12 +39,12 @@ public class UserIncidentReport {
         Log.d("Report", reportJson.toString());
         Toast.makeText(mContext, "Report sent", Toast.LENGTH_SHORT).show();
 
-        String filename = "report:" + getTimeStamp() + ".txt";
+        String filename = "report:" + getTimeStamp();
         String string = getTimeStamp() + "::" + getType() + "::"+getReportMessage();
         FileOutputStream outputStream;
 
         try{
-            outputStream = mContext.openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream = mContext.openFileOutput(filename+".txt", Context.MODE_WORLD_READABLE);
             outputStream.write(string.getBytes());
             outputStream.close();
             Log.d("Files Directory Report", String.valueOf(mContext.getFilesDir()));
@@ -53,6 +55,7 @@ public class UserIncidentReport {
         }
 
         transmitToServer(warningId);
+        this.mState.makeContent(filename, filename);
     }
 
     public void transmitToServer(int warningId) {
