@@ -12,8 +12,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import d0020e.basac.bluetooth2.BluetoothScreenActivity;
-import d0020e.basac.bluetooth2.BluetoothServerScreenActivity;
+import d0020e.basac.bluetooth.BluetoothScreenActivity;
+import d0020e.basac.bluetooth.BluetoothServerScreenActivity;
 
 public class SettingsScreenActivity extends AppCompatActivity {
 

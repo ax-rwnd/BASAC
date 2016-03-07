@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context=".bluetooth2.BluetoothScreenActivity">
+    tools:context=".bluetooth.BluetoothScreenActivity">
 
     <TextView android:id="@+id/title_paired_devices"
         android:layout_width="fill_parent"

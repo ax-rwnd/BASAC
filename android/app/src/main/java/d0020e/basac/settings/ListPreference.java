@@ -1,4 +1,4 @@
-package d0020e.basac.settings2;
+package d0020e.basac.settings;
 
 import android.content.Context;
 import android.util.AttributeSet;
