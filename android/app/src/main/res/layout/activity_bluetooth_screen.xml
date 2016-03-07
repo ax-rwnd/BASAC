@@ -9,9 +9,10 @@
     <TextView android:id="@+id/title_paired_devices"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Paired devices"
+        android:text="@string/paired_devices"
         android:paddingTop="3dp"
         android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         />
     <ListView android:id="@+id/bt_paired_devices"
         android:layout_width="fill_parent"
@@ -22,9 +23,10 @@
     <TextView android:id="@+id/title_new_devices"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="New devices"
+        android:text="@string/new_devices"
         android:paddingTop="3dp"
         android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         />
     <ListView android:id="@+id/bt_devices"
         android:layout_width="fill_parent"
@@ -35,14 +37,15 @@
     <TextView android:id="@+id/bt_device"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="STATUS"
+        android:text="@string/bt_status"
         android:textAlignment="center"
         android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         />
     <Button android:id="@+id/button_scan"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Rescan"
+        android:text="@string/bt_rescan"
         android:onClick="bt_rescan"
         />
 

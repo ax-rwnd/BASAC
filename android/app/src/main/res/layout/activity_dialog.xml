@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Title"
+            android:text="@string/report_dialog_title"
             android:id="@+id/report_title"
             android:layout_gravity="center_horizontal" />
 
@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Report description"
+                    android:text="@string/report_description"
                     android:id="@+id/report_description" />
 
                 <LinearLayout
@@ -53,13 +53,13 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Cancel"
+                        android:text="@string/report_dialog_cancel"
                         android:id="@+id/cancel_report" />
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Send"
+                        android:text="@string/report_dialog_send"
                         android:id="@+id/send_report" />
 
                 </LinearLayout>

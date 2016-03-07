@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -524,7 +525,7 @@ public class StateController extends Service implements Observer {
                         StateController.setWarningState(countDown.get(countDown.firstKey()), false);
                         UserIncidentReport accidentReport = new UserIncidentReport(mStateController.get().mContext, countDown.get(countDown.firstKey()), "auto-report");
                         countDown.remove(countDown.firstKey());
-                        //accidentReport.submitReport();
+                        accidentReport.submitReport(mStateController.get());
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -546,9 +547,9 @@ public class StateController extends Service implements Observer {
     }
 
     public void makeContent(String infile, String outfile) {
+        generateContent("/ndn/hello-world", mContext.getFilesDir() + "/" + infile + ".txt",
+                mContext.getFilesDir() + "/content/" +outfile+".ndntlv");
         Log.d("makeContent", outfile + " CREATED");
-        generateContent("/ndn/hello-world", mContext.getFilesDir()+"/"+infile+".txt",
-                mContext.getFilesDir()+"/content/"+outfile+".ndntlv");
     }
 
 }

@@ -2,8 +2,6 @@ package d0020e.basac;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 
 /**

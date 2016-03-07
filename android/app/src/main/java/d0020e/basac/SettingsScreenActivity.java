@@ -67,10 +67,6 @@ public class SettingsScreenActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     *
-     * @param view
-     */
     public void bluetooth_disconnect(View view) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putBoolean("start_bluetooth", false);

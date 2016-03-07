@@ -45,7 +45,7 @@ public class SendAlarmTCP {
         try {
             InetAddress serverAddr = InetAddress.getByName(serverIP);
             Log.d(TAG,"Client connecting...");
-            socket = new Socket(serverAddr,serverPort);
+            socket = new Socket(serverAddr, serverPort);
 
             try {
                 outgoing = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
@@ -74,7 +74,7 @@ public class SendAlarmTCP {
     }
 
     public interface OnMessageReceived {
-        public void messageReceived(String message);
+        void messageReceived(String message);
     }
 
 }

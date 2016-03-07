@@ -30,10 +30,10 @@ public class BluetoothScreenActivity extends AppCompatActivity {
             String action = intent.getAction();
             if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
                 TextView bt_device = (TextView) findViewById(R.id.bt_device);
-                bt_device.setText("Scanning for devices...");
+                bt_device.setText(R.string.bt_scan);
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 TextView bt_device = (TextView) findViewById(R.id.bt_device);
-                bt_device.setText("Finished scanning for devices");
+                bt_device.setText(R.string.bt_scan_finished);
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 mDeviceArray.add(device.getName() + "\n" + device.getAddress());

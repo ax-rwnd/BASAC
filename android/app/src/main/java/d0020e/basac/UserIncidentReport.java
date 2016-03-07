@@ -39,7 +39,7 @@ public class UserIncidentReport {
         Log.d("Report", reportJson.toString());
         Toast.makeText(mContext, "Report sent", Toast.LENGTH_SHORT).show();
 
-        String filename = "report:" + getTimeStamp();
+        String filename = "report_" + getTimeStamp();
         String string = getTimeStamp() + "::" + getType() + "::"+getReportMessage();
         FileOutputStream outputStream;
 
@@ -76,7 +76,6 @@ public class UserIncidentReport {
                 }
             });
             sat.run();
-            sat.sendAlarm("WarningId: ...");
             return null;
         }
 
