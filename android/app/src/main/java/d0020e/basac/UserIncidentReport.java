@@ -43,8 +43,8 @@ public class UserIncidentReport {
         String string = getTimeStamp() + "::" + getType() + "::"+getReportMessage();
         FileOutputStream outputStream;
 
-        try{
-            outputStream = mContext.openFileOutput(filename+".txt", Context.MODE_WORLD_READABLE);
+        try {
+            outputStream = mContext.openFileOutput(filename+".txt", Context.MODE_PRIVATE);
             outputStream.write(string.getBytes());
             outputStream.close();
             Log.d("Files Directory Report", String.valueOf(mContext.getFilesDir()));

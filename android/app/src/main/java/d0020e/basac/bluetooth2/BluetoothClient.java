@@ -1,4 +1,4 @@
-package d0020e.basac.Bluetooth;
+package d0020e.basac.bluetooth2;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -64,11 +64,9 @@ public class BluetoothClient {
 
     public static int mState = STATE_NONE;
 
-    private static Handler mHandler = null;
-
     private Context mContext;
 
-    private Handler handler = new Handler() {
+    static class BluetoothClientHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             Log.d(TAG, "handleMessage(): " + msg.what);
@@ -105,17 +103,6 @@ public class BluetoothClient {
                                 e.printStackTrace();
                             }
 
-                            // construct a string from the valid bytes in the buffer
-                            /*Log.d(TAG, "Handler() msgRead: " + readMessage);
-                            try {
-                                DataModel.getInstance().setValue(DataStore.VALUE_OXYGEN, Integer.parseInt(readMessage));
-                                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
-                                editor.putInt("data_"+DataStore.VALUE_OXYGEN, Integer.parseInt(readMessage));
-                                editor.apply();
-                            } catch (NumberFormatException e) {
-                                Log.e(TAG, "NumberFormatException: " + readMessage);
-                            }
-                            */
                         }
                         break;
                     case MESSAGE_WRITE:
@@ -132,7 +119,8 @@ public class BluetoothClient {
             }
             super.handleMessage(msg);
         }
-    };
+    }
+    private static BluetoothClientHandler handler = new BluetoothClientHandler();
 
     public BluetoothClient(Context c) {
         Log.d(TAG, "Bluetooth Connecting");

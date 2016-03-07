@@ -47,7 +47,7 @@ public class DataStore extends Application {
 
     public StateController mState;
 
-    Handler.Callback realCallback = null;
+    /*Handler.Callback realCallback = null;
     Handler handler  = new Handler() {
         public void handleMessage(Message msg) {
             if (realCallback != null) {
@@ -62,7 +62,8 @@ public class DataStore extends Application {
 
     public void setCallback(Handler.Callback callback) {
         this.realCallback = callback;
-    }
+    }*/
+
 
     @Override
     public void onCreate() {

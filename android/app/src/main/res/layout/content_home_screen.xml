@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:text="@string/button_info"
         android:onClick="startDataScreen"
-        android:textSize="60dp"/>
+        android:textSize="60sp"/>
 
     <Button
         android:id="@+id/action_settings"

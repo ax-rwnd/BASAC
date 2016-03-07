@@ -1,4 +1,4 @@
-package d0020e.basac.Settings;
+package d0020e.basac.settings2;
 
 import android.content.Context;
 import android.preference.DialogPreference;

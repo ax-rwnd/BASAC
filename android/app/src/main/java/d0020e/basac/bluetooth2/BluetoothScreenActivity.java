@@ -1,4 +1,4 @@
-package d0020e.basac.Bluetooth;
+package d0020e.basac.bluetooth2;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -49,7 +49,7 @@ public class BluetoothScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_screen);
-        BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(getApplicationContext().BLUETOOTH_SERVICE);
+        BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 
         mBluetoothAdapter = mBluetoothManager.getAdapter();
         if (mBluetoothAdapter == null) {
@@ -57,10 +57,10 @@ public class BluetoothScreenActivity extends AppCompatActivity {
             return;
         }
 
-        mDeviceArray = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1);
+        mDeviceArray = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1);
         ListView mDeviceList = (ListView) findViewById(R.id.bt_devices);
         mDeviceList.setAdapter(mDeviceArray);
-        mPairedDeviceArray = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1);
+        mPairedDeviceArray = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);

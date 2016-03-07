@@ -1,4 +1,4 @@
-package d0020e.basac.Bluetooth;
+package d0020e.basac.bluetooth2;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -50,7 +50,7 @@ public class BluetoothServerScreenActivity extends AppCompatActivity {
             int currentData = 0;
             public void run() {
                 // demo data
-                JSONObject json = null;
+                JSONObject json;
                 try {
                     json = new JSONObject();
                     json.put("oxygen", 21)         // %

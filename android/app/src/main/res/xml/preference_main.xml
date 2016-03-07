@@ -16,7 +16,7 @@
             android:title="Log"
             android:defaultValue="false" />
 
-        <d0020e.basac.Settings.ResetLogFile
+        <d0020e.basac.settings2.ResetLogFile
             android:key="pref_key_settings_delete_log_file"
             android:title="Delete log file?"
             android:positiveButtonText="Yes"
@@ -67,7 +67,7 @@
             android:title="Automatic report"
             android:summary="Automatically send a report after specified time"
             android:defaultValue="true" />
-        <d0020e.basac.Settings.SeekBarPreference
+        <d0020e.basac.settings2.SeekBarPreference
             android:key="settings_warning_report_timeout"
             android:title="Report timeout"
             android:dialogMessage="Time to wait before automatically send a report"
@@ -95,7 +95,7 @@
                     android:key="settings_accelerometer_enable"
                     android:title="Enable accelerometer"
                     android:defaultValue="true" />
-                <d0020e.basac.Settings.SeekBarPreference
+                <d0020e.basac.settings2.SeekBarPreference
                     android:key="accelerometer_low"
                     android:title="Accelerometer calibration low"
                     android:dialogMessage="Trigger a warning if accelerometer is below this value"
@@ -103,7 +103,7 @@
                     basac:maxValue="8"
                     basac:minValue="0"
                     android:defaultValue="2" />
-                <d0020e.basac.Settings.SeekBarPreference
+                <d0020e.basac.settings2.SeekBarPreference
                     android:key="accelerometer_high"
                     android:title="Accelerometer calibration high"
                     android:dialogMessage="Trigger a warning if accelerometer is above this value"
@@ -167,7 +167,7 @@
             <PreferenceCategory
                 android:title="Location"
                 android:key="pref_key_settings_location">
-                <d0020e.basac.Settings.ListPreference
+                <d0020e.basac.settings2.ListPreference
                     android:title="Mock location"
                     android:summary="Simulate location"
                     android:key="pref_key_location"

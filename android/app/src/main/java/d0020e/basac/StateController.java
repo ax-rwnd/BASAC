@@ -7,7 +7,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -29,8 +28,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.TreeMap;
 
-import d0020e.basac.Bluetooth.BluetoothArduino;
-import d0020e.basac.Bluetooth.BluetoothClient;
+import d0020e.basac.bluetooth2.BluetoothArduino;
+import d0020e.basac.bluetooth2.BluetoothClient;
 
 /**
  * Created by Sebastian on 04/12/2015.

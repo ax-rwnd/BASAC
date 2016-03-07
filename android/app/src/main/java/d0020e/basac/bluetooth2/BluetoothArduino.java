@@ -1,4 +1,4 @@
-package d0020e.basac.Bluetooth;
+package d0020e.basac.bluetooth2;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
