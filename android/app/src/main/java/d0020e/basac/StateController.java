@@ -20,6 +20,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
@@ -547,8 +548,13 @@ public class StateController extends Service implements Observer {
     }
 
     public void makeContent(String infile, String outfile) {
-        generateContent("/ndn/hello-world", mContext.getFilesDir() + "/" + infile + ".txt",
-                mContext.getFilesDir() + "/content/" +outfile+".ndntlv");
+        // Make sure all direcoties exists
+        File basacFolder = new File(Environment.getExternalStorageDirectory(), "ccn-lite");
+        if (!basacFolder.exists()) {
+            basacFolder.mkdir();
+        }
+        generateContent("/ndn/hello-world", infile, outfile);
+
         Log.d("makeContent", outfile + " CREATED");
     }
 

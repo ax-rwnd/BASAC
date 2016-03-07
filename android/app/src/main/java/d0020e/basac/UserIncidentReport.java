@@ -2,10 +2,13 @@ package d0020e.basac;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by Sebastian on 17/02/2016.
@@ -43,7 +46,7 @@ public class UserIncidentReport {
         String string = getTimeStamp() + "::" + getType() + "::"+getReportMessage();
         FileOutputStream outputStream;
 
-        try {
+        /*try {
             outputStream = mContext.openFileOutput(filename+".txt", Context.MODE_PRIVATE);
             outputStream.write(string.getBytes());
             outputStream.close();
@@ -52,10 +55,34 @@ public class UserIncidentReport {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }*/
+
+        // write file to sdcard
+        try {
+            File basacFolder = new File(Environment.getExternalStorageDirectory(), "BASAC");
+            if (!basacFolder.exists()) {
+                basacFolder.mkdir();
+            }
+            try {
+                File dataFile = new File(basacFolder, "data.txt");
+                dataFile.createNewFile();
+                FileOutputStream fos = new FileOutputStream(dataFile, false);
+                try {
+                    fos.write(reportJson.toString().getBytes());
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
+        this.mState.makeContent(Environment.getExternalStorageDirectory().toString() + "/BASAC/data.txt",
+                Environment.getExternalStorageDirectory().toString() + "/ccn-lite/data_" + getTimeStamp() + ".ndntlv");
         transmitToServer(warningId);
-        this.mState.makeContent(filename, filename);
     }
 
     public void transmitToServer(int warningId) {
