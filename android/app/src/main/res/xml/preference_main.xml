@@ -164,6 +164,23 @@
             android:key="button_dev_settings"
             android:title="Developer settings"
             android:persistent="false">
+            <EditTextPreference
+                android:key="amarino_mac_address"
+                android:title="MAC address for amarino"
+                android:defaultValue="00:06:66:08:5F:6F"
+                android:capitalize="characters" />
+            <EditTextPreference
+                android:key="reports_ip_address"
+                android:title="IP address"
+                android:summary="IP address to send reports to"
+                android:defaultValue="192.168.43.149"
+                android:inputType="number" />
+            <EditTextPreference
+                android:key="reports_port_number"
+                android:title="Port"
+                android:summary="Port number for reports"
+                android:defaultValue="1337"
+                android:inputType="number" />
             <PreferenceCategory
                 android:title="Location"
                 android:key="pref_key_settings_location">

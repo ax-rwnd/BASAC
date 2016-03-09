@@ -1,5 +1,7 @@
 package d0020e.basac;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -16,8 +18,8 @@ public class SendAlarmTCP {
     private String TAG="TCP/IP client";
     private Socket socket;
     private OnMessageReceived mRecvListener = null;
-    public final String serverIP = "192.168.43.149";
-    public final int serverPort = 1337;
+    public String serverIP = "192.168.43.149";
+    public int serverPort = 1337;
     private boolean mRun = false;
 
     PrintWriter outgoing;
@@ -29,6 +31,9 @@ public class SendAlarmTCP {
 
     public void sendAlarm(String msg){
         Log.d(TAG,"Trying to send: " + msg);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(DataStore.mState.getInstance().getContext());
+        serverIP = pref.getString("reports_ip_address", "192.168.43.149");
+        serverPort = Integer.parseInt(pref.getString("reports_port_number", "1337"));
         if(outgoing != null && !outgoing.checkError()){
             outgoing.println(msg);
             outgoing.flush();

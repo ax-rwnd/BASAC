@@ -38,7 +38,7 @@ public class UserIncidentReport {
         reportJson.putData("AccidentTimeStamp", timeStamp);
         reportJson.putData("AccidentType", warningId);
         reportJson.putData("AccidentMessage", reportMessage);
-        reportJson.logJSON();
+        reportJson.updateTimestamp();
         Log.d("Report", reportJson.toString());
         Toast.makeText(mContext, "Report sent", Toast.LENGTH_SHORT).show();
 
@@ -64,7 +64,7 @@ public class UserIncidentReport {
                 basacFolder.mkdir();
             }
             try {
-                File dataFile = new File(basacFolder, "data.txt");
+                File dataFile = new File(basacFolder, "data_" + getTimeStamp() + ".txt");
                 dataFile.createNewFile();
                 FileOutputStream fos = new FileOutputStream(dataFile, false);
                 try {
@@ -80,7 +80,7 @@ public class UserIncidentReport {
             e.printStackTrace();
         }
 
-        this.mState.makeContent(Environment.getExternalStorageDirectory().toString() + "/BASAC/data.txt",
+        this.mState.makeContent(Environment.getExternalStorageDirectory().toString() + "/BASAC/data_" + getTimeStamp() + ".txt",
                 Environment.getExternalStorageDirectory().toString() + "/ccn-lite/data_" + getTimeStamp() + ".ndntlv");
         transmitToServer(warningId);
     }

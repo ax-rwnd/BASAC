@@ -88,13 +88,15 @@ public class JSONData {
         }
         Log.d(TAG, json.toString());
     }
-
-    public JSONObject getJSON() {
+    public void updateTimestamp() {
         try {
             json.put("timestamp", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public JSONObject getJSON() {
         return json;
     }
 

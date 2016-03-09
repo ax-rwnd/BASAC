@@ -43,7 +43,7 @@ public class DataStore extends Application {
     public static int THRESHOLD_AIRPRESSURE_HIGH = 150000;
     public static int THRESHOLD_CO = 30;
 
-    public StateController mState;
+    public static StateController mState;
 
     /*Handler.Callback realCallback = null;
     Handler handler  = new Handler() {
