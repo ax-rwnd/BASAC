@@ -62,7 +62,7 @@ public class StateController extends Service implements Observer {
         System.loadLibrary("ssl");
         System.loadLibrary("androidmkc");
     }
-    private native int generateContent(String content, String ipath, String opath);
+    private native int generateContent(String content, String ipath, String opath, int ccn_suite);
 
 
     //Service
@@ -496,11 +496,6 @@ public class StateController extends Service implements Observer {
             mCDThread.remove(warningId);
         }
     }
-
-    public void showToast(String s) {
-        Toast.makeText(mContext, s, Toast.LENGTH_SHORT).show();
-    }
-
     // TODO: Add time left on notification
     private class CountDownThread extends Thread {
         private static final String TAG = "CountDownThread";
@@ -528,8 +523,6 @@ public class StateController extends Service implements Observer {
                         Log.d(TAG, "Remove countdown for " + countDown.get(countDown.firstKey()));
                         NotificationManager mNotifyMgr = (NotificationManager) mStateController.get().mContext.getSystemService(Context.NOTIFICATION_SERVICE);
                         mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING + countDown.get(countDown.firstKey()));
-
-                        //mStateController.get().showToast("Test");
 
                         StateController.setWarningState(countDown.get(countDown.firstKey()), false);
                         UserIncidentReport accidentReport = new UserIncidentReport(mStateController.get().mContext, countDown.get(countDown.firstKey()), "auto-report");
@@ -607,7 +600,7 @@ public class StateController extends Service implements Observer {
         if (!basacFolder.exists()) {
             basacFolder.mkdir();
         }
-        generateContent("/ndn/hello-world", infile, outfile);
+        generateContent("/ndn/hello-world", infile, outfile, 6);
 
         Log.d("makeContent", outfile + " CREATED");
     }
