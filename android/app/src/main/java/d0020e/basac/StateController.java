@@ -48,6 +48,7 @@ public class StateController extends Service implements Observer {
 
     public static boolean warningDialog = false;
     private static boolean[] warningState = new boolean[8];
+    private static long lastWarning = System.currentTimeMillis();
 
     private JSONData json;
 
@@ -313,7 +314,8 @@ public class StateController extends Service implements Observer {
     }
 
     private void showWarning(int warningId) {
-        if (mBluetoothArduino != null) {
+        if (mBluetoothArduino != null && lastWarning < System.currentTimeMillis() + 30000) {
+            lastWarning = System.currentTimeMillis() + 30000;
             mBluetoothArduino.turnonvibe();
         }
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -361,6 +363,9 @@ public class StateController extends Service implements Observer {
                     break;
                 case DataStore.VALUE_SKIN_TEMPERATURE:
                     mBuilder.setContentTitle("Skin temperature");
+                    break;
+                case DataStore.VALUE_HUMIDITY:
+                    mBuilder.setContentTitle("Humidity");
                     break;
                 default:
                     mBuilder.setContentTitle("Unspecified warning!");
@@ -441,6 +446,10 @@ public class StateController extends Service implements Observer {
         // Carbon monoxide
         if (DataModel.getInstance().getValue(DataStore.VALUE_CO) > Integer.parseInt(pref.getString("threshold_co_max", String.valueOf(DataStore.THRESHOLD_CO)))) {
             warnings.add(DataStore.VALUE_CO);
+        }
+        // Humidity
+        if (DataModel.getInstance().getValue(DataStore.VALUE_HUMIDITY) > Integer.parseInt(pref.getString("threshold_humidity_max", "50"))) {
+            warnings.add(DataStore.VALUE_HUMIDITY);
         }
         // Display warnings
         for (int warningId : warnings) {
