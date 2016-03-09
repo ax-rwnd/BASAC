@@ -2,6 +2,7 @@ package d0020e.basac;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -44,10 +45,10 @@ public class UserIncidentReport {
         FileOutputStream outputStream;
 
         try{
-            outputStream = mContext.openFileOutput(filename+".txt", Context.MODE_WORLD_READABLE);
+            outputStream = mContext.openFileOutput(filename+".txt", Context.MODE_WORLD_READABLE); //Don't use this.
             outputStream.write(string.getBytes());
             outputStream.close();
-            Log.d("Files Directory Report", String.valueOf(mContext.getFilesDir()));
+            Log.d("Files Directory Report", String.valueOf(Environment.getExternalStorageDirectory()));
             Log.d("Report", string);
 
         } catch (Exception e) {

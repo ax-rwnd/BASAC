@@ -61,7 +61,7 @@ public class StateController extends Service implements Observer {
         System.loadLibrary("ssl");
         System.loadLibrary("androidmkc");
     }
-    private native int generateContent(String content, String ipath, String opath);
+    private native int generateContent(String content, String ipath, String opath, int ccn_suite);
 
 
     //Service
@@ -548,8 +548,8 @@ public class StateController extends Service implements Observer {
 
     public void makeContent(String infile, String outfile) {
         Log.d("makeContent", outfile + " CREATED");
-        generateContent("/ndn/hello-world", mContext.getFilesDir()+"/"+infile+".txt",
-                mContext.getFilesDir()+"/content/"+outfile+".ndntlv");
+        generateContent("/ndn/hello-world", mContext.getFilesDir() + "/" + infile + ".txt",
+                Environment.getExternalStorageDirectory()+"/ccn-lite/"+outfile+".ndntlv", 6);
     }
 
 }
