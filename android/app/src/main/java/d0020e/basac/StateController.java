@@ -535,8 +535,9 @@ public class StateController extends Service implements Observer {
                         UserIncidentReport accidentReport = new UserIncidentReport(mStateController.get().mContext, countDown.get(countDown.firstKey()), "auto-report");
                         countDown.remove(countDown.firstKey());
                         accidentReport.submitReport(mStateController.get());
-                    } else {
-                        int warningId = countDown.get(countDown.firstKey());
+                    } else if (countDown.size() > 0) {
+                        // Only works when there is one notification
+                        /*int warningId = countDown.get(countDown.firstKey());
                         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mStateController.get().mContext);
                         if (pref.getBoolean("settings_warning_show_notification", true)) {
                             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mStateController.get().mContext)
@@ -580,7 +581,7 @@ public class StateController extends Service implements Observer {
 
                             NotificationManager mNotifyMgr = (NotificationManager) mStateController.get().mContext.getSystemService(Context.NOTIFICATION_SERVICE);
                             mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING + warningId, mBuilder.build());
-                        }
+                        }*/
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();

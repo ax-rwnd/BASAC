@@ -44,21 +44,21 @@ public class UserIncidentReport {
 
         String filename = "report_" + getTimeStamp();
         String string = getTimeStamp() + "::" + getType() + "::"+getReportMessage();
-        FileOutputStream outputStream;
 
-        /*try {
+        FileOutputStream outputStream;
+        try {
             outputStream = mContext.openFileOutput(filename+".txt", Context.MODE_PRIVATE);
-            outputStream.write(string.getBytes());
+            outputStream.write(reportJson.toString().getBytes());
             outputStream.close();
             Log.d("Files Directory Report", String.valueOf(mContext.getFilesDir()));
             Log.d("Report", string);
 
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
 
         // write file to sdcard
-        try {
+        /*try {
             File basacFolder = new File(Environment.getExternalStorageDirectory(), "BASAC");
             if (!basacFolder.exists()) {
                 basacFolder.mkdir();
@@ -68,7 +68,8 @@ public class UserIncidentReport {
                 dataFile.createNewFile();
                 FileOutputStream fos = new FileOutputStream(dataFile, false);
                 try {
-                    fos.write(reportJson.toString().getBytes());
+                    //fos.write(reportJson.toString().getBytes());
+                    fos.write(string.getBytes());
                     fos.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -79,8 +80,10 @@ public class UserIncidentReport {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         this.mState.makeContent(Environment.getExternalStorageDirectory().toString() + "/BASAC/data_" + getTimeStamp() + ".txt",
+                Environment.getExternalStorageDirectory().toString() + "/ccn-lite/data_" + getTimeStamp() + ".ndntlv");*/
+
+        this.mState.makeContent(mContext.getFilesDir() + "/" + filename + ".txt",
                 Environment.getExternalStorageDirectory().toString() + "/ccn-lite/data_" + getTimeStamp() + ".ndntlv");
         transmitToServer(warningId);
     }
