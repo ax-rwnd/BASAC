@@ -521,12 +521,12 @@ public class StateController extends Service implements Observer {
             Log.d(TAG, countDown.toString());
         }
         public void run() {
+            Looper.prepare();
             while(countDown.size() > 0) {
                 //Log.d(TAG, "run()");
                 try {
                     Thread.sleep(1000);
                     if (countDown.size() > 0 && countDown.firstKey() < System.currentTimeMillis()) {
-                        Looper.prepare();
                         Log.d(TAG, "Remove countdown for " + countDown.get(countDown.firstKey()));
                         NotificationManager mNotifyMgr = (NotificationManager) mStateController.get().mContext.getSystemService(Context.NOTIFICATION_SERVICE);
                         mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING + countDown.get(countDown.firstKey()));
