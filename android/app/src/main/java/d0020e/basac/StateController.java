@@ -399,7 +399,14 @@ public class StateController extends Service implements Observer {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
         SharedPreferences.Editor editor = pref.edit();
         editor.putLong("last_update", last_update);
-        editor.apply();
+        editor.putInt("data_" + DataStore.VALUE_OXYGEN, 21);
+        editor.putInt("data_" + DataStore.VALUE_ENV_TEMPERATURE, 20);
+        editor.putInt("data_" + DataStore.VALUE_HEARTRATE, 60);
+        editor.putInt("data_" + DataStore.VALUE_AIRPRESSURE, 101000);
+        editor.putInt("data_" + DataStore.VALUE_HUMIDITY, 40);
+        editor.putInt("data_" + DataStore.VALUE_CO, 0);
+        editor.putInt("data_" + DataStore.VALUE_SKIN_TEMPERATURE, 20);
+        editor.commit();
 
         // Oxygen
         if(DataModel.getInstance().getValue(DataStore.VALUE_OXYGEN) < DataStore.THRESHOLD_OXYGEN) {

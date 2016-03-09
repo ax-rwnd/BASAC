@@ -25,40 +25,7 @@ public class BluetoothArduino {
     private String device_address;
 
     String[] fields = null;
-    //String[] s = null; //pachube String
-    String result;
     String data = null;
-    String HeartBeat;
-    float tempin,tempout;
-    int X_axis,Y_axis,Z_axis;
-
-
-    // shared preferences variables
-    /*boolean viberCheckbox = false;
-    boolean soundcheckbox = false;
-    boolean pachubecheckbox = false;
-    boolean localstorage = false;
-    String Emergencycontact;
-    String Globaltimeout;
-    int Global_Time;
-    String emailaddress;
-    String Skinlowerthresholdtemp;
-    String Skinupperthresholdtemp;
-    String Environmentlowerthresholdtemp;
-    String Environmentupperthresholdtemp;
-    String cogasminimum;
-    String cogasmaximum;
-
-    // sensor variables
-    boolean Emergencybutton = false;
-    boolean Fallstatus  = false;
-    int Max_heartrate =210,Min_heartrate = 40;
-    float max_bodytempin,min_bodytempin,max_envtemp,min_envtemp;
-*/
-    ArrayList<Float> flo= new ArrayList<>();
-    ArrayList<Float> values1= new ArrayList<>();
-    ArrayList<Long> time= new ArrayList<>();
-    ArrayList<Long> time1= new ArrayList<>();
 
     public BluetoothArduino(Context c, String address) {
         Log.d(TAG, "Constructor()");
@@ -124,7 +91,7 @@ public class BluetoothArduino {
             if (AmarinoIntent.ACTION_RECEIVED.equals(intent.getAction())) {
                 // the type of data which is added to the intent
                 final int dataType = intent.getIntExtra(AmarinoIntent.EXTRA_DATA_TYPE, -1);
-                Log.d(TAG, "DataType: " + dataType);
+                //Log.d(TAG, "DataType: " + dataType);
                 if (dataType == AmarinoIntent.STRING_EXTRA) {
                     data = intent.getStringExtra(AmarinoIntent.EXTRA_DATA);
                     Log.d(TAG, "Data: " + data);
@@ -137,96 +104,20 @@ public class BluetoothArduino {
 
                         // check if the data is in correct format
                         if ((c == '@')) {
-                            // user name text field
-                            //String text = "\u00A0"+"User name:"+"\n" +"\u00A0"+username +"\n"+ "\u00A0"+"Login Time:"+"\n"+ "\u00A0"+Starttime+"\n"+ "\u00A0"+"Status:"+ "\u00A0"+"connected";
-                            String text = "\u00A0"+"User name:"+"\u00A0"+"WeeDz" +"\n"+ "\u00A0"+"Login time:"+ "\u00A0"+ System.currentTimeMillis()+"\n"+ "\u00A0"+"Status:"+ "\u00A0"+"connected";
-                            //user.setText(text);
-
-                            //  pachube String
-                            /*int[] indices = { 1,2,3,4,5};
-                            int length = indices.length;
-                            StringBuilder str = new StringBuilder();
-                            for (int i=0; i<length; i++) {
-                                str.append(s[indices[i]]);
-                                if (i+1 != length) str.append(",");
-                            }
-                            result = str.toString();
-
-                            Timer pachhube = new Timer();
-                            pachhube.schedule(new TimerTask()
-                            {
-                                public void run()
-                                {
-                                    if(pachubecheckbox == true)
-                                    {
-                                        coms.Cosm(result);  // Update to Pachube server
-
-                                    }
-                                }
-                            },60000); //Every 60 seconds
-
-                            Timer t2 = new Timer();
-                            t2.schedule(new TimerTask()
-                            {
-                                public void run()
-                                {
-                                    if(localstorage == true)
-                                    {
-                                        coms.savedata(fields,username,Long,Lat);	  // save data into local database
-                                    }
-                                }
-                            },60000); //Every 60 seconds*/
-
                             // Temperature in
                             if (fields[1] != null && !fields[1].isEmpty() && !fields[1].trim().isEmpty()) {
                                 float f = Float.valueOf(fields[1].trim());
-                                /*tempin = Float.valueOf(fields[1].trim());
-                                values1.add((float) Math.round(tempin));
-                                time1.add(System.currentTimeMillis());*/
 
                                 // ------ Set value in DataModel ------
                                 DataModel.getInstance().setValue(DataStore.VALUE_SKIN_TEMPERATURE, f);
-
-
-                                //tv3.setText(tempin+" "+(char) 0x00B0 +"C" );  //tv2
-                                //tv3.setTextColor(Color.BLACK);
-                                /*max_bodytempin = Float.valueOf(Skinupperthresholdtemp.trim());
-                                min_bodytempin = Float.valueOf(Skinlowerthresholdtemp.trim());
-                                if( tempin >= max_bodytempin)
-                                {
-                                    tv3.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFF62217));
-                                }
-                                else
-                                {
-                                    tv3.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
-                                }*/
-
                             }
 
                             // Temperature out
                             if (fields[2] != null && !fields[2].isEmpty() && !fields[2].trim().isEmpty()) {
                                 float f = Float.valueOf(fields[2].trim());
-                                /*tempout = Float.valueOf(fields[2].trim());
-                                flo.add((float) Math.round(f));
-                                time.add(System.currentTimeMillis());*/
 
                                 // ------ Set value in DataModel ------
                                 DataModel.getInstance().setValue(DataStore.VALUE_ENV_TEMPERATURE, f);
-
-
-                                //max_envtemp = Float.valueOf(Environmentupperthresholdtemp.trim());
-                                //min_envtemp = Float.valueOf(Environmentlowerthresholdtemp.trim());
-
-                                //tv4.setText(f+" "+(char) 0x00B0 +"C" );  //tv3
-                                //tv4.setTextColor(Color.BLACK);
-                                /*if( f >= max_envtemp)
-                                {
-                                    tv4.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFF62217));
-                                }
-                                else
-                                {
-                                    tv4.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
-                                }*/
                             }
 
                             // Humidity
@@ -235,17 +126,6 @@ public class BluetoothArduino {
 
                                 // ------ Set value in DataModel ------
                                 DataModel.getInstance().setValue(DataStore.VALUE_HUMIDITY, f);
-
-                                //tv1.setText(f+" "+"% rH" );
-                                //tv1.setTextColor(Color.BLACK);
-                                /*if ((f > 80) || (f < 20))
-                                {
-                                    tv1.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFF62217));
-                                }
-                                else
-                                {
-                                    tv1.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
-                                }*/
                             }
 
                             // Heart beat
@@ -254,13 +134,6 @@ public class BluetoothArduino {
 
                                 // ------ Set value in DataModel ------
                                 DataModel.getInstance().setValue(DataStore.VALUE_HEARTRATE, heart_beat);
-
-                                /*if ((heart_beat <= 210) && (heart_beat >= 38)) {
-                                    //tv2.setText(fields[4]+" "+"bpm" );
-                                    //tv2.setTextColor(Color.BLACK);
-                                    //tv2.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
-                                    //HeartBeat = Integer.toString(heart_beat);
-                                }*/
                             }
 
                             // CO gas
@@ -269,62 +142,21 @@ public class BluetoothArduino {
 
                                 // ------ Set value in DataModel ------
                                 DataModel.getInstance().setValue(DataStore.VALUE_CO, f);
-
-                                //tv5.setText(f+" "+"ppm" );
-                                //tv5.setTextColor(Color.BLACK);
-                                //tv5.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF59E817));
                             }
 
                             if (fields[6] != null && !fields[6].isEmpty() && !fields[6].trim().isEmpty()) {
                                 int n = Integer.parseInt(fields[6]);
-                                Log.d(TAG, "unknown value, fields[7]: " + fields[6]);
-                                /*if(n == 1)
-                                {
-                                    Emergencybutton = false;
-                                }
-                                else
-                                {
-                                    Emergencybutton = true;
-                                }*/
+                                //Log.d(TAG, "unknown value, fields[7]: " + fields[6]);
                             }
 
                             if (fields[7] != null && !fields[7].isEmpty() && !fields[7].trim().isEmpty()) {
                                 float f = Float.valueOf(fields[7].trim());
-                                Log.d(TAG, "unknown value, fields[7]: " + fields[7]);
-                                /*if(f > 4.55)
-                                {
-                                    percentage = "100";
-                                    imageButton.setImageDrawable((Drawable)getResources().getDrawable(R.drawable.h));
-                                }
-                                if(f > 4.35 && f < 4.55)
-                                {
-                                    percentage = "75";
-                                    imageButton.setImageDrawable((Drawable)getResources().getDrawable(R.drawable.mh));
-                                }
-                                if(f > 4.0 && f < 4.35)
-                                {
-                                    percentage = "50";
-                                    imageButton.setImageDrawable((Drawable)getResources().getDrawable(R.drawable.ml));
-                                }
-                                if(f < 4.0)
-                                {
-                                    percentage = "25";
-                                    imageButton.setImageDrawable((Drawable)getResources().getDrawable(R.drawable.l));
-                                }*/
+                                //Log.d(TAG, "unknown value, fields[7]: " + fields[7]);
                             }
-
-                            /*if (fields[8] != null && !fields[8].isEmpty() && !fields[8].trim().isEmpty()) {
-                                X_axis = Integer.parseInt(fields[8]);
-                            }
-                            if (fields[9] != null && !fields[9].isEmpty() && !fields[9].trim().isEmpty()) {
-                                X_axis = Integer.parseInt(fields[9]);
-                            }
-                            if (fields[10] != null && !fields[10].isEmpty() && !fields[10].trim().isEmpty()) {
-                                Z_axis = Integer.parseInt(fields[10]);
-                            }*/
                         }
                     }
                 }
+                DataModel.getInstance().setUpdate();
             }
         }
 

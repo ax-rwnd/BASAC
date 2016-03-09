@@ -75,7 +75,7 @@ public class DataStore extends Application {
         int value_env_temperature = sharedPref.getInt("data_"+DataStore.VALUE_ENV_TEMPERATURE, 20);
         int value_heart_rate = sharedPref.getInt("data_"+DataStore.VALUE_HEARTRATE, 60);
         int value_air_pressure = sharedPref.getInt("data_"+DataStore.VALUE_AIRPRESSURE, 101000);
-        int value_humidity = sharedPref.getInt("data_"+DataStore.VALUE_HUMIDITY, 70);
+        int value_humidity = sharedPref.getInt("data_"+DataStore.VALUE_HUMIDITY, 40);
         int value_co = sharedPref.getInt("data_"+DataStore.VALUE_CO, 0);
         int value_skin_temperature = sharedPref.getInt("data_"+DataStore.VALUE_SKIN_TEMPERATURE, 20);
 
