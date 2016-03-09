@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +20,6 @@ public class WarningActivity extends AppCompatActivity {
     private int warningId;
     private String alt1, alt2, alt3;
 
-    private JSONData reportJson;
     DataStore ds;
 
 
@@ -48,39 +46,38 @@ public class WarningActivity extends AppCompatActivity {
         this.alt2 = "case 2";
         this.alt3 = "case 3";
 
-        reportJson = new JSONData();
-        RelativeLayout layout = (RelativeLayout) View.inflate(this, R.layout.content_warning, null);
+        //RelativeLayout layout = (RelativeLayout) View.inflate(this, R.layout.content_warning, null);
 
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING + warningId);
 
         switch (warningId) {
             case DataStore.VALUE_OXYGEN:
-                mWarningText.setText("Oxygen value is too low!");
+                mWarningText.setText(R.string.warning_oxygen);
                 break;
             case DataStore.VALUE_ACCELEROMETER:
-                mWarningText.setText("Accelerometer");
+                mWarningText.setText(R.string.warning_accelerometer);
                 this.alt1 = "Need Help!";
                 this.alt2 = "Minor fall";
                 this.alt3 = "Nothing";
                 break;
             case DataStore.VALUE_AIRPRESSURE:
-                mWarningText.setText("Airpressure");
+                mWarningText.setText(R.string.warning_air_pressure);
                 break;
             case DataStore.VALUE_CO:
-                mWarningText.setText("Carbon monoxide");
+                mWarningText.setText(R.string.warning_carbon_monoxide);
                 break;
             case DataStore.VALUE_HEARTRATE:
-                mWarningText.setText("Heart rate");
+                mWarningText.setText(R.string.warning_heart_rate);
                 break;
             case DataStore.VALUE_ENV_TEMPERATURE:
-                mWarningText.setText("Environment temperature");
+                mWarningText.setText(R.string.warning_env_temperature);
                 break;
             case DataStore.VALUE_SKIN_TEMPERATURE:
-                mWarningText.setText("Skin temperature");
+                mWarningText.setText(R.string.warning_skin_temperature);
                 break;
             default:
-                mWarningText.setText("Unknown warning id: " + warningId);
+                mWarningText.setText(String.format(getString(R.string.warning_unknown), warningId));
         }
 
         Button warningButton1 = (Button) findViewById(R.id.warning_button_1);

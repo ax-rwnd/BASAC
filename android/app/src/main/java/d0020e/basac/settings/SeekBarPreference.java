@@ -1,4 +1,4 @@
-package d0020e.basac.Settings;
+package d0020e.basac.settings;
 
 import android.app.AlertDialog;
 import android.content.Context;

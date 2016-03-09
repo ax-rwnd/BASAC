@@ -12,8 +12,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import d0020e.basac.Bluetooth.BluetoothScreenActivity;
-import d0020e.basac.Bluetooth.BluetoothServerScreenActivity;
+import d0020e.basac.bluetooth.BluetoothScreenActivity;
+import d0020e.basac.bluetooth.BluetoothServerScreenActivity;
 
 public class SettingsScreenActivity extends AppCompatActivity {
 
@@ -67,10 +67,6 @@ public class SettingsScreenActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     *
-     * @param view
-     */
     public void bluetooth_disconnect(View view) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putBoolean("start_bluetooth", false);

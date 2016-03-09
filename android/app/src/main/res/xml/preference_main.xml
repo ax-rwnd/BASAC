@@ -16,7 +16,7 @@
             android:title="Log"
             android:defaultValue="false" />
 
-        <d0020e.basac.Settings.ResetLogFile
+        <d0020e.basac.settings.ResetLogFile
             android:key="pref_key_settings_delete_log_file"
             android:title="Delete log file?"
             android:positiveButtonText="Yes"
@@ -67,12 +67,12 @@
             android:title="Automatic report"
             android:summary="Automatically send a report after specified time"
             android:defaultValue="true" />
-        <d0020e.basac.Settings.SeekBarPreference
+        <d0020e.basac.settings.SeekBarPreference
             android:key="settings_warning_report_timeout"
             android:title="Report timeout"
             android:dialogMessage="Time to wait before automatically send a report"
             basac:minValue="5"
-            basac:maxValue="30"
+            basac:maxValue="60"
             android:text="seconds"
             android:dependency="settings_warning_automatic_report"
             android:defaultValue="10" />
@@ -95,7 +95,7 @@
                     android:key="settings_accelerometer_enable"
                     android:title="Enable accelerometer"
                     android:defaultValue="true" />
-                <d0020e.basac.Settings.SeekBarPreference
+                <d0020e.basac.settings.SeekBarPreference
                     android:key="accelerometer_low"
                     android:title="Accelerometer calibration low"
                     android:dialogMessage="Trigger a warning if accelerometer is below this value"
@@ -103,7 +103,7 @@
                     basac:maxValue="8"
                     basac:minValue="0"
                     android:defaultValue="2" />
-                <d0020e.basac.Settings.SeekBarPreference
+                <d0020e.basac.settings.SeekBarPreference
                     android:key="accelerometer_high"
                     android:title="Accelerometer calibration high"
                     android:dialogMessage="Trigger a warning if accelerometer is above this value"
@@ -164,10 +164,27 @@
             android:key="button_dev_settings"
             android:title="Developer settings"
             android:persistent="false">
+            <EditTextPreference
+                android:key="amarino_mac_address"
+                android:title="MAC address for amarino"
+                android:defaultValue="00:06:66:08:5F:6F"
+                android:capitalize="characters" />
+            <EditTextPreference
+                android:key="reports_ip_address"
+                android:title="IP address"
+                android:summary="IP address to send reports to"
+                android:defaultValue="192.168.43.149"
+                android:inputType="number" />
+            <EditTextPreference
+                android:key="reports_port_number"
+                android:title="Port"
+                android:summary="Port number for reports"
+                android:defaultValue="1337"
+                android:inputType="number" />
             <PreferenceCategory
                 android:title="Location"
                 android:key="pref_key_settings_location">
-                <d0020e.basac.Settings.ListPreference
+                <d0020e.basac.settings.ListPreference
                     android:title="Mock location"
                     android:summary="Simulate location"
                     android:key="pref_key_location"

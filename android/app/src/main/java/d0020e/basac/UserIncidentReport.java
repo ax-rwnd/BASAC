@@ -6,7 +6,9 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by Sebastian on 17/02/2016.
@@ -36,27 +38,51 @@ public class UserIncidentReport {
         reportJson.putData("AccidentTimeStamp", timeStamp);
         reportJson.putData("AccidentType", warningId);
         reportJson.putData("AccidentMessage", reportMessage);
-        reportJson.logJSON();
+        reportJson.updateTimestamp();
         Log.d("Report", reportJson.toString());
         Toast.makeText(mContext, "Report sent", Toast.LENGTH_SHORT).show();
 
-        String filename = "report:" + getTimeStamp();
+        String filename = "report_" + getTimeStamp();
         String string = getTimeStamp() + "::" + getType() + "::"+getReportMessage();
         FileOutputStream outputStream;
 
-        try{
-            outputStream = mContext.openFileOutput(filename+".txt", Context.MODE_WORLD_READABLE); //Don't use this.
+        /*try {
+            outputStream = mContext.openFileOutput(filename+".txt", Context.MODE_PRIVATE);
             outputStream.write(string.getBytes());
             outputStream.close();
-            Log.d("Files Directory Report", String.valueOf(Environment.getExternalStorageDirectory()));
+            Log.d("Files Directory Report", String.valueOf(mContext.getFilesDir()));
             Log.d("Report", string);
 
         } catch (Exception e) {
             e.printStackTrace();
+        }*/
+
+        // write file to sdcard
+        try {
+            File basacFolder = new File(Environment.getExternalStorageDirectory(), "BASAC");
+            if (!basacFolder.exists()) {
+                basacFolder.mkdir();
+            }
+            try {
+                File dataFile = new File(basacFolder, "data_" + getTimeStamp() + ".txt");
+                dataFile.createNewFile();
+                FileOutputStream fos = new FileOutputStream(dataFile, false);
+                try {
+                    fos.write(reportJson.toString().getBytes());
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
+        this.mState.makeContent(Environment.getExternalStorageDirectory().toString() + "/BASAC/data_" + getTimeStamp() + ".txt",
+                Environment.getExternalStorageDirectory().toString() + "/ccn-lite/data_" + getTimeStamp() + ".ndntlv");
         transmitToServer(warningId);
-        this.mState.makeContent(filename, filename);
     }
 
     public void transmitToServer(int warningId) {
@@ -77,7 +103,6 @@ public class UserIncidentReport {
                 }
             });
             sat.run();
-            sat.sendAlarm("WarningId: ...");
             return null;
         }
 

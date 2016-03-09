@@ -61,7 +61,7 @@ public class WarningDialogActivity extends Activity {
                     NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                     mNotifyMgr.cancel(DataStore.NOTIFICATION_WARNING + warningId);
                     UserIncidentReport accidentReport = new UserIncidentReport(WarningDialogActivity.this, warningId, reportMessage);
-                    //accidentReport.submitReport();
+                    accidentReport.submitReport(ds.mState);
                 } else {
                     Toast.makeText(WarningDialogActivity.this, "Report already sent", Toast.LENGTH_SHORT).show();
                 }

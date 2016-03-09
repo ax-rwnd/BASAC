@@ -20,6 +20,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
@@ -29,8 +30,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.TreeMap;
 
-import d0020e.basac.Bluetooth.BluetoothArduino;
-import d0020e.basac.Bluetooth.BluetoothClient;
+import d0020e.basac.bluetooth.BluetoothArduino;
+import d0020e.basac.bluetooth.BluetoothClient;
 
 /**
  * Created by Sebastian on 04/12/2015.
@@ -97,6 +98,14 @@ public class StateController extends Service implements Observer {
         Log.d(TAG, "Constructor()");
     }
 
+    public StateController getInstance() {
+        return StateController.this;
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
+
     public void startBluetoothConnection() {
         StateController.bluetoothRunning = true;
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -110,7 +119,7 @@ public class StateController extends Service implements Observer {
                 "20:FA:BB:01:98:3F"
                 "20:FA:BB:01:9A:FB"
                 "20:FA:BB:01:9C:17"*/
-                mBluetoothArduino = new BluetoothArduino(mContext, "00:06:66:08:5F:6F");
+                mBluetoothArduino = new BluetoothArduino(mContext, sharedPref.getString("amarino_mac_address", "00:06:66:08:5F:6F"));
             } else {
                 Log.d(TAG, "Bluetooth already connected");
                 Toast.makeText(mContext, "Already connected, try disconnecting or restarting service", Toast.LENGTH_SHORT).show();
@@ -317,9 +326,9 @@ public class StateController extends Service implements Observer {
         }
 
         if (pref.getBoolean("settings_warning_show_notification", true)) {
-            // TODO: Send data back to arduino?
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                     .setDefaults(Notification.DEFAULT_ALL)
+                    .setOnlyAlertOnce(true)
                     .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                     .setOngoing(true)
                     .setContentIntent(PendingIntent.getActivity(
@@ -333,41 +342,34 @@ public class StateController extends Service implements Observer {
 
             switch (warningId) {
                 case DataStore.VALUE_OXYGEN:
-                    mBuilder.setContentTitle("Warning, Oxygen value!")
-                            .setContentText("Oxygen value is too low!");
+                    mBuilder.setContentTitle("Oxygen levels too low!");
                     break;
                 case DataStore.VALUE_ACCELEROMETER:
-                    mBuilder.setContentTitle("Accelerometer")
-                            .setContentText("Accelerometer triggered warning");
+                    mBuilder.setContentTitle("Accelerometer");
                     break;
                 case DataStore.VALUE_CO:
-                    mBuilder.setContentTitle("Carbon monoxide")
-                            .setContentText("Carbon monoxide levels are too high!");
+                    mBuilder.setContentTitle("Carbon monoxide levels too high!");
                     break;
                 case DataStore.VALUE_AIRPRESSURE:
-                    mBuilder.setContentTitle("Air pressure")
-                            .setContentText("Air pressure");
+                    mBuilder.setContentTitle("Air pressure");
                     break;
                 case DataStore.VALUE_HEARTRATE:
-                    mBuilder.setContentTitle("Heart rate")
-                            .setContentText("Heart rate");
+                    mBuilder.setContentTitle("Heart rate");
                     break;
                 case DataStore.VALUE_ENV_TEMPERATURE:
-                    mBuilder.setContentTitle("Environment temperature")
-                            .setContentText("Environment temperature");
+                    mBuilder.setContentTitle("Environment temperature");
                     break;
                 case DataStore.VALUE_SKIN_TEMPERATURE:
-                    mBuilder.setContentTitle("Skin temperature")
-                            .setContentText("Skin temperature");
+                    mBuilder.setContentTitle("Skin temperature");
                     break;
                 default:
-                    mBuilder.setContentTitle("Warning!")
-                            .setContentText("Unspecified warning!");
+                    mBuilder.setContentTitle("Unspecified warning!");
             }
 
             NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
             mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING + warningId, mBuilder.build());
         }
+
         if (pref.getBoolean("settings_warning_automatic_report", true)) {
             if (mCDThread == null) {
                 mCDThread = new CountDownThread(StateController.this);
@@ -397,7 +399,14 @@ public class StateController extends Service implements Observer {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
         SharedPreferences.Editor editor = pref.edit();
         editor.putLong("last_update", last_update);
-        editor.apply();
+        editor.putInt("data_" + DataStore.VALUE_OXYGEN, 21);
+        editor.putInt("data_" + DataStore.VALUE_ENV_TEMPERATURE, 20);
+        editor.putInt("data_" + DataStore.VALUE_HEARTRATE, 60);
+        editor.putInt("data_" + DataStore.VALUE_AIRPRESSURE, 101000);
+        editor.putInt("data_" + DataStore.VALUE_HUMIDITY, 40);
+        editor.putInt("data_" + DataStore.VALUE_CO, 0);
+        editor.putInt("data_" + DataStore.VALUE_SKIN_TEMPERATURE, 20);
+        editor.commit();
 
         // Oxygen
         if(DataModel.getInstance().getValue(DataStore.VALUE_OXYGEN) < DataStore.THRESHOLD_OXYGEN) {
@@ -513,7 +522,7 @@ public class StateController extends Service implements Observer {
         }
         public void run() {
             while(countDown.size() > 0) {
-                Log.d(TAG, "run()");
+                //Log.d(TAG, "run()");
                 try {
                     Thread.sleep(1000);
                     if (countDown.size() > 0 && countDown.firstKey() < System.currentTimeMillis()) {
@@ -525,14 +534,60 @@ public class StateController extends Service implements Observer {
                         StateController.setWarningState(countDown.get(countDown.firstKey()), false);
                         UserIncidentReport accidentReport = new UserIncidentReport(mStateController.get().mContext, countDown.get(countDown.firstKey()), "auto-report");
                         countDown.remove(countDown.firstKey());
-                        //accidentReport.submitReport();
+                        accidentReport.submitReport(mStateController.get());
+                    } else {
+                        int warningId = countDown.get(countDown.firstKey());
+                        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mStateController.get().mContext);
+                        if (pref.getBoolean("settings_warning_show_notification", true)) {
+                            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mStateController.get().mContext)
+                                    .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                                    .setOngoing(true)
+                                    .setContentIntent(PendingIntent.getActivity(
+                                            mStateController.get().mContext,
+                                            DataStore.NOTIFICATION_WARNING + warningId,
+                                            new Intent(mStateController.get().mContext, WarningActivity.class)
+                                                    .putExtra("warning", warningId),
+                                            PendingIntent.FLAG_UPDATE_CURRENT
+                                    ))
+                                    .setPriority(NotificationCompat.PRIORITY_MAX);
+
+                            switch (warningId) {
+                                case DataStore.VALUE_OXYGEN:
+                                    mBuilder.setContentTitle("Oxygen levels too low!");
+                                    break;
+                                case DataStore.VALUE_ACCELEROMETER:
+                                    mBuilder.setContentTitle("Accelerometer");
+                                    break;
+                                case DataStore.VALUE_CO:
+                                    mBuilder.setContentTitle("Carbon monoxide levels too high!");
+                                    break;
+                                case DataStore.VALUE_AIRPRESSURE:
+                                    mBuilder.setContentTitle("Air pressure");
+                                    break;
+                                case DataStore.VALUE_HEARTRATE:
+                                    mBuilder.setContentTitle("Heart rate");
+                                    break;
+                                case DataStore.VALUE_ENV_TEMPERATURE:
+                                    mBuilder.setContentTitle("Environment temperature");
+                                    break;
+                                case DataStore.VALUE_SKIN_TEMPERATURE:
+                                    mBuilder.setContentTitle("Skin temperature");
+                                    break;
+                                default:
+                                    mBuilder.setContentTitle("Unspecified warning!");
+                            }
+                            mBuilder.setContentText("Time left: " + (int)Math.ceil((double)(countDown.firstKey() - System.currentTimeMillis()) / 1000) + " seconds");
+
+                            NotificationManager mNotifyMgr = (NotificationManager) mStateController.get().mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                            mNotifyMgr.notify(DataStore.NOTIFICATION_WARNING + warningId, mBuilder.build());
+                        }
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     break;
                 }
             }
-            Log.d(TAG, "run() end");
+            //Log.d(TAG, "run() end");
             mStateController.get().mCDThread.cancel();
             mStateController.get().mCDThread = null;
         }
@@ -541,15 +596,20 @@ public class StateController extends Service implements Observer {
          * Stop all pending countdowns
          */
         public void cancel() {
-            Log.d(TAG, "cancel()");
+            //Log.d(TAG, "cancel()");
         }
 
     }
 
     public void makeContent(String infile, String outfile) {
+        // Make sure all direcoties exists
+        File basacFolder = new File(Environment.getExternalStorageDirectory(), "ccn-lite");
+        if (!basacFolder.exists()) {
+            basacFolder.mkdir();
+        }
+        generateContent("/ndn/hello-world", infile, outfile, 6);
+
         Log.d("makeContent", outfile + " CREATED");
-        generateContent("/ndn/hello-world", mContext.getFilesDir() + "/" + infile + ".txt",
-                Environment.getExternalStorageDirectory()+"/ccn-lite/"+outfile+".ndntlv", 6);
     }
 
 }

@@ -2,8 +2,6 @@ package d0020e.basac;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 
 /**
@@ -45,9 +43,9 @@ public class DataStore extends Application {
     public static int THRESHOLD_AIRPRESSURE_HIGH = 150000;
     public static int THRESHOLD_CO = 30;
 
-    public StateController mState;
+    public static StateController mState;
 
-    Handler.Callback realCallback = null;
+    /*Handler.Callback realCallback = null;
     Handler handler  = new Handler() {
         public void handleMessage(Message msg) {
             if (realCallback != null) {
@@ -62,7 +60,8 @@ public class DataStore extends Application {
 
     public void setCallback(Handler.Callback callback) {
         this.realCallback = callback;
-    }
+    }*/
+
 
     @Override
     public void onCreate() {
@@ -76,7 +75,7 @@ public class DataStore extends Application {
         int value_env_temperature = sharedPref.getInt("data_"+DataStore.VALUE_ENV_TEMPERATURE, 20);
         int value_heart_rate = sharedPref.getInt("data_"+DataStore.VALUE_HEARTRATE, 60);
         int value_air_pressure = sharedPref.getInt("data_"+DataStore.VALUE_AIRPRESSURE, 101000);
-        int value_humidity = sharedPref.getInt("data_"+DataStore.VALUE_HUMIDITY, 70);
+        int value_humidity = sharedPref.getInt("data_"+DataStore.VALUE_HUMIDITY, 40);
         int value_co = sharedPref.getInt("data_"+DataStore.VALUE_CO, 0);
         int value_skin_temperature = sharedPref.getInt("data_"+DataStore.VALUE_SKIN_TEMPERATURE, 20);
 
