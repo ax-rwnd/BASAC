@@ -11,9 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Created by Sebastian on 17/02/2016.
+ * Class containing the data required to submit a report and push it to the CCN-lite network.
  */
-//TODO: figure out how to shoehorn this into a JSON object and push as seperate content to CCN network.
 public class UserIncidentReport {
     private int warningId;
     private long timeStamp;

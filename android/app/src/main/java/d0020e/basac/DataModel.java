@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 /**
- * Created by WeeDzCokie on 2016-01-28.
+ * The Datamodel contains all sensordata and is updated when new data is recived from the vest.
+ *
  */
 public class DataModel extends Observable {
     private static final String TAG = "DataModel";

@@ -34,7 +34,9 @@ import d0020e.basac.bluetooth.BluetoothArduino;
 import d0020e.basac.bluetooth.BluetoothClient;
 
 /**
- * Created by Sebastian on 04/12/2015.
+ * Statecontroller (service) handles main functionality in the app.
+ * Makes sure datamodel updates on reviced data, triggers notifications on warnings raised and triggers submitting of reports
+ * when an alarm has been raised. "exports" data as JSON objects and Makes content for CCN-lite
  *
  * TODO: Do not trigger warnings/collect data if statecontroller is set not to monitor to user
  */

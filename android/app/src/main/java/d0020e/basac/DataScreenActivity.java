@@ -14,7 +14,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * TODO: Show threshold values
+ * Datascreenactivity is the activity started when clicking on "DATA" button on homescreen,
+ * It displays the data contained inside Datamodel.
  */
 public class DataScreenActivity extends AppCompatActivity implements Observer {
 

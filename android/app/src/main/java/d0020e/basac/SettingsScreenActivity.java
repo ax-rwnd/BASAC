@@ -15,6 +15,9 @@ import android.widget.Toast;
 import d0020e.basac.bluetooth.BluetoothScreenActivity;
 import d0020e.basac.bluetooth.BluetoothServerScreenActivity;
 
+/**
+ * The "temp setting" activity.
+ */
 public class SettingsScreenActivity extends AppCompatActivity {
 
     private static final String TAG = "SettingsScreen";

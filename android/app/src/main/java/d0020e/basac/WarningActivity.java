@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 
+/**
+ * The activity for submitting the incident-reports.
+ */
 
 public class WarningActivity extends AppCompatActivity {
 

@@ -9,6 +9,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+/**
+ * Main activity started when BASAC starts. contains elements for navigating the app.
+ */
 
 public class HomeScreenActivity extends AppCompatActivity {
     private static final String TAG = "HomeScreen";

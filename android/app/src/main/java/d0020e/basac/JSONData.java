@@ -6,10 +6,6 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by weedz on 2016-02-03.
- */
-
 /*
 
 JSON structure:
@@ -25,6 +21,9 @@ JSON structure:
 
  */
 
+/**
+ * The container class for sensordata.
+ */
     //TODO: comment.
 public class JSONData {
     private static final String TAG = "JSONData";

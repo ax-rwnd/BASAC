@@ -9,7 +9,7 @@ import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
 
 /**
- * Created by Joppe on 2016-01-27.
+ * Motionsensor is handling events related to the Accelerometer and subsequently the Fall-accident stuffs.
  */
 public class MotionSensor implements SensorEventListener{
     private static final String TAG ="MotionSensor";
@@ -53,6 +53,6 @@ public class MotionSensor implements SensorEventListener{
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
+        //do nothing
     }
 }

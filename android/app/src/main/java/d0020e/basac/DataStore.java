@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 /**
- * Created by WeeDzCokie on 2016-01-28.
+ * Initializes the DataModel with values to make sure it's not empty.
  */
 public class DataStore extends Application {
     // Location
