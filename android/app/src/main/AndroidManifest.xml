@@ -43,8 +43,8 @@
             android:label="@string/title_activity_settings_screen"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Bluetooth.BluetoothScreenActivity" />
-        <activity android:name=".Bluetooth.BluetoothServerScreenActivity" />
+        <activity android:name=".bluetooth.BluetoothScreenActivity" />
+        <activity android:name=".bluetooth.BluetoothServerScreenActivity" />
         <activity
             android:name=".WarningActivity"
             android:label="@string/title_activity_warning"

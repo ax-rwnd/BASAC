@@ -72,10 +72,7 @@
                 android:id="@+id/oxygen_bar"
                 android:max="30"
                 android:indeterminate="false"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="false" />
+                style="?android:attr/progressBarStyleHorizontal" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

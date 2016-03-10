@@ -105,7 +105,7 @@
             android:id="@+id/humidity_seekBar"
             android:layout_gravity="center_horizontal"
             android:max="100"
-            android:progress="70"
+            android:progress="40"
             android:indeterminate="false" />
 
         <TextView

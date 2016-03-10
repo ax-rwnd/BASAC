@@ -1,4 +1,4 @@
-package d0020e.basac.Bluetooth;
+package d0020e.basac.bluetooth;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -30,10 +30,10 @@ public class BluetoothScreenActivity extends AppCompatActivity {
             String action = intent.getAction();
             if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
                 TextView bt_device = (TextView) findViewById(R.id.bt_device);
-                bt_device.setText("Scanning for devices...");
+                bt_device.setText(R.string.bt_scan);
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 TextView bt_device = (TextView) findViewById(R.id.bt_device);
-                bt_device.setText("Finished scanning for devices");
+                bt_device.setText(R.string.bt_scan_finished);
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 mDeviceArray.add(device.getName() + "\n" + device.getAddress());
@@ -49,7 +49,7 @@ public class BluetoothScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_screen);
-        BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(getApplicationContext().BLUETOOTH_SERVICE);
+        BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 
         mBluetoothAdapter = mBluetoothManager.getAdapter();
         if (mBluetoothAdapter == null) {
@@ -57,10 +57,10 @@ public class BluetoothScreenActivity extends AppCompatActivity {
             return;
         }
 
-        mDeviceArray = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1);
+        mDeviceArray = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1);
         ListView mDeviceList = (ListView) findViewById(R.id.bt_devices);
         mDeviceList.setAdapter(mDeviceArray);
-        mPairedDeviceArray = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1);
+        mPairedDeviceArray = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);
