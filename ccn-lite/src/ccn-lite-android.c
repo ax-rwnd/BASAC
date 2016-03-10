@@ -726,7 +726,8 @@ ccnl_android_init()
                   ALOOPER_EVENT_INPUT, ccnl_android_http_accept, &theRelay);
 
 
-    ccnl_populate_cache(&theRelay, "/mnt/sdcard/ccn-lite");
+    //ccnl_populate_cache(&theRelay, "/mnt/sdcard/ccn-lite");
+    ccnl_populate_cache(&theRelay, "/storage/emulated/0/ccn-lite");
 
 #ifdef USE_SUITE_CCNTLV
     strcpy(hello, echopath);
