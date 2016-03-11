@@ -57,6 +57,7 @@ public class BluetoothArduino {
     }
 
     public void turnonvibe() {
+        Log.d(TAG, "warning");
         int om = 220;
         Amarino.sendDataToArduino(mContext, device_address, 'A', om);
     }

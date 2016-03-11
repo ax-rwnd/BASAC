@@ -31,4 +31,5 @@
     <string name="warning_oxygen">Oxygen value is too low!</string>
     <string name="warning_skin_temperature">Skin temperature</string>
     <string name="warning_unknown">"Unknown warning id: %d"</string>
+    <string name="warning_humidity">Humidity</string>
 </resources>

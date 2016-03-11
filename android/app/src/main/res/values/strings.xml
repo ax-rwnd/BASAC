@@ -33,6 +33,7 @@
     <string name="warning_heart_rate">Heart rate</string>
     <string name="warning_env_temperature">Environment temperature</string>
     <string name="warning_skin_temperature">Skin temperature</string>
+    <string name="warning_humidity">Humidity</string>
 
     <string-array name="mockLocation">
         <item>Safe</item>

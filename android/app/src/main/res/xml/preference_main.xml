@@ -75,7 +75,7 @@
             basac:maxValue="60"
             android:text="seconds"
             android:dependency="settings_warning_automatic_report"
-            android:defaultValue="10" />
+            android:defaultValue="30" />
     </PreferenceCategory>
 
     <!--
@@ -88,6 +88,12 @@
             android:key="button_thresholds"
             android:title="Threshold values"
             android:persistent="false">
+            <EditTextPreference
+                android:key="threshold_humidity_max"
+                android:title="Upper threshold"
+                android:defaultValue="50"
+                android:summary="Set maximum humidity"
+                android:inputType="number" />
             <PreferenceCategory
                 android:title="Accelerometer"
                 android:key="pref_key_settings_accelerometer">

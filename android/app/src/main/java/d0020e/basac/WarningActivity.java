@@ -79,6 +79,9 @@ public class WarningActivity extends AppCompatActivity {
             case DataStore.VALUE_SKIN_TEMPERATURE:
                 mWarningText.setText(R.string.warning_skin_temperature);
                 break;
+            case DataStore.VALUE_HUMIDITY:
+                mWarningText.setText(R.string.warning_humidity);
+                break;
             default:
                 mWarningText.setText(String.format(getString(R.string.warning_unknown), warningId));
         }
